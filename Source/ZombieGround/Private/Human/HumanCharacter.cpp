@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
@@ -19,6 +20,8 @@ void AHumanCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetCharacterMovement()->MaxWalkSpeed = 400.f;
+	
 	// Enhanced Input Subsystem 활성화
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
