@@ -20,7 +20,10 @@ public class ZombieGround : ModuleRules
 			"UMG",
 			"Slate"
 		});
-
+		
+		PublicIncludePaths.Add(ModuleDirectory);
+		// PublicIncludePaths.Add(ModuleDirectory);
+		
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
