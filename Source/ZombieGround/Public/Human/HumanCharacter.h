@@ -31,6 +31,9 @@ public:
 	
 protected:
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Collision")
+	UCapsuleComponent* InteractionCapsule;
+	
 	// --- 마우스 옵션 ---
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Input|Mouse")
 	float MouseSensitivity = 0.5f;
@@ -47,9 +50,37 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* IA_Jump;
 	
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* IA_Interact;
+	
 	//Input 함수
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void JumpAction(const FInputActionValue& Value);
+	void Interact(const FInputActionValue& Value);
+	
+	
+	
+public:
+	UPROPERTY()
+	TSet<AActor*> OverlappingInteractables;
 
+	UFUNCTION()
+	void OnInteractableBeginOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 BodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnInteractableEndOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 BodyIndex);
+	
+public:
+	UFUNCTION()
+	AActor* GetCenterScreenInteractable();
+	
+	//이전에 하이라이트된 액터 저장용 변수
+	UPROPERTY()
+	AActor* HighlightedActor = nullptr;
+	
+	UFUNCTION()
+	void SetActorOutline(AActor* Actor, bool bEnable);
 };
