@@ -31,6 +31,7 @@ public:
 	
 protected:
 	
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Collision")
 	UCapsuleComponent* InteractionCapsule;
 	
@@ -62,6 +63,10 @@ protected:
 	
 	
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABaseWeapon> WeaponToSpawnClass;
+	
+	
 	UPROPERTY()
 	TSet<AActor*> OverlappingInteractables;
 
@@ -79,8 +84,25 @@ public:
 	
 	//이전에 하이라이트된 액터 저장용 변수
 	UPROPERTY()
-	AActor* HighlightedActor = nullptr;
+	class ABasePickup* HighlightedPickup = nullptr;
 	
 	UFUNCTION()
-	void SetActorOutline(AActor* Actor, bool bEnable);
+	void SetActorOutline(ABasePickup* pickup, bool bEnable);
+	
+	
+public:
+	//Interaction 관련
+	UPROPERTY()
+	class ABaseWeapon* BaseWeapon;
+	
+	//E키로 습득한 무기 클래스를 1인칭에 인스턴스화
+	UFUNCTION()
+	void SpawnWeapon(UClass* weaponToSpawn);
+	
+	
+protected:
+	// 현재 장착하고 있는 무기 인스턴스를 저장할 변수
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	class ABaseWeapon* currentWeapon;
+	
 };

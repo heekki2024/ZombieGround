@@ -7,6 +7,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Item/Weapon/Pickup/BasePickup.h"
+#include "Item/Weapon/Weapon/BaseWeapon.h"
 
 
 // Sets default values
@@ -71,21 +73,25 @@ void AHumanCharacter::Tick(float DeltaTime)
 	
 	AActor* HitActor = GetCenterScreenInteractable();
 
-	// 이전에 하이라이트된 액터 끄기
-	if (HighlightedActor && HighlightedActor != HitActor)
+	// 1. 먼저 Pickup인지 확인해봅니다.
+	if (ABasePickup* pickup = Cast<ABasePickup>(HitActor))
 	{
-		SetActorOutline(HighlightedActor, false);
-	}
+		// 이전에 하이라이트된 액터 끄기
+		if (HighlightedPickup && HighlightedPickup != HitActor)
+		{
+			SetActorOutline(HighlightedPickup, false);
+		}
 
-	// 새로운 액터 하이라이트
-	if (HitActor && HitActor != HighlightedActor)
-	{
-		SetActorOutline(HitActor, true);
-		HighlightedActor = HitActor;
-	}
-	else if(!HitActor)
-	{
-		HighlightedActor = nullptr;
+		// 새로운 액터 하이라이트
+		if (HitActor && HitActor != HighlightedPickup)
+		{
+			SetActorOutline(pickup, true);
+			HighlightedPickup = pickup;
+		}
+		else if(!HitActor)
+		{
+			HighlightedPickup = nullptr;
+		}
 	}
 }
 
@@ -141,6 +147,8 @@ void AHumanCharacter::JumpAction(const FInputActionValue& Value)
 
 void AHumanCharacter::Interact(const FInputActionValue& Value)
 {
+	if (!HighlightedPickup) return;
+	IInteractInterface::Execute_OnInteract(HighlightedPickup, this, HighlightedPickup);
 	
 }
 
@@ -218,12 +226,12 @@ AActor* AHumanCharacter::GetCenterScreenInteractable()
 	return nullptr;
 }
 
-void AHumanCharacter::SetActorOutline(AActor* Actor, bool bEnable)
+void AHumanCharacter::SetActorOutline(ABasePickup* pickup, bool bEnable)
 {
-	if (!Actor) return;
+	if (!pickup) return;
 
 	TArray<UStaticMeshComponent*> MeshComponents;
-	Actor->GetComponents<UStaticMeshComponent>(MeshComponents);
+	pickup->GetComponents<UStaticMeshComponent>(MeshComponents);
 
 	for (UStaticMeshComponent* InteractableItemMesh : MeshComponents)
 	{
@@ -233,5 +241,47 @@ void AHumanCharacter::SetActorOutline(AActor* Actor, bool bEnable)
 			// 필요시 Stencil Value도 설정 가능
 			InteractableItemMesh->SetCustomDepthStencilValue(1);
 		}
+	}
+}
+
+void AHumanCharacter::SpawnWeapon(UClass* weaponToSpawn)
+{
+	// 2. 기존에 들고 있는 무기가 있다면 제거 (교체)
+	if (currentWeapon)
+	{
+		currentWeapon->Destroy();
+		currentWeapon = nullptr;
+	}
+	
+	// 3. 스폰 파라미터 설정 (주인은 나)
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+	
+	// 4. 월드에 무기 액터 생성
+	// 위치와 회전은 어차피 바로 붙일 거라 현재 캐릭터 기준으로 생성해도 됩니다.
+	
+	ABaseWeapon* NewWeapon = GetWorld()->SpawnActor<ABaseWeapon>(
+		weaponToSpawn,
+		GetActorLocation(),
+		GetActorRotation(),
+		SpawnParams
+	);
+	
+	if (NewWeapon)
+	{
+		// 5. 멤버 변수에 저장
+		currentWeapon = NewWeapon;
+
+		// 6. 캐릭터 메쉬의 소켓에 부착 (Attach)
+		// "WeaponSocket"은 에디터에서 미리 만든 소켓 이름이어야 합니다.
+		// NewWeapon->SocketName;
+
+		//SnapToTargetIncludingScale: 위치, 회전, 크기를 소켓에 딱 맞춤
+		NewWeapon->AttachToComponent(
+			GetMesh(), 
+			FAttachmentTransformRules::SnapToTargetIncludingScale, 
+			NewWeapon->SocketName
+		);
 	}
 }

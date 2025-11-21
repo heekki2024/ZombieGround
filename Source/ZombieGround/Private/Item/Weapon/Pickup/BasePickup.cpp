@@ -1,7 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Item/Weapon/BasePickup.h"
+#include "Item/Weapon/Pickup/BasePickup.h"
+
+#include "Human/HumanCharacter.h"
+#include "Item/Weapon/Weapon/BaseWeapon.h"
 
 
 // Sets default values
@@ -58,3 +61,9 @@ void ABasePickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ABasePickup::OnInteract_Implementation(class AHumanCharacter* characterPickingUp,class ABasePickup* interactedPickup)
+{
+	IInteractInterface::OnInteract_Implementation(characterPickingUp, interactedPickup);
+	
+	characterPickingUp->SpawnWeapon(WeaponToSpawn);
+}
