@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "InputAction.h"
 #include "GameFramework/Character.h"
+#include "Item/Weapon/Weapon/BaseWeapon.h"
 #include "HumanCharacter.generated.h"
+
 
 UCLASS()
 class ZOMBIEGROUND_API AHumanCharacter : public ACharacter
@@ -95,14 +97,27 @@ public:
 	UPROPERTY()
 	class ABaseWeapon* BaseWeapon;
 	
+
 	//E키로 습득한 무기 클래스를 1인칭에 인스턴스화
 	UFUNCTION()
-	void SpawnWeapon(UClass* weaponToSpawn);
+	void SwapWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn);
+	
+	UFUNCTION()
+	void DropCurrentWeapon();
 	
 	
 protected:
 	// 현재 장착하고 있는 무기 인스턴스를 저장할 변수
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+	UPROPERTY(EditAnywhere)
 	class ABaseWeapon* currentWeapon;
 	
+	// EWeaponName currentWeaponNameEnum;
+	//
+	
+public:
+	UFUNCTION(BlueprintCallable)
+	ABaseWeapon* GetCurrentWeapon() const { return currentWeapon;};
+	
+	// UFUNCTION()
+	// EWeaponName GetCurrentWeaponName() const { return currentWeaponNameEnum;};
 };

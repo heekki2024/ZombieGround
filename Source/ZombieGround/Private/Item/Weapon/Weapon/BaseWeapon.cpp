@@ -9,6 +9,10 @@ ABaseWeapon::ABaseWeapon()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	// 기존 RootComponent 또는 캐릭터 메쉬에 Attach
+	gunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
+
 }
 
 // Called when the game starts or when spawned

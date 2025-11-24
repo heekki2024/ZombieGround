@@ -33,7 +33,6 @@ AHumanCharacter::AHumanCharacter()
 	// 필요 시 Overlap 이벤트 발생 가능
 	InteractionCapsule->SetGenerateOverlapEvents(true);
 	
-
 }
 
 // Called when the game starts or when spawned
@@ -88,10 +87,16 @@ void AHumanCharacter::Tick(float DeltaTime)
 			SetActorOutline(pickup, true);
 			HighlightedPickup = pickup;
 		}
-		else if(!HitActor)
+	}else if(!HitActor)
+	{
+		
+		// 이전에 하이라이트된 액터 끄기
+		if (HighlightedPickup)
 		{
-			HighlightedPickup = nullptr;
+			SetActorOutline(HighlightedPickup, false);
 		}
+		HighlightedPickup = nullptr;
+
 	}
 }
 
@@ -107,7 +112,7 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AHumanCharacter::Move);
 		playerInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AHumanCharacter::Look);
 		playerInput->BindAction(IA_Jump, ETriggerEvent::Started, this, &AHumanCharacter::JumpAction);
-		playerInput->BindAction(IA_Interact, ETriggerEvent::Started, this, &AHumanCharacter::Interact);
+		playerInput->BindAction(IA_Interact, ETriggerEvent::Triggered, this, &AHumanCharacter::Interact);
 	}
 }
 
@@ -149,7 +154,8 @@ void AHumanCharacter::Interact(const FInputActionValue& Value)
 {
 	if (!HighlightedPickup) return;
 	IInteractInterface::Execute_OnInteract(HighlightedPickup, this, HighlightedPickup);
-	
+	SwapWeapon(HighlightedPickup->GetWeaponToSpawn());
+
 }
 
 void AHumanCharacter::OnInteractableBeginOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
@@ -244,44 +250,113 @@ void AHumanCharacter::SetActorOutline(ABasePickup* pickup, bool bEnable)
 	}
 }
 
-void AHumanCharacter::SpawnWeapon(UClass* weaponToSpawn)
+void AHumanCharacter::SwapWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn)
 {
-	// 2. 기존에 들고 있는 무기가 있다면 제거 (교체)
-	if (currentWeapon)
+	if (!currentWeapon)
+	DropCurrentWeapon();
+
+    // 2. 스폰 파라미터 설정
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.Owner = this;
+    SpawnParams.Instigator = this;
+    SpawnParams.SpawnCollisionHandlingOverride = 
+        ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+    // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+    FVector SpawnLocation = GetActorLocation();
+    FRotator SpawnRotation = GetActorRotation();
+
+    // 4. 액터 스폰
+    ABaseWeapon* NewWeapon = GetWorld()->SpawnActor<ABaseWeapon>(
+        weaponToSpawn,
+        SpawnLocation,
+        SpawnRotation,
+        SpawnParams
+    );
+
+    if (!IsValid(NewWeapon))
+    {
+        UE_LOG(LogTemp, Error, TEXT("SwapWeapon: Failed to spawn weapon %s"),
+            *weaponToSpawn->GetName());
+        return;
+    }
+	
+
+    // 6. 무기 저장
+    currentWeapon = NewWeapon;
+	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
+	
+	
+    // 7. Attach (부착)
+    NewWeapon->AttachToComponent(
+        GetMesh(),
+        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+        NewWeapon->weaponDetails.socketName
+    );
+	
+	
+	HighlightedPickup->Destroy();
+}
+
+
+void AHumanCharacter::DropCurrentWeapon()
+{
+	if (!IsValid(currentWeapon))
 	{
-		currentWeapon->Destroy();
-		currentWeapon = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: CurrentWeapon is invalid"));
+		return;
 	}
 	
-	// 3. 스폰 파라미터 설정 (주인은 나)
+	// 1. 무기 픽업 클래스가 있는지 확인 (무기 클래스 내부에 있을 것으로 가정)
+	TSubclassOf<ABasePickup> PickupClass = currentWeapon->pickupClass;
+	if (!PickupClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("DropWeapon: Weapon has no PickupClass"));
+		return;
+	}
+	
+	// [수정 포인트 1] 바라보는 방향(Aim Direction) 가져오기
+	// GetActorForwardVector() 대신 GetControlRotation()을 사용합니다.
+	// GetControlRotation()은 마우스/스틱으로 조종하는 카메라의 회전값(Pitch, Yaw)을 포함합니다.
+	FRotator ControlRotation = GetControlRotation();
+	FVector AimDirection = ControlRotation.Vector(); // 회전값을 방향 벡터로 변환
+
+	// [수정 포인트 2] 스폰 위치 계산
+	// 바라보는 방향으로 100만큼 떨어진 곳에서 스폰
+	FVector SpawnLocation = GetActorLocation() + (AimDirection * 50.f); 
+    
+	// [옵션] 스폰 회전값도 시선과 일치시킬지, 아니면 랜덤하게 할지 결정
+	// 무기가 날아가는 방향으로 머리를 돌리려면 ControlRotation을 넣으세요.
+	FRotator SpawnRotation = ControlRotation; 
+    
+	// 3. 무기 제거 (기존 코드 동일)
+	currentWeapon->Destroy();
+	currentWeapon = nullptr;
+    
+	// 4. 픽업 액터 스폰 (기존 코드 동일)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = this;
-	
-	// 4. 월드에 무기 액터 생성
-	// 위치와 회전은 어차피 바로 붙일 거라 현재 캐릭터 기준으로 생성해도 됩니다.
-	
-	ABaseWeapon* NewWeapon = GetWorld()->SpawnActor<ABaseWeapon>(
-		weaponToSpawn,
-		GetActorLocation(),
-		GetActorRotation(),
-		SpawnParams
+	SpawnParams.SpawnCollisionHandlingOverride = 
+	   ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	ABasePickup* Pickup = GetWorld()->SpawnActor<ABasePickup>(
+	   PickupClass,
+	   SpawnLocation,
+	   SpawnRotation,
+	   SpawnParams
 	);
-	
-	if (NewWeapon)
+    
+	// 5. 물리 임펄스 적용
+	if (Pickup) // Pickup이 잘 생성되었는지 확인
 	{
-		// 5. 멤버 변수에 저장
-		currentWeapon = NewWeapon;
-
-		// 6. 캐릭터 메쉬의 소켓에 부착 (Attach)
-		// "WeaponSocket"은 에디터에서 미리 만든 소켓 이름이어야 합니다.
-		// NewWeapon->SocketName;
-
-		//SnapToTargetIncludingScale: 위치, 회전, 크기를 소켓에 딱 맞춤
-		NewWeapon->AttachToComponent(
-			GetMesh(), 
-			FAttachmentTransformRules::SnapToTargetIncludingScale, 
-			NewWeapon->SocketName
-		);
+		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(Pickup->GetRootComponent());
+		if (RootComp && RootComp->IsSimulatingPhysics())
+		{
+			// [수정 포인트 3] 바라보는 방향(AimDirection)으로 힘을 가함
+			// 400.f는 좀 약할 수 있으니 테스트해보며 조절하세요 (예: 1000.f)
+			FVector ThrowForce = AimDirection * 600.f; 
+			RootComp->AddImpulse(ThrowForce, NAME_None, true);
+		}
 	}
 }

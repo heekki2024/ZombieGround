@@ -12,6 +12,8 @@ void UHumanAnim::NativeInitializeAnimation()
 	
 	//소유 Pawn 을 가져오자.
 	pawnOwner = Cast<AHumanCharacter>(TryGetPawnOwner());
+	
+	currentWeaponNameEnum = EWeaponName::Unarmed;
 }
 
 void UHumanAnim::NativeUpdateAnimation(float DeltaSeconds)
@@ -27,8 +29,17 @@ void UHumanAnim::NativeUpdateAnimation(float DeltaSeconds)
 		groundSpeed = velocity.Size2D();
 		//공중 여부 설정
 		isAir = pawnOwner->GetMovementComponent()->IsFalling();
-	
+		
+		currentWeapon = pawnOwner->GetCurrentWeapon();
+		bHasCurrentWeapon = (currentWeapon != nullptr);
+		
+		if (IsValid(currentWeapon))
+		{
+			WeaponAnimSetToUse = currentWeapon->playerAnim;
+		}
+		else
+		{
+			WeaponAnimSetToUse = DefaultWeaponAnimSet;
+		}
 	}
-
-	
 }

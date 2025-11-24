@@ -20,31 +20,31 @@ ABasePickup::ABasePickup()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// 1. 컴포넌트 생성 (이름은 "MeshComp"로 지정)
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	gunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunMesh"));
 
 	// 2. 루트 컴포넌트로 설정
 	// (만약 이 액터의 기준이 이 메쉬라면 RootComponent로 설정)
-	RootComponent = MeshComp;
+	RootComponent = gunMesh;
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMeshAsset(TEXT("/Engine/BasicShapes/Cube.Cube"));
 
 	// 3. 찾는데 성공했다면 할당하기
 	if (CubeMeshAsset.Succeeded())
 	{
-		MeshComp->SetStaticMesh(CubeMeshAsset.Object);
+		gunMesh->SetStaticMesh(CubeMeshAsset.Object);
 	}
 	
 	// 1. 물리 시뮬레이션 켜기
-	MeshComp->SetSimulatePhysics(true);
+	gunMesh->SetSimulatePhysics(true);
 
 	// 2. (중요) 중력 켜기 (보통 기본값이 true지만 확실하게 하기 위해)
-	MeshComp->SetEnableGravity(true);
+	gunMesh->SetEnableGravity(true);
 
 	// 3. (권장) 물리용 콜리전 프리셋으로 변경
 	// 'BlockAll'이나 'PhysicsActor'를 써야 땅을 뚫고 떨어지지 않습니다.
-	MeshComp->SetCollisionProfileName(TEXT("PhysicsActor"));
+	gunMesh->SetCollisionProfileName(TEXT("PhysicsActor"));
 	
-	MeshComp->SetCollisionObjectType(ECC_GameTraceChannel2);
+	gunMesh->SetCollisionObjectType(ECC_GameTraceChannel2);
 
 }
 
@@ -61,9 +61,9 @@ void ABasePickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABasePickup::OnInteract_Implementation(class AHumanCharacter* characterPickingUp,class ABasePickup* interactedPickup)
-{
-	IInteractInterface::OnInteract_Implementation(characterPickingUp, interactedPickup);
-	
-	characterPickingUp->SpawnWeapon(WeaponToSpawn);
-}
+// void ABasePickup::OnInteract_Implementation(class AHumanCharacter* characterPickingUp,class ABasePickup* interactedPickup)
+// {
+// 	IInteractInterface::OnInteract_Implementation(characterPickingUp, interactedPickup);
+// 	
+// 	characterPickingUp->SwapWeapon(WeaponToSpawn);
+// }

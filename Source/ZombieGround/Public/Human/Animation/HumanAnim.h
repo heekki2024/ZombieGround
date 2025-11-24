@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Item/Weapon/Weapon/BaseWeapon.h"
 #include "HumanAnim.generated.h"
 
 /**
@@ -35,4 +36,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float groundSpeed;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class ABaseWeapon* currentWeapon;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	EWeaponName currentWeaponNameEnum;
+	
+	UPROPERTY(BlueprintReadOnly, meta = (BlueprintThreadSafe))
+	bool bHasCurrentWeapon;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FWeaponAnimSet WeaponAnimSetToUse;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FWeaponAnimSet DefaultWeaponAnimSet; 
 };

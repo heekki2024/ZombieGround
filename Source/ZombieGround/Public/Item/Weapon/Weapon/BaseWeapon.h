@@ -26,12 +26,11 @@ enum class EWeaponName : uint8
 {
 	// 2. UMETA(DisplayName)은 에디터(드롭다운 메뉴)에서 보일 이름입니다.
 	Unarmed         UMETA(DisplayName = "Unarmed"),
-	Pistol          UMETA(DisplayName = "Pistol_A"),
-	
+	Pistol_A          UMETA(DisplayName = "Pistol_A"),
+	Assault_Rifle_A		UMETA(DisplayName = "Assault_Rifle_A"),
 	// 3. 최대값 (보통 반복문이나 범위 체크용으로 둠, 에디터엔 숨김)
 	MAX             UMETA(Hidden)
 };
-
 
 UENUM(BlueprintType)
 enum class EFireMode : uint8
@@ -43,6 +42,59 @@ enum class EFireMode : uint8
 	// 3. 최대값 (보통 반복문이나 범위 체크용으로 둠, 에디터엔 숨김)
 	MAX             UMETA(Hidden)
 };
+
+USTRUCT(BlueprintType)
+struct FWeaponAnimSet
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequence* aimDownSight;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequence* lowReady;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequence* equip;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequence* unEquip;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* reload;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* fire;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UBlendSpace* AimOffset;
+};
+
+USTRUCT(BlueprintType)
+struct FWeaponDetails
+{
+	GENERATED_BODY()
+    
+	UPROPERTY(EditAnywhere)
+	float damage;
+
+	UPROPERTY(EditAnywhere)
+	float range;
+
+	UPROPERTY(EditAnywhere)
+	EWeaponType weaponType;
+
+	UPROPERTY(EditAnywhere)
+	EWeaponName weaponName;
+	
+	UPROPERTY(EditAnywhere)
+	FName socketName;
+};
+
+
+
+
+
 
 UCLASS()
 class ZOMBIEGROUND_API ABaseWeapon : public AActor
@@ -64,21 +116,17 @@ public:
 	
 public:
 	UPROPERTY(EditAnywhere)
-	float Damage;
+	class USkeletalMeshComponent* gunMesh;
 	
 	UPROPERTY(EditAnywhere)
-	float Range;
+	class TSubclassOf<class ABasePickup> pickupClass;
+	
 	
 	UPROPERTY(EditAnywhere)
-	EWeaponType WeaponType;
+	FWeaponDetails weaponDetails;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FWeaponAnimSet playerAnim;
 	
-	UPROPERTY(EditAnywhere)
-	EWeaponName WeaponName;
-	
-	UPROPERTY(EditAnywhere)
-	class TSubclassOf<class ABasePickup> PickupClass;
-	
-	UPROPERTY(EditAnywhere)
-	FName SocketName;
 };
  
