@@ -7,8 +7,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Item/Weapon/Pickup/BasePickup.h"
-#include "Item/Weapon/Weapon/BaseWeapon.h"
+#include "Item/Weapon/BaseWeapon.h"
+#include "Pickup/BasePickup.h"
+#include "Pickup/WeaponPickup/BaseWeaponPickup.h"
 
 
 // Sets default values
@@ -113,6 +114,9 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AHumanCharacter::Look);
 		playerInput->BindAction(IA_Jump, ETriggerEvent::Started, this, &AHumanCharacter::JumpAction);
 		playerInput->BindAction(IA_Interact, ETriggerEvent::Triggered, this, &AHumanCharacter::Interact);
+		playerInput->BindAction(IA_Aim, ETriggerEvent::Started, this, &AHumanCharacter::StartAiming);
+		playerInput->BindAction(IA_Aim, ETriggerEvent::Completed, this, &AHumanCharacter::StopAiming);
+		playerInput->BindAction(IA_Fire, ETriggerEvent::Completed, this, &AHumanCharacter::StopAiming);
 	}
 }
 
@@ -153,13 +157,31 @@ void AHumanCharacter::JumpAction(const FInputActionValue& Value)
 void AHumanCharacter::Interact(const FInputActionValue& Value)
 {
 	if (!HighlightedPickup) return;
-	IInteractInterface::Execute_OnInteract(HighlightedPickup, this, HighlightedPickup);
-	SwapWeapon(HighlightedPickup->GetWeaponToSpawn());
+	if (ABaseWeaponPickup* HighlightedWeaponPickup = Cast<ABaseWeaponPickup>(HighlightedPickup))
+	{
+		SwapWeapon(HighlightedWeaponPickup->GetWeaponToSpawn());
+	}
+	// IInteractInterface::Execute_OnInteract(HighlightedPickup, this, HighlightedPickup);
 
 }
 
+void AHumanCharacter::StartAiming(const FInputActionValue& Value)
+{
+	bIsAiming = true;
+}
+
+void AHumanCharacter::StopAiming(const FInputActionValue& Value)
+{
+	bIsAiming = false;
+}
+
+void AHumanCharacter::Fire(const FInputActionValue& Value)
+{
+}
+
+
 void AHumanCharacter::OnInteractableBeginOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 BodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                                 UPrimitiveComponent* OtherComp, int32 BodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor) return;
 	if (OtherComp && OtherComp->GetCollisionObjectType() == ECC_GameTraceChannel2)
@@ -252,7 +274,7 @@ void AHumanCharacter::SetActorOutline(ABasePickup* pickup, bool bEnable)
 
 void AHumanCharacter::SwapWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn)
 {
-	if (!currentWeapon)
+	if (currentWeapon)
 	DropCurrentWeapon();
 
     // 2. 스폰 파라미터 설정

@@ -12,251 +12,48 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4f3ddc7-86d1-42a1-bb7c-fedf326fe68d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/Assault_Rifle_A.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/Assault_Rifle_A.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/PrimaryWeapon/BasePrimaryWeapon.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/SecondaryWeapon/BaseSecondaryWeapon.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/SecondaryWeapon/Pistol/BasePistol.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Manny_Simple.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Manny_Simple.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SK_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SK_Mannequin.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Maps/Weapons_Showcase.umap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/AR4/M_AR4.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/AR4/M_AR4_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Accessories/M_Scope_25x56.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Accessories/M_Scope_25x56_Lens.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Accessories/M_Scope_25x56_Lens_NoAlpha.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Accessories/M_Suppressor5.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Accessories/M_Tc4_Sight.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Accessories/M_V_Grip.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Accessories/M_V_Grip_Green.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ammunition/M_40mm_Grenade.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ammunition/M_45ap.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ammunition/M_762x39_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ammunition/M_9mm.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ammunition/M_9x18.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ammunition/M_Ammo_12gauge.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/G67_Grenade/M_G67.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/KA74U/M_KA74U.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/KA74U/M_KA74U_Gold.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/KA74U/M_KA74U_LeafSpray.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/KA_Val/M_KA_Val.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/KA_Val/M_KA_Val_Black.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/KA_Val/M_KA_Val_Black_Camo.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/KA_Val/M_KA_Val_Black_Striped.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ka47/M_KA47.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ka47/M_KA47_Gold.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Ka47/M_KA47_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/M9_Knife/M_M9_Knife.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Master_Material/M_RDS_Master.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Master_Material/M_Scope_Lens_MASTER.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/Master_Material/M_Weapon_Master_USE.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/RDS/M_RDS_01.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/RDS/M_RDS_02.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/RDS/M_RDS_03.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/RDS/M_RDS_Glass.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/SMG11/M_SMG11.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/SMG11/M_SMG11_Camo.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/SMG11/M_SMG11_Color.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Materials/SMG11/M_SMG11_Rem.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SK_AR4.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SK_AR4_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SK_AR4_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SK_AR4_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SK_AR4_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SK_AR4_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SM_AR4.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SM_AR4_Mag.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SM_AR4_Mag_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/AR4/SM_AR4_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_Scope_25x56_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_Scope_25x56_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_Suppressor5.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_T4_Sight.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Accessories/SM_Vertgrip.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_12Gauge.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_12Gauge_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_40mm_G.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_40mm_G_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_45ap.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_45ap_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_545x39.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_545x39_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_556x45.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_556x45_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_762x39.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_762x39_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_762x51.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_762x51_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_9mm.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_9mm_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_9x18.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ammunition/SM_Shell_9x18_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SK_G67.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SK_G67_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SK_G67_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SK_G67_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SK_G67_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SK_G67_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SM_G67.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SM_G67_Thrown.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/G67_Grenade/SM_G67_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SK_KA74U_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SK_KA74U_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SK_KA74U_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SK_KA74U_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SK_KA74U_Y_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SK_KA74U_Y_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_Mag_Empty_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_Mag_Empty_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_Mag_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_Mag_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA74U/SM_KA74U_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SK_KA_Val_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SK_KA_Val_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SK_KA_Val_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SK_KA_Val_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SK_KA_Val_Y_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SK_KA_Val_Y_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SM_KA_Val_MAG_Loaded_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SM_KA_Val_Mag_Loaded_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SM_KA_Val_Mag_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SM_KA_Val_Mag_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SM_KA_Val_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/KA_Val/SM_KA_Val_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SK_KA47.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SK_KA47_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SK_KA47_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SK_KA47_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SK_KA47_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SK_KA47_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SM_KA47.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SM_KA47_Mag.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SM_KA47_Mag_Empty.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/Ka47/SM_KA47_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SK_M9_Knife.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SK_M9_Knife_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SK_M9_Knife_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SK_M9_Knife_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SK_M9_Knife_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SK_M9_Knife_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SM_M9_Knife.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/M9_Knife/SM_M9_Knife_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Nostock_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Nostock_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Nostock_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Nostock_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Nostock_Y_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Nostock_Y_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_X_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_X_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Y_Physics.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SK_SMG11_Y_Skeleton.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_Mag_Empty_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_Mag_Empty_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_Mag_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_Nostock_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_Nostock_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Meshes/SMG11/SM_SMG11_Y.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/AR4/T_AR4_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/AR4/T_AR4_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/AR4/T_AR4_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Scope_25x56_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Scope_25x56_Lens_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Scope_25x56_Lens_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Scope_25x56_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Scope_25x56_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Suppressor5_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Suppressor5_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Suppressor5_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Tc4_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Tc4_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_Tc4_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_V_Grip_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_V_Grip_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Accessories/T_V_Grip_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_12Gauge_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_12Gauge_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_12Gauge_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_40mm_Grenade_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_40mm_Grenade_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_40mm_Grenade_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_45ap_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_45ap_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_45ap_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_762x39_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_762x39_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_762x39_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_9mm_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_9mm_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_9mm_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_9x18_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_9x18_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Ammunition/T_9x18_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/G67_Grenade/T_G67_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/G67_Grenade/T_G67_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/G67_Grenade/T_G67_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA47/T_KA47_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA47/T_KA47_Gold_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA47/T_KA47_Gold_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA47/T_KA47_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA47/T_KA47_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA74U/T_KA74U_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA74U/T_KA74U_Gold_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA74U/T_KA74U_Gold_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA74U/T_KA74U_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA74U/T_KA74U_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA_Val/T_KA_Val_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA_Val/T_KA_Val_Black_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA_Val/T_KA_Val_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/KA_Val/T_KA_Val_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/M9_Knife/T_M9_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/M9_Knife/T_M9_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/M9_Knife/T_M9_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_80s_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Chochip_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Cracks_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Desert_Marpat_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Hexagon_Glow_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Hexagon_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Ink_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_LeafSpray_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Net01_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Stripes__Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Urban_Marpat_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_W90K_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_W90_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/Patterns/T_Wood_Marpat_Pattern.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/RDS/T_RDS_01.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/RDS/T_RDS_02.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/RDS/T_RDS_03.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/SMG11/T_SMG11_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/SMG11/T_SMG11_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/SMG11/T_SMG11_NRM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/SMG11/T_SMG11_Rem_ALB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/SMG11/T_SMG11_Rem_M_MSK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FPS_Weapon_Bundle/Weapons/Textures/SMG11/T_SMG11_Rem_NRM.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_Idle_Rifle_Ironsights.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Quinn_Simple.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Quinn_Simple.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/Anims/ABP_HumanAnim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Blueprints/Anims/ABP_HumanAnim.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IA_Interact.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IA_Interact.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/DroppedWeapons/BP_BasePrimaryFullAutoWeapon_Pickup.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/DroppedWeapons/BP_BaseWeapon_Pickup.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/DroppedWeapons/BP_PrimarySemiAutoWeapon_BasePickup.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/HeldWeapons/BP_BasePrimaryFullAutoWeapon.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/HeldWeapons/BP_BasePrimarySemiAutoWeapon.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/HeldWeapons/BP_BaseWeapon.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Pickups/BP_Pistols_A_Pickup.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Items/Props/Pickups/BP_Pistols_A_Pickup.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Weapons/BP_Pistols_A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Items/Props/Weapons/BP_Pistols_A.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/BP_Human.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Blueprints/BP_Human.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Pickups/BP_Assault_Rifle_A_Pickup.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Pickups/BP_Pistols_A_Pickup.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Weapons/BP_Assault_Rifle_A.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Weapons/BP_Pistols_A.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/Animation/HumanAnim.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/Animation/HumanAnim.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/HumanCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/HumanCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/BasePickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/BasePickup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/BaseWeapon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/BaseWeapon.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Glock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/BaseItem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/M4A1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/BasePickup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/BasePickup.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/Pistols_A_Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/BaseWeaponPickup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/Assault_Rifle_A.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/SecondaryWeapon/Pistol/BasePistol.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/BaseWeapon.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/Pistols_A.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/BaseWeapon.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/Animation/HumanAnim.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/Animation/HumanAnim.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/HumanCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/HumanCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/BasePickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/BasePickup.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/BaseWeapon.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/BaseWeapon.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Glock.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/BaseItem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/M4A1.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/BasePickup.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/SecondaryWeapon/BaseSecondaryWeapon.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/BasePickup.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/Pistols_A_Pickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/PrimaryWeapon/BasePrimaryWeapon.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/Assault_Rifle_A.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/BaseWeaponPickup.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/BaseWeapon.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/Pistols_A.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/BaseWeapon.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -288,6 +85,7 @@
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/AnimGraphRuntime/Public/BoneControllers/AnimNode_LookAt.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/ApplicationCore/Public/Android/AndroidInputInterface.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/UObject/ScriptDelegates.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/CoreUObject/Private/UObject/SparseDelegate.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/CoreUObject/Public/Templates/SubclassOf.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Classes/GameFramework/Controller.h" root0="FORCE_HIGHLIGHTING" />
@@ -301,25 +99,33 @@
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Human/Animation/HumanAnim.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Human/HumanCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Human/Interface/InteractInterface.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Glock.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/M4A1.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/BasePickup.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/Pistols_A_Pickup.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/Assault_Rifle_A.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/BaseWeapon.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/Pistols_A.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/BaseItem.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/BaseWeapon.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/PrimaryWeapon/BasePrimaryWeapon.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/SecondaryWeapon/BaseSecondaryWeapon.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/SecondaryWeapon/Pistol/BasePistol.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/BasePickup.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/BaseWeaponPickup.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Human/Animation/HumanAnim.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Human/HumanCharacter.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Human/Interface/InteractInterface.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Glock.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/M4A1.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/BasePickup.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/Pistols_A_Pickup.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/Assault_Rifle_A.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/BaseWeapon.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/Pistols_A.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/BaseItem.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/BaseWeapon.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/PrimaryWeapon/BasePrimaryWeapon.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/SecondaryWeapon/BaseSecondaryWeapon.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/SecondaryWeapon/Pistol/BasePistol.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/BasePickup.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/BaseWeaponPickup.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -460,7 +266,9 @@
       <workItem from="1763537044574" duration="63111000" />
       <workItem from="1763943371718" duration="28400000" />
       <workItem from="1763986453462" duration="614000" />
-      <workItem from="1763987102674" duration="3496000" />
+      <workItem from="1763987102674" duration="17977000" />
+      <workItem from="1764073489375" duration="4825000" />
+      <workItem from="1764078401669" duration="1040000" />
     </task>
     <servers />
   </component>

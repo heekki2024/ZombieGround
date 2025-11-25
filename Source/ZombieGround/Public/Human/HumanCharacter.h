@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "InputAction.h"
 #include "GameFramework/Character.h"
-#include "Item/Weapon/Weapon/BaseWeapon.h"
 #include "HumanCharacter.generated.h"
 
 
@@ -56,15 +55,27 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* IA_Interact;
 	
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* IA_Aim;
+	
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* IA_Fire;
+	
+	
+	
 	//Input 함수
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void JumpAction(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
-	
-	
-	
+	void StartAiming(const FInputActionValue& Value);
+	void StopAiming(const FInputActionValue& Value);
+	void Fire(const FInputActionValue& Value);
 public:
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsAiming = false;
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABaseWeapon> WeaponToSpawnClass;
 	
@@ -117,6 +128,8 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	ABaseWeapon* GetCurrentWeapon() const { return currentWeapon;};
+	
+	
 	
 	// UFUNCTION()
 	// EWeaponName GetCurrentWeaponName() const { return currentWeaponNameEnum;};

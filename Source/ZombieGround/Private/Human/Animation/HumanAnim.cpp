@@ -30,6 +30,9 @@ void UHumanAnim::NativeUpdateAnimation(float DeltaSeconds)
 		//공중 여부 설정
 		isAir = pawnOwner->GetMovementComponent()->IsFalling();
 		
+		bIsAiming = pawnOwner->bIsAiming;
+
+		
 		currentWeapon = pawnOwner->GetCurrentWeapon();
 		bHasCurrentWeapon = (currentWeapon != nullptr);
 		

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "Item/Weapon/Weapon/BaseWeapon.h"
+#include "Item/Weapon/BaseWeapon.h"
 #include "HumanAnim.generated.h"
 
 /**
@@ -35,6 +35,10 @@ public:
 	//수평 이동 속력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float groundSpeed;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsAiming;
+	
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class ABaseWeapon* currentWeapon;
