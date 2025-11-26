@@ -12,49 +12,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4f3ddc7-86d1-42a1-bb7c-fedf326fe68d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/PrimaryWeapon/BasePrimaryWeapon.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/SecondaryWeapon/BaseSecondaryWeapon.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/SecondaryWeapon/Pistol/BasePistol.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Inventory/InventoryComponent.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Projectile/BaseProjectile.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Projectile/BulletProjectile/BaseBulletProjectile.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Projectile/GrenadeProjectile/BaseGrenadeProjectile.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Inventory/InventoryComponent.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Projectile/BaseProjectile.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Projectile/BulletProjectile/BaseBulletProjectile.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Projectile/GrenadeProjectile/BaseGrenadeProjectile.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_Idle_Rifle_Ironsights.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Quinn_Simple.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Quinn_Simple.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/Anims/ABP_HumanAnim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Blueprints/Anims/ABP_HumanAnim.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/BP_Human.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Blueprints/BP_Human.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IA_Aim.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IA_Fire.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Pickups/BP_Assault_Rifle_A_Pickup.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Pickups/BP_Pistols_A_Pickup.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Weapons/BP_Assault_Rifle_A.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Props/Weapons/BP_Pistols_A.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Weapons/PrimaryWeapons/AssaultRifle/BP_BasePrimaryRifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Items/Weapons/PrimaryWeapons/AssaultRifle/BP_BasePrimaryRifle.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Human/Items/Weapons/SecondaryWeapons/Pistols/BP_BasePistol.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Human/Items/Weapons/SecondaryWeapons/Pistols/BP_BasePistol.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/0/KR/BQYJE5PWOSI11MB9KHQBRK.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/4/NJ/4R48OSS3D7CPW83Z7RLIXB.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/Animation/HumanAnim.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/Animation/HumanAnim.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/HumanCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Human/HumanCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Glock.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/BaseItem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/M4A1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/BasePickup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/BasePickup.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Pickup/Pistols_A_Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/BaseWeaponPickup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/Assault_Rifle_A.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/SecondaryWeapon/Pistol/BasePistol.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/BaseWeapon.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/Weapon/Pistols_A.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/BaseWeapon.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/BaseWeapon.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/BaseWeapon.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/Animation/HumanAnim.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/Animation/HumanAnim.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/HumanCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Human/HumanCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Glock.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/BaseItem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/M4A1.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/BasePickup.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/Assault_Rifle_A_Pickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/SecondaryWeapon/BaseSecondaryWeapon.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/BasePickup.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Pickup/Pistols_A_Pickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/PrimaryWeapon/BasePrimaryWeapon.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/Assault_Rifle_A.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/BaseWeaponPickup.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/BaseWeapon.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/Weapon/Pistols_A.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/BaseWeapon.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/BaseItem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/BaseItem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/BaseWeapon.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/BaseWeapon.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +60,7 @@
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Editor/CurveEditor/Private/Modification/Utils/SelectionChangeUtils.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Editor/UnrealEd/Classes/Settings/LevelEditorViewportSettings.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Editor/UnrealEd/Private/EditorViewportClient.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Editor/VREditor/Public/Teleporter/VREditorTeleporter.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/AIModule/Public/AIModule.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/AnimGraphRuntime/Private/AnimNodes/AnimNode_AimOffsetLookAt.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/AnimGraphRuntime/Private/BoneControllers/AnimNode_LookAt.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -99,6 +82,7 @@
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Human/Animation/HumanAnim.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Human/HumanCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Human/Interface/InteractInterface.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Inventory/InventoryComponent.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/BaseItem.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/BaseWeapon.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -111,9 +95,13 @@
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Projectile/BaseProjectile.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Projectile/BulletProjectile/BaseBulletProjectile.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Projectile/GrenadeProjectile/BaseGrenadeProjectile.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Human/Animation/HumanAnim.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Human/HumanCharacter.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Human/Interface/InteractInterface.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Inventory/InventoryComponent.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/BaseItem.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/BaseWeapon.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Item/Weapon/PrimaryWeapon/AssaultRifle/BaseAssaultRifle.h" root0="FORCE_HIGHLIGHTING" />
@@ -126,6 +114,9 @@
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/PrimaryWeaponPickup/BasePrimaryWeaponPickup.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/BaseSecondaryWeaponPickup.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Pickup/WeaponPickup/SecondaryWeaponPickup/PistolPickup/BasePistolPickup.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Projectile/BaseProjectile.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Projectile/BulletProjectile/BaseBulletProjectile.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Public/Projectile/GrenadeProjectile/BaseGrenadeProjectile.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -268,7 +259,7 @@
       <workItem from="1763986453462" duration="614000" />
       <workItem from="1763987102674" duration="17977000" />
       <workItem from="1764073489375" duration="4825000" />
-      <workItem from="1764078401669" duration="1040000" />
+      <workItem from="1764078401669" duration="32478000" />
     </task>
     <servers />
   </component>

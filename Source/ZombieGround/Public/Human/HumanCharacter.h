@@ -31,7 +31,8 @@ public:
 	
 	
 protected:
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
+	class UInventoryComponent* InventoryComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Collision")
 	UCapsuleComponent* InteractionCapsule;
@@ -55,27 +56,35 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* IA_Interact;
 	
+	//공격
 	UPROPERTY(EditAnywhere, Category="Input")
-	class UInputAction* IA_Aim;
+	class UInputAction* IA_MouseLeftClick;
 	
+	//Mode
 	UPROPERTY(EditAnywhere, Category="Input")
-	class UInputAction* IA_Fire;
+	class UInputAction* IA_MouseRightClick;
 	
-	
+	//1번키
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* IA_Num1Key;
+
+	//2번키
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* IA_Num2Key;
 	
 	//Input 함수
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void JumpAction(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
-	void StartAiming(const FInputActionValue& Value);
-	void StopAiming(const FInputActionValue& Value);
-	void Fire(const FInputActionValue& Value);
+	void OnRightClickPressed(const FInputActionValue& Value);
+	void OnRightClickReleased(const FInputActionValue& Value);
+	void OnLeftClickPressed(const FInputActionValue& Value);
+	void OnLeftClickReleased(const FInputActionValue& Value);
+	void OnNum1KeyPressed(const FInputActionValue& Value);
+	void OnNum2KeyPressed(const FInputActionValue& Value);
+
 public:
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	bool bIsAiming = false;
-	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABaseWeapon> WeaponToSpawnClass;
 	
@@ -108,14 +117,16 @@ public:
 	UPROPERTY()
 	class ABaseWeapon* BaseWeapon;
 	
-
+	UFUNCTION()
+	ABaseWeapon* SpawnWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn);
+	
 	//E키로 습득한 무기 클래스를 1인칭에 인스턴스화
 	UFUNCTION()
 	void SwapWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn);
 	
-	UFUNCTION()
-	void DropCurrentWeapon();
-	
+	// UFUNCTION()
+	// void DropCurrentWeapon();
+	//
 	
 protected:
 	// 현재 장착하고 있는 무기 인스턴스를 저장할 변수
@@ -126,6 +137,8 @@ protected:
 	//
 	
 public:
+	
+	
 	UFUNCTION(BlueprintCallable)
 	ABaseWeapon* GetCurrentWeapon() const { return currentWeapon;};
 	

@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Inventory/InventoryComponent.h"
 #include "Item/Weapon/BaseWeapon.h"
 #include "Pickup/BasePickup.h"
 #include "Pickup/WeaponPickup/BaseWeaponPickup.h"
@@ -17,6 +18,8 @@ AHumanCharacter::AHumanCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	
 	InteractionCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("InteractionCapsule"));
 	InteractionCapsule->SetupAttachment(RootComponent);
@@ -114,9 +117,12 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AHumanCharacter::Look);
 		playerInput->BindAction(IA_Jump, ETriggerEvent::Started, this, &AHumanCharacter::JumpAction);
 		playerInput->BindAction(IA_Interact, ETriggerEvent::Triggered, this, &AHumanCharacter::Interact);
-		playerInput->BindAction(IA_Aim, ETriggerEvent::Started, this, &AHumanCharacter::StartAiming);
-		playerInput->BindAction(IA_Aim, ETriggerEvent::Completed, this, &AHumanCharacter::StopAiming);
-		playerInput->BindAction(IA_Fire, ETriggerEvent::Completed, this, &AHumanCharacter::StopAiming);
+		playerInput->BindAction(IA_MouseLeftClick, ETriggerEvent::Started, this, &AHumanCharacter::OnLeftClickPressed);
+		playerInput->BindAction(IA_MouseLeftClick, ETriggerEvent::Completed, this, &AHumanCharacter::OnLeftClickReleased);
+		playerInput->BindAction(IA_MouseRightClick, ETriggerEvent::Started, this, &AHumanCharacter::OnRightClickPressed);
+		playerInput->BindAction(IA_MouseRightClick, ETriggerEvent::Completed, this, &AHumanCharacter::OnRightClickReleased);
+		playerInput->BindAction(IA_Num1Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum1KeyPressed);	
+		playerInput->BindAction(IA_Num1Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum2KeyPressed);	
 	}
 }
 
@@ -159,24 +165,72 @@ void AHumanCharacter::Interact(const FInputActionValue& Value)
 	if (!HighlightedPickup) return;
 	if (ABaseWeaponPickup* HighlightedWeaponPickup = Cast<ABaseWeaponPickup>(HighlightedPickup))
 	{
-		SwapWeapon(HighlightedWeaponPickup->GetWeaponToSpawn());
+		ABaseWeapon* NewWeapon = SpawnWeapon(HighlightedWeaponPickup->GetWeaponToSpawn());
+		if (NewWeapon->weaponDetails.weaponType == EWeaponType::AssaultRifle ||
+			NewWeapon->weaponDetails.weaponType == EWeaponType::LMG ||
+			NewWeapon->weaponDetails.weaponType == EWeaponType::SMG ||
+			NewWeapon->weaponDetails.weaponType == EWeaponType::SniperRifle ||
+			NewWeapon->weaponDetails.weaponType == EWeaponType::Shotgun
+		)
+		{
+			//PickUpPrimaryWeapon함수부터 호출하면 기존 들고있던 무기가 덮어씌어져버림
+			InventoryComponent->UnequipCurrentWeapon();
+			InventoryComponent->PickUpPrimaryWeapon(NewWeapon);
+			
+		}else if (NewWeapon->weaponDetails.weaponType == EWeaponType::Pistol)
+		{
+			InventoryComponent->UnequipCurrentWeapon();
+			InventoryComponent->PickUpSecondaryWeapon(NewWeapon);
+		}
+		
+		
+		
+		// SwapWeapon(HighlightedWeaponPickup->GetWeaponToSpawn());
 	}
-	// IInteractInterface::Execute_OnInteract(HighlightedPickup, this, HighlightedPickup);
 
 }
 
-void AHumanCharacter::StartAiming(const FInputActionValue& Value)
-{
-	bIsAiming = true;
+void AHumanCharacter::OnRightClickPressed(const FInputActionValue& Value)
+{	
+	if (currentWeapon)
+	{
+		currentWeapon->OnRightClickPressed();
+	}
 }
 
-void AHumanCharacter::StopAiming(const FInputActionValue& Value)
+void AHumanCharacter::OnRightClickReleased(const FInputActionValue& Value)
 {
-	bIsAiming = false;
+	if (currentWeapon)
+	{
+		currentWeapon->OnRightClickReleased();
+	}
 }
 
-void AHumanCharacter::Fire(const FInputActionValue& Value)
+void AHumanCharacter::OnLeftClickPressed(const FInputActionValue& Value)
 {
+	if (currentWeapon)
+	{
+		currentWeapon->OnLeftClickPressed();
+	}
+}
+
+void AHumanCharacter::OnLeftClickReleased(const FInputActionValue& Value)
+{
+	if (currentWeapon)
+	{
+		currentWeapon->OnLeftClickReleased();
+
+	}
+}
+
+void AHumanCharacter::OnNum1KeyPressed(const FInputActionValue& Value)
+{
+	InventoryComponent->EquipPrimaryWeapon();
+}
+
+void AHumanCharacter::OnNum2KeyPressed(const FInputActionValue& Value)
+{
+	InventoryComponent->EquipSecondaryWeapon();
 }
 
 
@@ -228,8 +282,8 @@ AActor* AHumanCharacter::GetCenterScreenInteractable()
 
 	// ───── 디버그 라인 그리기 ─────
 	// Hit 여부에 따라 색상 변경
-	FColor LineColor = bHit ? FColor::Green : FColor::Red;
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, LineColor, false, 1.f, 0, 1.f);
+	// FColor LineColor = bHit ? FColor::Green : FColor::Red;
+	// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, LineColor, false, 1.f, 0, 1.f);
 
 	if (!bHit) return nullptr;
 
@@ -272,113 +326,151 @@ void AHumanCharacter::SetActorOutline(ABasePickup* pickup, bool bEnable)
 	}
 }
 
-void AHumanCharacter::SwapWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn)
+ABaseWeapon* AHumanCharacter::SpawnWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn)
 {
-	if (currentWeapon)
-	DropCurrentWeapon();
-
-    // 2. 스폰 파라미터 설정
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Owner = this;
-    SpawnParams.Instigator = this;
-    SpawnParams.SpawnCollisionHandlingOverride = 
-        ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-    // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-    FVector SpawnLocation = GetActorLocation();
-    FRotator SpawnRotation = GetActorRotation();
-
-    // 4. 액터 스폰
-    ABaseWeapon* NewWeapon = GetWorld()->SpawnActor<ABaseWeapon>(
-        weaponToSpawn,
-        SpawnLocation,
-        SpawnRotation,
-        SpawnParams
-    );
-
-    if (!IsValid(NewWeapon))
-    {
-        UE_LOG(LogTemp, Error, TEXT("SwapWeapon: Failed to spawn weapon %s"),
-            *weaponToSpawn->GetName());
-        return;
-    }
-	
-
-    // 6. 무기 저장
-    currentWeapon = NewWeapon;
-	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
-	
-	
-    // 7. Attach (부착)
-    NewWeapon->AttachToComponent(
-        GetMesh(),
-        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-        NewWeapon->weaponDetails.socketName
-    );
-	
-	
-	HighlightedPickup->Destroy();
-}
-
-
-void AHumanCharacter::DropCurrentWeapon()
-{
-	if (!IsValid(currentWeapon))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: CurrentWeapon is invalid"));
-		return;
-	}
-	
-	// 1. 무기 픽업 클래스가 있는지 확인 (무기 클래스 내부에 있을 것으로 가정)
-	TSubclassOf<ABasePickup> PickupClass = currentWeapon->pickupClass;
-	if (!PickupClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("DropWeapon: Weapon has no PickupClass"));
-		return;
-	}
-	
-	// [수정 포인트 1] 바라보는 방향(Aim Direction) 가져오기
-	// GetActorForwardVector() 대신 GetControlRotation()을 사용합니다.
-	// GetControlRotation()은 마우스/스틱으로 조종하는 카메라의 회전값(Pitch, Yaw)을 포함합니다.
-	FRotator ControlRotation = GetControlRotation();
-	FVector AimDirection = ControlRotation.Vector(); // 회전값을 방향 벡터로 변환
-
-	// [수정 포인트 2] 스폰 위치 계산
-	// 바라보는 방향으로 100만큼 떨어진 곳에서 스폰
-	FVector SpawnLocation = GetActorLocation() + (AimDirection * 50.f); 
-    
-	// [옵션] 스폰 회전값도 시선과 일치시킬지, 아니면 랜덤하게 할지 결정
-	// 무기가 날아가는 방향으로 머리를 돌리려면 ControlRotation을 넣으세요.
-	FRotator SpawnRotation = ControlRotation; 
-    
-	// 3. 무기 제거 (기존 코드 동일)
-	currentWeapon->Destroy();
-	currentWeapon = nullptr;
-    
-	// 4. 픽업 액터 스폰 (기존 코드 동일)
+	// 2. 스폰 파라미터 설정
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = this;
 	SpawnParams.SpawnCollisionHandlingOverride = 
-	   ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	ABasePickup* Pickup = GetWorld()->SpawnActor<ABasePickup>(
-	   PickupClass,
-	   SpawnLocation,
-	   SpawnRotation,
-	   SpawnParams
+	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = GetActorRotation();
+
+	// 4. 액터 스폰
+	ABaseWeapon* NewWeapon = GetWorld()->SpawnActor<ABaseWeapon>(
+		weaponToSpawn,
+		SpawnLocation,
+		SpawnRotation,
+		SpawnParams
 	);
-    
-	// 5. 물리 임펄스 적용
-	if (Pickup) // Pickup이 잘 생성되었는지 확인
-	{
-		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(Pickup->GetRootComponent());
-		if (RootComp && RootComp->IsSimulatingPhysics())
-		{
-			// [수정 포인트 3] 바라보는 방향(AimDirection)으로 힘을 가함
-			// 400.f는 좀 약할 수 있으니 테스트해보며 조절하세요 (예: 1000.f)
-			FVector ThrowForce = AimDirection * 600.f; 
-			RootComp->AddImpulse(ThrowForce, NAME_None, true);
-		}
-	}
+	
+	// if (NewWeapon)
+	// {
+	// 	// 1. 메쉬 숨기기
+	// 	if (NewWeapon->gunMesh)
+	// 	{
+	// 		NewWeapon->gunMesh->SetVisibility(false, true); // 자식 컴포넌트까지 모두 숨김
+	// 		NewWeapon->gunMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// 	}
+	//
+	// 	// 2. 전체 액터 숨기기 (선택 사항)
+	// 	NewWeapon->SetActorHiddenInGame(true);
+	// 	NewWeapon->SetActorEnableCollision(false);
+	// }
+	//
+	return NewWeapon;
 }
+
+// void AHumanCharacter::SwapWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn)
+// {
+// 	if (currentWeapon)
+// 	DropCurrentWeapon();
+//
+//     // 2. 스폰 파라미터 설정
+//     FActorSpawnParameters SpawnParams;
+//     SpawnParams.Owner = this;
+//     SpawnParams.Instigator = this;
+//     SpawnParams.SpawnCollisionHandlingOverride = 
+//         ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+//
+//     // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+//     FVector SpawnLocation = GetActorLocation();
+//     FRotator SpawnRotation = GetActorRotation();
+//
+//     // 4. 액터 스폰
+//     ABaseWeapon* NewWeapon = GetWorld()->SpawnActor<ABaseWeapon>(
+//         weaponToSpawn,
+//         SpawnLocation,
+//         SpawnRotation,
+//         SpawnParams
+//     );
+//
+//     if (!IsValid(NewWeapon))
+//     {
+//         UE_LOG(LogTemp, Error, TEXT("SwapWeapon: Failed to spawn weapon %s"),
+//             *weaponToSpawn->GetName());
+//         return;
+//     }
+// 	
+//
+//     // 6. 무기 저장
+//     currentWeapon = NewWeapon;
+// 	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
+// 	
+// 	
+//     // 7. Attach (부착)
+//     NewWeapon->AttachToComponent(
+//         GetMesh(),
+//         FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+//         NewWeapon->weaponDetails.socketName
+//     );
+// 	
+// 	
+// 	HighlightedPickup->Destroy();
+// }
+
+
+// void AHumanCharacter::DropCurrentWeapon()
+// {
+// 	if (!IsValid(currentWeapon))
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: CurrentWeapon is invalid"));
+// 		return;
+// 	}
+// 	
+// 	// 1. 무기 픽업 클래스가 있는지 확인 (무기 클래스 내부에 있을 것으로 가정)
+// 	TSubclassOf<ABasePickup> PickupClass = currentWeapon->pickupClass;
+// 	if (!PickupClass)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("DropWeapon: Weapon has no PickupClass"));
+// 		return;
+// 	}
+// 	
+// 	// [수정 포인트 1] 바라보는 방향(Aim Direction) 가져오기
+// 	// GetActorForwardVector() 대신 GetControlRotation()을 사용합니다.
+// 	// GetControlRotation()은 마우스/스틱으로 조종하는 카메라의 회전값(Pitch, Yaw)을 포함합니다.
+// 	FRotator ControlRotation = GetControlRotation();
+// 	FVector AimDirection = ControlRotation.Vector(); // 회전값을 방향 벡터로 변환
+//
+// 	// [수정 포인트 2] 스폰 위치 계산
+// 	// 바라보는 방향으로 100만큼 떨어진 곳에서 스폰
+// 	FVector SpawnLocation = GetActorLocation() + (AimDirection * 50.f); 
+//     
+// 	// [옵션] 스폰 회전값도 시선과 일치시킬지, 아니면 랜덤하게 할지 결정
+// 	// 무기가 날아가는 방향으로 머리를 돌리려면 ControlRotation을 넣으세요.
+// 	FRotator SpawnRotation = ControlRotation; 
+//     
+// 	// 3. 무기 제거 (기존 코드 동일)
+// 	currentWeapon->Destroy();
+// 	currentWeapon = nullptr;
+//     
+// 	// 4. 픽업 액터 스폰 (기존 코드 동일)
+// 	FActorSpawnParameters SpawnParams;
+// 	SpawnParams.Owner = this;
+// 	SpawnParams.Instigator = this;
+// 	SpawnParams.SpawnCollisionHandlingOverride = 
+// 	   ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+//
+// 	ABasePickup* Pickup = GetWorld()->SpawnActor<ABasePickup>(
+// 	   PickupClass,
+// 	   SpawnLocation,
+// 	   SpawnRotation,
+// 	   SpawnParams
+// 	);
+//     
+// 	// 5. 물리 임펄스 적용
+// 	if (Pickup) // Pickup이 잘 생성되었는지 확인
+// 	{
+// 		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(Pickup->GetRootComponent());
+// 		if (RootComp && RootComp->IsSimulatingPhysics())
+// 		{
+// 			// [수정 포인트 3] 바라보는 방향(AimDirection)으로 힘을 가함
+// 			// 400.f는 좀 약할 수 있으니 테스트해보며 조절하세요 (예: 1000.f)
+// 			FVector ThrowForce = AimDirection * 600.f; 
+// 			RootComp->AddImpulse(ThrowForce, NAME_None, true);
+// 		}
+// 	}
+// }

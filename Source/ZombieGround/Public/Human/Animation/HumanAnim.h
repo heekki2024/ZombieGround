@@ -37,7 +37,7 @@ public:
 	float groundSpeed;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bIsAiming;
+	bool bIsRightClicking;
 	
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

@@ -30,7 +30,10 @@ void UHumanAnim::NativeUpdateAnimation(float DeltaSeconds)
 		//공중 여부 설정
 		isAir = pawnOwner->GetMovementComponent()->IsFalling();
 		
-		bIsAiming = pawnOwner->bIsAiming;
+		if (pawnOwner->GetCurrentWeapon())
+		{
+			bIsRightClicking = pawnOwner->GetCurrentWeapon()->GetbIsRightClicking();
+		}
 
 		
 		currentWeapon = pawnOwner->GetCurrentWeapon();
@@ -38,7 +41,7 @@ void UHumanAnim::NativeUpdateAnimation(float DeltaSeconds)
 		
 		if (IsValid(currentWeapon))
 		{
-			WeaponAnimSetToUse = currentWeapon->playerAnim;
+			WeaponAnimSetToUse = currentWeapon->weaponAnimSet;
 		}
 		else
 		{

@@ -12,9 +12,10 @@ enum class EWeaponType : uint8
 {
 	// 2. UMETA(DisplayName)은 에디터(드롭다운 메뉴)에서 보일 이름입니다.
 	Unarmed         UMETA(DisplayName = "Unarmed"),
+	Knife			UMETA(DisplayName = "Knife"),
 	Pistol          UMETA(DisplayName = "Pistol"),
 	AssaultRifle    UMETA(DisplayName = "Assault Rifle"),
-	MachineGun      UMETA(DisplayName = "Machinegun"),
+	LMG				UMETA(DisplayName = "LMG"),
 	SMG             UMETA(DisplayName = "SMG"),
 	SniperRifle		UMETA(DisplayName = "SniperRifle"),
 	Shotgun			UMETA(DisplayName = "Shotgun"),
@@ -93,6 +94,10 @@ struct FWeaponDetails
 	
 	UPROPERTY(EditAnywhere)
 	FName socketName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EFireMode fireMode;
+
 };
 
 UCLASS()
@@ -125,6 +130,47 @@ public:
 	FWeaponDetails weaponDetails;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FWeaponAnimSet playerAnim;
+	FWeaponAnimSet weaponAnimSet;
 	
+	//총 관련
+protected:
+	
+	UPROPERTY()
+	FTimerHandle FireTimerHandle;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsRightClicking = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	float FireRate = 0.2f;  // 초 단위. 0.1초 → 600RPM
+
+	double NextFireTime = 0.0;  // 다음 발사 가능 시간
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* MuzzleFlash;
+
+	UPROPERTY(EditAnywhere)
+	USoundBase* FireSound;
+
+	UPROPERTY(EditAnywhere)
+	UAnimSequence* TempGunAction;
+	
+	//칼 타입만
+	
+public:
+	
+	UFUNCTION(BlueprintCallable)
+	bool GetbIsRightClicking() const {return bIsRightClicking;}
+	
+	virtual void OnLeftClickPressed() override;
+	virtual void OnLeftClickReleased() override;
+	virtual void OnRightClickPressed() override;
+	virtual void OnRightClickReleased() override;
+	
+	UFUNCTION()
+	void Fire();
+
 };

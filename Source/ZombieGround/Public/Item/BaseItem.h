@@ -22,4 +22,17 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+public:
+
+	UFUNCTION()
+	virtual void OnLeftClickPressed(){}
+	UFUNCTION()
+	virtual void OnLeftClickReleased(){}
+	// virtual void OnRightClickReleased(AHumanCharacter* OwnerCharacter) {}
+	UFUNCTION()
+	virtual void OnRightClickPressed(){}
+	UFUNCTION()
+	virtual void OnRightClickReleased(){}
+	
 };
