@@ -32,11 +32,11 @@ public:
 
 	/** 주무기 슬롯 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class ABaseWeapon* primaryWeapon;
+	class ABaseWeaponActor* primaryWeapon;
 
 	/** 보조무기 슬롯 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class ABaseWeapon* secondaryWeapon;
+	class ABaseWeaponActor* secondaryWeapon;
 
 	/** 총알 슬롯 8개 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -44,13 +44,13 @@ public:
 
 	/** 현재 장착 무기 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class ABaseWeapon* currentWeapon;
+	class ABaseWeaponActor* currentWeapon;
 
 	/** 주무기 습득 */
-	bool PickUpPrimaryWeapon(ABaseWeapon* NewWeapon);
+	bool PickUpPrimaryWeapon(ABaseWeaponActor* NewWeapon);
 
 	/** 보조무기 습득 */
-	bool PickUpSecondaryWeapon(ABaseWeapon* NewWeapon);
+	bool PickUpSecondaryWeapon(ABaseWeaponActor* NewWeapon);
 
 	/** 총알 습득 (빈 슬롯에만 추가) */
 	bool PickUpAmmo(ABaseItem* NewAmmo);
@@ -65,10 +65,10 @@ public:
 	void UnequipCurrentWeapon();
 	
 	UFUNCTION()
-	void SpawnPickup(class ABaseWeapon* Weapon);
+	void SpawnPickup(class ABaseWeaponActor* Weapon);
 
 	UFUNCTION()
-	void SpawnWeapon(TSubclassOf<ABaseWeapon> WeaponToSpawn);
+	void SpawnWeapon(TSubclassOf<ABaseWeaponActor> WeaponToSpawn);
 	
 private:
 	const int32 MaxAmmoSlots = 8;

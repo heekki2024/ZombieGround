@@ -3,9 +3,7 @@
 
 #include "Inventory/InventoryComponent.h"
 
-#include "Human/HumanCharacter.h"
-#include "Item/Weapon/BaseWeapon.h"
-#include "Pickup/BasePickup.h"
+#include "Character/Human/HumanCharacter.h"
 
 
 // Sets default values for this component's properties
@@ -45,7 +43,7 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-bool UInventoryComponent::PickUpPrimaryWeapon(ABaseWeapon* NewWeapon)
+bool UInventoryComponent::PickUpPrimaryWeapon(ABaseWeaponActor* NewWeapon)
 {
 	if (!NewWeapon) return false;
 
@@ -55,7 +53,7 @@ bool UInventoryComponent::PickUpPrimaryWeapon(ABaseWeapon* NewWeapon)
 	return true;
 }
 
-bool UInventoryComponent::PickUpSecondaryWeapon(ABaseWeapon* NewWeapon)
+bool UInventoryComponent::PickUpSecondaryWeapon(ABaseWeaponActor* NewWeapon)
 {
 	if (!NewWeapon) return false;
 
@@ -116,7 +114,7 @@ void UInventoryComponent::UnequipCurrentWeapon()
 	currentWeapon = nullptr;  
 }
 
-void UInventoryComponent::SpawnPickup(class ABaseWeapon* Weapon)
+void UInventoryComponent::SpawnPickup(class ABaseWeaponActor* Weapon)
 {
 	if (!IsValid(Weapon) || !OwnerCharacter)
 		return;
@@ -152,7 +150,7 @@ void UInventoryComponent::SpawnPickup(class ABaseWeapon* Weapon)
 	}
 }
 
-void UInventoryComponent::SpawnWeapon(TSubclassOf<ABaseWeapon> WeaponToSpawn)
+void UInventoryComponent::SpawnWeapon(TSubclassOf<ABaseWeaponActor> WeaponToSpawn)
 {
 	if (!OwnerCharacter || !WeaponToSpawn)
 		return;
@@ -174,7 +172,7 @@ void UInventoryComponent::SpawnWeapon(TSubclassOf<ABaseWeapon> WeaponToSpawn)
 	FRotator SpawnRotation = OwnerCharacter->GetActorRotation();
 
 	// 4) 무기 스폰
-	ABaseWeapon* NewWeapon = OwnerCharacter->GetWorld()->SpawnActor<ABaseWeapon>(
+	ABaseWeapon* NewWeapon = OwnerCharacter->GetWorld()->SpawnActor<ABaseWeaponActor>(
 		WeaponToSpawn,
 		SpawnLocation,
 		SpawnRotation,

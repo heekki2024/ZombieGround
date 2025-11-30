@@ -1,0 +1,26 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Item/Equippable/Weapon/Projectile/BulletProjectile/BaseBulletProjectile.h"
+
+
+// Sets default values
+ABaseBulletProjectile::ABaseBulletProjectile()
+{
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+// Called when the game starts or when spawned
+void ABaseBulletProjectile::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+// Called every frame
+void ABaseBulletProjectile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
