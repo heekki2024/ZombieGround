@@ -17,7 +17,7 @@ class ZOMBIEGROUND_API UWeaponInstance : public UBaseInstance
 public:
 	//원본 데이터 에셋
 	UPROPERTY()
-	class UWeaponDataAsset* weaponDA;
+	class UWeaponDataAsset* defaultWeaponData;
 	
 	UPROPERTY()
 	int32 maxAmmo; // 최대 장전 가능 총알수
@@ -25,15 +25,22 @@ public:
     //현재 상태 (변하는 값)
 	UPROPERTY()
 	int32 currentAmmo; // 현재 장전된 총알
+	
+	UPROPERTY()
+	class UStaticMesh* weaponPickupMesh;
+	
+	UPROPERTY()
+	class USkeletalMesh* weaponActorMesh;
 
 	
 public:
-	virtual void InitInstance(class UBaseItemDataAsset* itemDataAsset) override;
-	
-	//최대 탄창 용량 계산
 	UFUNCTION()
-	int32 GetMaxAmmo();
+	virtual void InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset);
 	
+	// //최대 탄창 용량 계산
+	// UFUNCTION()
+	// int32 GetMaxAmmo();
+	//
 	// UFUNCTION()
 	// int32 UpgradeMaxAmmo(int upgradeAmount);
 };

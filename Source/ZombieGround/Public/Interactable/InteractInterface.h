@@ -24,8 +24,9 @@ class ZOMBIEGROUND_API IInteractInterface
 public:
 	
 	// E키 눌렀을 때 호출
-	virtual void OnInteract(AActor* InteractingActor) = 0;
-
-	// UI 표시용
-	virtual FText GetInteractText() const = 0;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Interaction")
+	void OnInteract(class AHumanCharacter* interactingCharacter);
+	
+	// // UI 표시용
+	// virtual FText GetInteractText() const = 0;
 };

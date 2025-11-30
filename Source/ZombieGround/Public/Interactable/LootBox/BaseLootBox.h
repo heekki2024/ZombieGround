@@ -25,7 +25,9 @@ public:
 	
 
 public:
-	virtual void OnInteract(AActor* InteractingActor) override;
+
+	virtual void OnInteract_Implementation(class AHumanCharacter* interactingCharacter) override;
+
 	
 	// [변경] 단일 변수 -> 배열(Array)
 	// 이제 에디터에서 + 버튼을 눌러 AK, M4, Sniper 등 여러 개를 등록할 수 있습니다.

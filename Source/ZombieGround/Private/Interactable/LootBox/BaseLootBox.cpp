@@ -26,10 +26,12 @@ void ABaseLootBox::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABaseLootBox::OnInteract(AActor* InteractingActor)
+void ABaseLootBox::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
 {
-	Super::OnInteract(InteractingActor);
+	Super::OnInteract_Implementation(interactingCharacter);
+	SpawnPrimaryWeapon();
 }
+
 
 void ABaseLootBox::SpawnPrimaryWeapon()
 {
@@ -62,7 +64,7 @@ void ABaseLootBox::SpawnPrimaryWeapon()
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	// 5. 픽업 액터(껍데기) 스폰
-	ABaseWeaponPickup* NewPickup = GetWorld()->SpawnActor<ABaseWeaponPickup>(
+	ABaseWeaponPickup* newPickup = GetWorld()->SpawnActor<ABaseWeaponPickup>(
 		weaponPickupClass, 
 		SpawnLocation, 
 		SpawnRotation, 
@@ -70,9 +72,9 @@ void ABaseLootBox::SpawnPrimaryWeapon()
 	);
 	
 	// 6. 데이터 주입 (중요: 여기서 랜덤으로 뽑힌 AK나 M4 정보를 넣어줌)
-	if (NewPickup)
+	if (newPickup)
 	{
-		NewPickup->InitPickup(selectedWeaponDA);
+		newPickup->InitPickup(selectedWeaponDA);
 	}
 }
 

@@ -130,16 +130,6 @@ public:
 	// 발사 모드
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
 	EFireMode fireMode;
-
-	// 실제 스폰될 무기 액터 클래스 (블루프린트)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class ABaseWeaponActor> weaponActorClass;
-    
-	// [Equip 상태] 손에 들었을 때 보여줄 메쉬 (애니메이션 필요)
-	// 장전, 발사 애니메이션을 위해 SkeletalMesh 사용
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-	class USkeletalMesh* weaponActorMesh;
-	
 	
 	// 발사체 클래스 (총알) - 하나로 통일!
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
@@ -178,13 +168,22 @@ public:
 	FPlayerAnimData playerAnimData;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
-	UAnimSequence* TempGunAnim;
+	UAnimSequence* tempGunAnim;
 	
-	UPROPERTY()
-	class UBaseWeaponActor* weaponActorToSpawn;
+	// 실제 스폰될 무기 액터 클래스 (블루프린트)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABaseWeaponPickup> weaponPickupClass;
 	
+	// 실제 스폰될 무기 액터 클래스 (블루프린트)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABaseWeaponActor> weaponActorClass;
+
 	UPROPERTY()
-	class UBaseWeaponPickup* weaponPickupToSpawn;
+	class UStaticMesh* weaponPickupMesh;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
+	class USkeletalMesh* weaponActorMesh;
+	
 	
 	// 소켓 이름 정의 
 	const FName rHandRifleSocketName = FName("RifleSocket");

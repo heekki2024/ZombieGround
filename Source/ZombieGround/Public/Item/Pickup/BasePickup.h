@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interactable/InteractInterface.h"
 #include "BasePickup.generated.h"
 
 
 UCLASS()
-class ZOMBIEGROUND_API ABasePickup : public AActor
+class ZOMBIEGROUND_API ABasePickup : public AActor, public IInteractInterface
 {
 	GENERATED_BODY()
 
@@ -25,7 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 
-protected:
+public:
 	// 시각적 표현 (무기 메쉬 or 상자 메쉬)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* meshComp;
@@ -41,8 +42,12 @@ public:
     
 	// (선택) 이미 쓰던 총을 버렸을 때, 남은 탄약을 기억하기 위한 인스턴스 보관
 	UPROPERTY()
-	class UBaseItemInstance* itemInstance;
+	class UBaseInstance* itemInstance;
 
 	// // 상호작용 시 호출 (인벤토리에 Instance 생성 후 자폭)
 	// virtual void OnInteract(class ACharacter* Interactor);
+	
+	UFUNCTION()
+	virtual void OnInteract_Implementation(class AHumanCharacter* interactingCharacter) override;	
+	
 };

@@ -8,7 +8,9 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Inventory/InventoryComponent.h"
+#include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
+#include "Item/Instance/Weapon/WeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
 #include "Item/Pickup/Weapon/BaseWeaponPickup.h"
 
@@ -20,7 +22,7 @@ AHumanCharacter::AHumanCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+	inventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	
 	InteractionCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("InteractionCapsule"));
 	InteractionCapsule->SetupAttachment(RootComponent);
@@ -81,26 +83,26 @@ void AHumanCharacter::Tick(float DeltaTime)
 	if (ABasePickup* pickup = Cast<ABasePickup>(HitActor))
 	{
 		// 이전에 하이라이트된 액터 끄기
-		if (HighlightedPickup && HighlightedPickup != HitActor)
+		if (outLinedPickup && outLinedPickup != HitActor)
 		{
-			SetActorOutline(HighlightedPickup, false);
+			SetActorOutline(outLinedPickup, false);
 		}
 
 		// 새로운 액터 하이라이트
-		if (HitActor && HitActor != HighlightedPickup)
+		if (HitActor && HitActor != outLinedPickup)
 		{
 			SetActorOutline(pickup, true);
-			HighlightedPickup = pickup;
+			outLinedPickup = pickup;
 		}
 	}else if(!HitActor)
 	{
 		
 		// 이전에 하이라이트된 액터 끄기
-		if (HighlightedPickup)
+		if (outLinedPickup)
 		{
-			SetActorOutline(HighlightedPickup, false);
+			SetActorOutline(outLinedPickup, false);
 		}
-		HighlightedPickup = nullptr;
+		outLinedPickup = nullptr;
 
 	}
 }
@@ -164,74 +166,62 @@ void AHumanCharacter::JumpAction(const FInputActionValue& Value)
 void AHumanCharacter::Interact(const FInputActionValue& Value)
 {
 	if (!outLinedPickup) return;
-	if (ABaseWeaponPickup* outLinedWeaponPickup = Cast<ABaseWeaponPickup>(outLinedPickup))
-	{
-		ABaseWeaponActor* NewWeapon = SpawnWeapon(HighlightedWeaponPickup->GetWeaponToSpawn());
-		if (NewWeapon->weaponDetails.weaponType == EWeaponType::AssaultRifle ||
-			NewWeapon->weaponDetails.weaponType == EWeaponType::LMG ||
-			NewWeapon->weaponDetails.weaponType == EWeaponType::SMG ||
-			NewWeapon->weaponDetails.weaponType == EWeaponType::SniperRifle ||
-			NewWeapon->weaponDetails.weaponType == EWeaponType::Shotgun
-		)
-		{
-			//PickUpPrimaryWeapon함수부터 호출하면 기존 들고있던 무기가 덮어씌어져버림
-			InventoryComponent->UnequipCurrentWeapon();
-			InventoryComponent->PickUpPrimaryWeapon(NewWeapon);
-			
-		}else if (NewWeapon->weaponDetails.weaponType == EWeaponType::Pistol)
-		{
-			InventoryComponent->UnequipCurrentWeapon();
-			InventoryComponent->PickUpSecondaryWeapon(NewWeapon);
-		}
-		
-		
-		
-		// SwapWeapon(HighlightedWeaponPickup->GetWeaponToSpawn());
-	}
+	
+	IInteractInterface::Execute_OnInteract(outLinedPickup, this);
 
 }
 
 void AHumanCharacter::OnRightClickPressed(const FInputActionValue& Value)
 {	
-	if (currentWeapon)
+	if (currentWeaponActor)
 	{
-		currentWeapon->OnRightClickPressed();
+		currentWeaponActor->OnRightClickPressed();
 	}
 }
 
 void AHumanCharacter::OnRightClickReleased(const FInputActionValue& Value)
 {
-	if (currentWeapon)
+	if (currentWeaponActor)
 	{
-		currentWeapon->OnRightClickReleased();
+		currentWeaponActor->OnRightClickReleased();
 	}
 }
 
 void AHumanCharacter::OnLeftClickPressed(const FInputActionValue& Value)
 {
-	if (currentWeapon)
+	if (currentWeaponActor)
 	{
-		currentWeapon->OnLeftClickPressed();
+		currentWeaponActor->OnLeftClickPressed();
 	}
 }
 
 void AHumanCharacter::OnLeftClickReleased(const FInputActionValue& Value)
 {
-	if (currentWeapon)
+	if (currentWeaponActor)
 	{
-		currentWeapon->OnLeftClickReleased();
+		currentWeaponActor->OnLeftClickReleased();
 
 	}
 }
 
 void AHumanCharacter::OnNum1KeyPressed(const FInputActionValue& Value)
 {
-	InventoryComponent->EquipPrimaryWeapon();
+	//인벤토리에 주무기가 있는지 확인한다. 없으면 return;
+	//현재 들고 있는 무기가 인벤토리의 주무기에 해당하면 return;
+	//총기 swap, 스왑한 무기를 현재 들고 있는 무기로 설정
+	if (inventoryComponent->primaryWeaponSlot == nullptr) return;
+	if (currentWeaponInstance == inventoryComponent->primaryWeaponSlot) return;
+	SwapWeapon(inventoryComponent->primaryWeaponSlot);
+	currentWeaponInstance = inventoryComponent->primaryWeaponSlot;
+
 }
 
 void AHumanCharacter::OnNum2KeyPressed(const FInputActionValue& Value)
 {
-	InventoryComponent->EquipSecondaryWeapon();
+	if (inventoryComponent->secondaryWeaponSlot == nullptr) return;
+	if (currentWeaponInstance == inventoryComponent->secondaryWeaponSlot) return;
+	SwapWeapon(inventoryComponent->secondaryWeaponSlot);
+	currentWeaponInstance = inventoryComponent->secondaryWeaponSlot;
 }
 
 
@@ -365,53 +355,44 @@ ABaseWeaponActor* AHumanCharacter::SpawnWeapon(TSubclassOf<ABaseWeaponActor> wea
 	return NewWeapon;
 }
 
-// void AHumanCharacter::SwapWeapon(TSubclassOf<ABaseWeapon> weaponToSpawn)
-// {
-// 	if (currentWeapon)
-// 	DropCurrentWeapon();
-//
-//     // 2. 스폰 파라미터 설정
-//     FActorSpawnParameters SpawnParams;
-//     SpawnParams.Owner = this;
-//     SpawnParams.Instigator = this;
-//     SpawnParams.SpawnCollisionHandlingOverride = 
-//         ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-//
-//     // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-//     FVector SpawnLocation = GetActorLocation();
-//     FRotator SpawnRotation = GetActorRotation();
-//
-//     // 4. 액터 스폰
-//     ABaseWeapon* NewWeapon = GetWorld()->SpawnActor<ABaseWeapon>(
-//         weaponToSpawn,
-//         SpawnLocation,
-//         SpawnRotation,
-//         SpawnParams
-//     );
-//
-//     if (!IsValid(NewWeapon))
-//     {
-//         UE_LOG(LogTemp, Error, TEXT("SwapWeapon: Failed to spawn weapon %s"),
-//             *weaponToSpawn->GetName());
-//         return;
-//     }
-// 	
-//
-//     // 6. 무기 저장
-//     currentWeapon = NewWeapon;
-// 	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
-// 	
-// 	
-//     // 7. Attach (부착)
-//     NewWeapon->AttachToComponent(
-//         GetMesh(),
-//         FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-//         NewWeapon->weaponDetails.socketName
-//     );
-// 	
-// 	
-// 	HighlightedPickup->Destroy();
-// }
+void AHumanCharacter::SwapWeapon(UWeaponInstance* weaponInstance)
+{
+    // 2. 스폰 파라미터 설정
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.Owner = this;
+    SpawnParams.Instigator = this;
+    SpawnParams.SpawnCollisionHandlingOverride = 
+        ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+    // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+    FVector SpawnLocation = GetActorLocation();
+    FRotator SpawnRotation = GetActorRotation();
+
+    // 4. 액터 스폰
+    ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
+        weaponInstance->defaultWeaponData->weaponActorClass,
+        SpawnLocation,
+        SpawnRotation,
+        SpawnParams
+    );
+	
+	newCurrentWeapon->LoadWeaponInstance(weaponInstance);
+	
+	
+    // 6. 무기 저장
+    currentWeaponActor = newCurrentWeapon;
+	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
+	
+    // 7. Attach (부착)
+    currentWeaponActor->AttachToComponent(
+        GetMesh(),
+        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+        weaponInstance->defaultWeaponData->rHandRifleSocketName
+    );
+	
+	
+	outLinedPickup->Destroy();
+}
 
 
 // void AHumanCharacter::DropCurrentWeapon()

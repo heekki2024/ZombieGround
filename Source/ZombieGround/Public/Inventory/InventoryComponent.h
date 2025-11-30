@@ -32,43 +32,45 @@ public:
 
 	/** 주무기 슬롯 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class ABaseWeaponActor* primaryWeapon;
+	class UWeaponInstance* primaryWeaponSlot;
 
 	/** 보조무기 슬롯 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class ABaseWeaponActor* secondaryWeapon;
+	class UWeaponInstance* secondaryWeaponSlot;
+	
+	/** 근접무기 슬롯 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UWeaponInstance* meleeWeaponSlot;
 
 	/** 총알 슬롯 8개 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<class ABaseItem*> AmmoSlots;
+	TArray<class UBaseInstance*> itemSlots;
 
 	/** 현재 장착 무기 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class ABaseWeaponActor* currentWeapon;
-
-	/** 주무기 습득 */
-	bool PickUpPrimaryWeapon(ABaseWeaponActor* NewWeapon);
-
-	/** 보조무기 습득 */
-	bool PickUpSecondaryWeapon(ABaseWeaponActor* NewWeapon);
-
-	/** 총알 습득 (빈 슬롯에만 추가) */
-	bool PickUpAmmo(ABaseItem* NewAmmo);
-
-	/** 무기 장착 */
+	class ABaseWeaponActor* currentWeaponActor;
+	
+public:
 	UFUNCTION()
-	void EquipPrimaryWeapon();
-	UFUNCTION()
-	void EquipSecondaryWeapon();
-
-	UFUNCTION()
-	void UnequipCurrentWeapon();
+	void PickupItem(class ABasePickup* pickup);
 	
 	UFUNCTION()
-	void SpawnPickup(class ABaseWeaponActor* Weapon);
-
+	void AddPrimaryToSlot(class ABaseWeaponPickup* weaponPickup);	
+	
 	UFUNCTION()
-	void SpawnWeapon(TSubclassOf<ABaseWeaponActor> WeaponToSpawn);
+	void AddSecondaryToSlot(class ABaseWeaponPickup* weaponPickup);
+	
+	UFUNCTION()
+	void AddMeleeToSlot(class ABaseWeaponPickup* weaponPickup);
+	
+	UFUNCTION()
+	void DropWeaponFromSlot(class UWeaponInstance* weaponInstance);
+	
+
+	
+	
+	
+
 	
 private:
 	const int32 MaxAmmoSlots = 8;

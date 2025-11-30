@@ -38,26 +38,20 @@ void ABaseWeaponActor::Tick(float DeltaTime)
 }
 
 
-void ABaseWeaponActor::InitializeWeapon(class UWeaponInstance* InInstance)
+void ABaseWeaponActor::LoadWeaponInstance(class UWeaponInstance* updatedInstance)
 {
-	if (!InInstance) return;
+	weaponInstance = updatedInstance;
 	
-	weaponInstance = InInstance;
-	weaponDataAsset = Cast<UWeaponDataAsset>(InInstance);
-	
-	if (!weaponDataAsset) return;
-
 	// 2. [데이터 주도] 데이터 에셋에 있는 Mesh를 내 몸에 입힘
-	if (weaponDataAsset->weaponActorMesh)
+	if (weaponInstance->weaponActorMesh)
 	{
-		weaponMesh->SetSkeletalMesh(weaponDataAsset->weaponActorMesh);
+		weaponMesh->SetSkeletalMesh(weaponInstance->weaponActorMesh);
 	}
-	
 	// 3. 부착물 생성 및 부착
-	UpdateAccessories();
+	UpdateAttachments();
 }
 
-void ABaseWeaponActor::UpdateAccessories()
+void ABaseWeaponActor::UpdateAttachments()
 {
 	// // 기존 부착물 싹 정리 (다시 그리기 위해)
 	// for (AActor* Att : SpawnedAttachments)
@@ -95,21 +89,21 @@ void ABaseWeaponActor::OnLeftClickPressed()
 {
 	if (bIsRightClicking == true)
 	{
-		if (weaponDataAsset->weaponSlot == EWeaponSlot::Primary || 
-			weaponDataAsset->weaponSlot == EWeaponSlot::Secondary)
+		if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Primary || 
+			weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Secondary)
 		{
 			// 1회 즉시 발사 시도 (발사 불가능하면 그냥 무시됨)
 			Fire();
 		}
 
 		// FullAuto만 타이머 연사
-		if (weaponDataAsset->fireMode == EFireMode::FullAuto)
+		if (weaponInstance->defaultWeaponData->fireMode == EFireMode::FullAuto)
 		{
 			GetWorld()->GetTimerManager().SetTimer(
 				FireTimerHandle,
 				this,
 				&ABaseWeaponActor::Fire,
-				weaponDataAsset->weaponStats.FireRate,      // 타이머는 거의 즉시 호출되도록 매우 짧게
+				weaponInstance->defaultWeaponData->weaponStats.fireRate,      // 타이머는 거의 즉시 호출되도록 매우 짧게
 				true
 			);
 		}
@@ -119,7 +113,7 @@ void ABaseWeaponActor::OnLeftClickPressed()
 void ABaseWeaponActor::OnLeftClickReleased()
 {
 	// FullAuto일 경우 타이머 중지
-	if (weaponDataAsset->fireMode == EFireMode::FullAuto)
+	if (weaponInstance->defaultWeaponData->fireMode == EFireMode::FullAuto)
 	{
 		if (GetWorld())
 		{
@@ -131,8 +125,8 @@ void ABaseWeaponActor::OnLeftClickReleased()
 void ABaseWeaponActor::OnRightClickPressed()
 {
 	// bIsAiming = true;
-	if (weaponDataAsset->weaponSlot == EWeaponSlot::Primary || 
-		weaponDataAsset->weaponSlot == EWeaponSlot::Secondary)
+	if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Primary || 
+		weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Secondary)
 	{
 		bIsRightClicking = true;
 	}
@@ -140,8 +134,8 @@ void ABaseWeaponActor::OnRightClickPressed()
 
 void ABaseWeaponActor::OnRightClickReleased()
 {
-	if (weaponDataAsset->weaponSlot == EWeaponSlot::Primary || 
-		weaponDataAsset->weaponSlot == EWeaponSlot::Secondary)
+	if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Primary || 
+		weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Secondary)
 	{
 		bIsRightClicking = false;
 	}
@@ -178,14 +172,14 @@ void ABaseWeaponActor::Fire()
 	// -------------------------------
 	// 3) Projectile 생성
 	// -------------------------------
-	if (weaponDataAsset->projectileClass)
+	if (weaponInstance->defaultWeaponData->projectileClass)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = OwnerPawn;
 
 		GetWorld()->SpawnActor<ABaseProjectile>(
-			weaponDataAsset->projectileClass,
+			weaponInstance->defaultWeaponData->projectileClass,
 			MuzzleLocation,
 			CameraRotation,
 			SpawnParams
@@ -195,20 +189,20 @@ void ABaseWeaponActor::Fire()
 	// -------------------------------
 	// 4) 총기 자체 발사 애니메이션 재생
 	// -------------------------------
-	if (weaponDataAsset->TempGunAnim)
+	if (weaponInstance->defaultWeaponData->tempGunAnim)
 	{
-		weaponMesh->PlayAnimation(weaponDataAsset->TempGunAnim, false);
+		weaponMesh->PlayAnimation(weaponInstance->defaultWeaponData->tempGunAnim, false);
 	}
 	
 	// -------------------------------
 	// 4) 캐릭터 총기 발사 애니메이션 재생
 	// -------------------------------
-	if (weaponDataAsset->playerAnimData.FireMontage)
+	if (weaponInstance->defaultWeaponData->playerAnimData.FireMontage)
 	{
 		// 캐릭터 SkeletalMesh 가져오기
 		USkeletalMeshComponent* CharacterMesh = OwnerPawn->FindComponentByClass<USkeletalMeshComponent>();
 		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
-		AnimInstance->Montage_Play(weaponDataAsset->playerAnimData.FireMontage);
+		AnimInstance->Montage_Play(weaponInstance->defaultWeaponData->playerAnimData.FireMontage);
 	}
 	
 	
@@ -225,16 +219,16 @@ void ABaseWeaponActor::Fire()
 	// 	);
 	// }
 
-	if (weaponDataAsset->weaponFX.FireSound)
+	if (weaponInstance->defaultWeaponData->weaponFX.FireSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(
 			this,
-			weaponDataAsset->weaponFX.FireSound,
+			weaponInstance->defaultWeaponData->weaponFX.FireSound,
 			ShootDirection
 		);
 	}
 	
 	// 다음 발사 가능 시간 갱신
-	NextFireTime = CurrentTime + weaponDataAsset->weaponStats.FireRate;
+	NextFireTime = CurrentTime + weaponInstance->defaultWeaponData->weaponStats.fireRate;
 }
 

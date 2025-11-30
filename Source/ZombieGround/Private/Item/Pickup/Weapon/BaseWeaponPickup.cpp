@@ -10,6 +10,8 @@ ABaseWeaponPickup::ABaseWeaponPickup()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	weaponInstance = CreateDefaultSubobject<UWeaponInstance>(TEXT("WeaponInstance"));
 }
 
 // Called when the game starts or when spawned
@@ -25,12 +27,17 @@ void ABaseWeaponPickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABaseWeaponPickup::InitPickup(class UWeaponDataAsset* initdata)
+void ABaseWeaponPickup::InitPickup(class UWeaponDataAsset* initData)
 {
-	defaultWeaponData = initdata;
-	weaponInstance->maxAmmo = defaultWeaponData->weaponStats.maxAmmo;
-	weaponInstance->currentAmmo = weaponInstance->maxAmmo;
-	
-	
+	weaponInstance->InitWeaponInstance(initData);
+
+	meshComp->SetStaticMesh(initData->weaponPickupMesh);
 }
+
+void ABaseWeaponPickup::LoadWeaponInstance(class UWeaponInstance* updatedWeaponInstance)
+{
+	weaponInstance = updatedWeaponInstance;
+}
+
+
 

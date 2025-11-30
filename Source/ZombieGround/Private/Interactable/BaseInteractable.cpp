@@ -3,6 +3,8 @@
 
 #include "Interactable/BaseInteractable.h"
 
+#include "Character/Human/HumanCharacter.h"
+
 
 // Sets default values
 ABaseInteractable::ABaseInteractable()
@@ -26,15 +28,17 @@ void ABaseInteractable::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABaseInteractable::OnInteract(AActor* InteractingActor)
+void ABaseInteractable::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
 {
+	IInteractInterface::OnInteract_Implementation(interactingCharacter);
 	// 기본 구현: 단순 로그
 	UE_LOG(LogTemp, Log, TEXT("%s interacted with %s"), 
-		*InteractingActor->GetName(), *GetName());
+		*interactingCharacter->GetName(), *GetName());
+	
 }
 
-FText ABaseInteractable::GetInteractText() const
-{
-	return InteractText;
-}
+// FText ABaseInteractable::GetInteractText() const
+// {
+// 	return InteractText;
+// }
 

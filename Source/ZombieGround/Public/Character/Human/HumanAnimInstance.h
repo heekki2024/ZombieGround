@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/BaseAnimInstance.h"
-#include "Item/Equippable/Weapon/WeaponActor/BaseWeapon.h"
+#include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "HumanAnimInstance.generated.h"
 
 /**
@@ -41,17 +41,17 @@ public:
 	
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	class ABaseWeaponActor* currentWeapon;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	EWeaponName currentWeaponNameEnum;
+	class ABaseWeaponActor* currentWeaponActor;
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BlueprintThreadSafe))
-	bool bHasCurrentWeapon;
+	bool bHasCurrentWeapon;	
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FWeaponAnimSet WeaponAnimSetToUse;
+	UPROPERTY(BlueprintReadOnly, meta = (BlueprintThreadSafe))
+	class UWeaponInstance* currentWeaponInstance;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FWeaponAnimSet DefaultWeaponAnimSet; 
+	UPROPERTY(BlueprintReadOnly, meta = (BlueprintThreadSafe))
+	FPlayerAnimData playerAnimData;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
+	FPlayerAnimData defaultPlayerAnimData;
 };

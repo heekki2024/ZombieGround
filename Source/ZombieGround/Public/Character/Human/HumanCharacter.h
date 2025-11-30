@@ -31,9 +31,6 @@ public:
 	
 	
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
-	class UInventoryComponent* InventoryComponent;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Collision")
 	UCapsuleComponent* InteractionCapsule;
 	
@@ -85,9 +82,18 @@ protected:
 	void OnNum2KeyPressed(const FInputActionValue& Value);
 
 public:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ABaseWeaponActor> WeaponToSpawnClass;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
+	class UInventoryComponent* inventoryComponent;
+	
+	// 현재 장착하고 있는 무기 인스턴스를 저장할 변수
+	UPROPERTY(EditAnywhere)
+	class ABaseWeaponActor* currentWeaponActor;
+	
+	
+	UPROPERTY(EditAnywhere)	
+	class UWeaponInstance* currentWeaponInstance;
+
 	
 	UPROPERTY()
 	TSet<AActor*> OverlappingInteractables;
@@ -122,25 +128,18 @@ public:
 	
 	//E키로 습득한 무기 클래스를 1인칭에 인스턴스화
 	UFUNCTION()
-	void SwapWeapon(TSubclassOf<ABaseWeaponActor> weaponToSpawn);
+	void SwapWeapon(class UWeaponInstance* weaponInstance);
 	
 	// UFUNCTION()
 	// void DropCurrentWeapon();
 	//
 	
 protected:
-	// 현재 장착하고 있는 무기 인스턴스를 저장할 변수
-	UPROPERTY(EditAnywhere)
-	class ABaseWeaponActor* currentWeapon;
-	
+
 	// EWeaponName currentWeaponNameEnum;
 	//
 	
 public:
-	
-	
-	UFUNCTION(BlueprintCallable)
-	ABaseWeaponActor* GetCurrentWeapon() const { return currentWeapon;};
 	
 	
 	

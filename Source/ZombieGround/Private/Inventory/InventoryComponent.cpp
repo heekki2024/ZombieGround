@@ -4,6 +4,10 @@
 #include "Inventory/InventoryComponent.h"
 
 #include "Character/Human/HumanCharacter.h"
+#include "Item/DataAsset/Weapon/WeaponDataAsset.h"
+#include "Item/Instance/Weapon/WeaponInstance.h"
+#include "Item/Pickup/BasePickup.h"
+#include "Item/Pickup/Weapon/BaseWeaponPickup.h"
 
 
 // Sets default values for this component's properties
@@ -15,11 +19,13 @@ UInventoryComponent::UInventoryComponent()
 
 	// ...
 	
-	primaryWeapon = nullptr;
-	secondaryWeapon = nullptr;
-	currentWeapon = nullptr;
+	primaryWeaponSlot = nullptr;
+	secondaryWeaponSlot = nullptr;
+	meleeWeaponSlot = nullptr;
+	currentWeaponActor = nullptr;
 
-	AmmoSlots.SetNum(MaxAmmoSlots); // 초기 8개 nullptr
+	
+	itemSlots.SetNum(MaxAmmoSlots); // 초기 8개 nullptr
 }
 
 
@@ -43,157 +49,104 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-bool UInventoryComponent::PickUpPrimaryWeapon(ABaseWeaponActor* NewWeapon)
+void UInventoryComponent::PickupItem(class ABasePickup* pickup)
 {
-	if (!NewWeapon) return false;
-
-	primaryWeapon = NewWeapon;
-	
-	PickUpPrimaryWeapon(primaryWeapon);
-	return true;
-}
-
-bool UInventoryComponent::PickUpSecondaryWeapon(ABaseWeaponActor* NewWeapon)
-{
-	if (!NewWeapon) return false;
-
-	secondaryWeapon = NewWeapon;
-	EquipSecondaryWeapon();
-	return true;
-}
-
-bool UInventoryComponent::PickUpAmmo(ABaseItem* NewAmmo)
-{
-	if (!NewAmmo) return false;
-
-	for (int32 i = 0; i < MaxAmmoSlots; ++i)
+	if (ABaseWeaponPickup* weaponPickup = Cast<ABaseWeaponPickup>(pickup))
 	{
-		if (!AmmoSlots[i])
+		if (weaponPickup->weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Primary)
 		{
-			AmmoSlots[i] = NewAmmo;
-			return true;
+			AddPrimaryToSlot(weaponPickup);
+		}else if (weaponPickup->weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Secondary)
+		{
+			AddSecondaryToSlot(weaponPickup);
+		}else if (weaponPickup->weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Melee)
+		{
+			AddMeleeToSlot(weaponPickup);
 		}
 	}
-
-	return false; // 빈 슬롯 없음
-}
-
-void UInventoryComponent::EquipPrimaryWeapon()
-{
-	if (primaryWeapon)
+	else
 	{
-		currentWeapon = primaryWeapon;
+		
 	}
 }
 
-void UInventoryComponent::EquipSecondaryWeapon()
+void UInventoryComponent::AddPrimaryToSlot(class ABaseWeaponPickup* weaponPickup)
 {
-	if (secondaryWeapon)
+	if (!IsValid(primaryWeaponSlot))
 	{
-		currentWeapon = secondaryWeapon;
+		// 슬롯이 비어있거나 GC로 삭제됨
+		primaryWeaponSlot = weaponPickup->weaponInstance;
+	}
+	else
+	{
+		DropWeaponFromSlot(primaryWeaponSlot);
+		// 정상적으로 무기 존재
+		primaryWeaponSlot = weaponPickup->weaponInstance;
 	}
 }
 
-void UInventoryComponent::UnequipCurrentWeapon()
+void UInventoryComponent::AddSecondaryToSlot(class ABaseWeaponPickup* weaponPickup)
 {
-	if (!IsValid(currentWeapon) || !OwnerCharacter) 
-		return;
-
-	// 어떤 슬롯인지 판단
-	if (currentWeapon == primaryWeapon)
+	if (!IsValid(secondaryWeaponSlot))
 	{
-		SpawnPickup(primaryWeapon);
-		primaryWeapon = nullptr;
+		// 슬롯이 비어있거나 GC로 삭제됨
+		secondaryWeaponSlot = weaponPickup->weaponInstance;
 	}
-	else if (currentWeapon == secondaryWeapon)
+	else
 	{
-		SpawnPickup(secondaryWeapon);
-		secondaryWeapon = nullptr;
-	}
-
-	currentWeapon = nullptr;  
-}
-
-void UInventoryComponent::SpawnPickup(class ABaseWeaponActor* Weapon)
-{
-	if (!IsValid(Weapon) || !OwnerCharacter)
-		return;
-
-	TSubclassOf<ABasePickup> PickupClass = Weapon->pickupClass;
-	if (!PickupClass)
-		return;
-
-	FRotator ControlRot = OwnerCharacter->GetControlRotation();
-	FVector Forward = ControlRot.Vector();
-	FVector SpawnLoc = OwnerCharacter->GetActorLocation() + Forward * 50.f;
-
-	Weapon->Destroy();
-
-	FActorSpawnParameters Params;
-	Params.Owner = OwnerCharacter;
-	Params.Instigator = OwnerCharacter;
-
-	ABasePickup* Pickup = OwnerCharacter->GetWorld()->SpawnActor<ABasePickup>(
-		PickupClass,
-		SpawnLoc,
-		ControlRot,
-		Params
-	);
-
-	if (Pickup)
-	{
-		if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(Pickup->GetRootComponent()))
-		{
-			if (Root->IsSimulatingPhysics())
-				Root->AddImpulse(Forward * 600.f);
-		}
+		DropWeaponFromSlot(secondaryWeaponSlot);
+		// 정상적으로 무기 존재
+		secondaryWeaponSlot = weaponPickup->weaponInstance;
 	}
 }
 
-void UInventoryComponent::SpawnWeapon(TSubclassOf<ABaseWeaponActor> WeaponToSpawn)
+void UInventoryComponent::AddMeleeToSlot(class ABaseWeaponPickup* weaponPickup)
 {
-	if (!OwnerCharacter || !WeaponToSpawn)
-		return;
-	
-	// 1) 현재 무기 드롭
-	if (currentWeapon)
-	{
-		UnequipCurrentWeapon();  // 내부적으로 SpawnPickup 실행
-	}
-	// 2) 스폰 파라미터
+}
+
+void UInventoryComponent::DropWeaponFromSlot(class UWeaponInstance* weaponInstance)
+{
+	// 2. 스폰 파라미터 설정
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = OwnerCharacter;
 	SpawnParams.Instigator = OwnerCharacter;
-	SpawnParams.SpawnCollisionHandlingOverride =
+	SpawnParams.SpawnCollisionHandlingOverride = 
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	// 3) 스폰 위치/회전
-	FVector SpawnLocation = OwnerCharacter->GetActorLocation();
-	FRotator SpawnRotation = OwnerCharacter->GetActorRotation();
-
-	// 4) 무기 스폰
-	ABaseWeapon* NewWeapon = OwnerCharacter->GetWorld()->SpawnActor<ABaseWeaponActor>(
-		WeaponToSpawn,
+	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+	FVector SpawnLocation = GetOwner()->GetActorLocation();
+	FRotator SpawnRotation = GetOwner()->GetActorRotation();
+	
+	
+	
+	// 4. pickup 스폰
+	ABaseWeaponPickup* newPickup = GetWorld()->SpawnActor<ABaseWeaponPickup>(
+		weaponInstance->defaultWeaponData->weaponPickupClass,
 		SpawnLocation,
 		SpawnRotation,
 		SpawnParams
 	);
 	
-	// 5) 새 무기 장착
-	currentWeapon = NewWeapon;
-
-	// 6) Character Mesh에 Attach
-	NewWeapon->AttachToComponent(
-		OwnerCharacter->GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		NewWeapon->weaponDetails.socketName
-	);
-
-	// 7) 하이라이트된 Pickup 제거(플레이어가 줍는 상황)
-	if (OwnerCharacter->HighlightedPickup)
-	{
-		OwnerCharacter->HighlightedPickup->Destroy();
-		OwnerCharacter->HighlightedPickup = nullptr;
-	}
+	newPickup->LoadWeaponInstance(weaponInstance);
+	
+	primaryWeaponSlot = nullptr;
 }
+
+
+// bool UInventoryComponent::PickUpAmmo(ABaseItem* NewAmmo)
+// {
+// 	if (!NewAmmo) return false;
+//
+// 	for (int32 i = 0; i < MaxAmmoSlots; ++i)
+// 	{
+// 		if (!AmmoSlots[i])
+// 		{
+// 			AmmoSlots[i] = NewAmmo;
+// 			return true;
+// 		}
+// 	}
+//
+// 	return false; // 빈 슬롯 없음
+// }
+
 

@@ -27,7 +27,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 protected:
-	bool bIsRightClicking = false;
 	
 	
 	// =================================================================
@@ -46,9 +45,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	class UWeaponInstance* weaponInstance;
 
-	// 편의를 위해 캐싱해두는 데이터 에셋 (Instance->Data와 동일)
-	UPROPERTY(BlueprintReadOnly, Category = "State")
-	const UWeaponDataAsset* weaponDataAsset;
 
 	// 현재 생성된 부착물 액터들을 관리하는 배열 (파괴 시 같이 없애기 위해)
 	UPROPERTY()
@@ -78,18 +74,21 @@ protected:
 	double NextFireTime = 0.0;  // 다음 발사 가능 시간
 	
 	// 부착물 시각화 업데이트
-	void UpdateAccessories();
+	void UpdateAttachments();
 
 	//칼 타입만
 	
 public:
+	
+	bool bIsRightClicking = false;
+
 	
 	// =================================================================
 	// 3. Interface (외부에서 호출)
 	// =================================================================
 
 	// [핵심] 인벤토리 데이터(Instance)를 기반으로 무기 초기화 (메쉬 변경, 부착물 장착)
-	virtual void InitializeWeapon(class UWeaponInstance* InInstance);
+	virtual void LoadWeaponInstance(class UWeaponInstance* updatedInstance);
 	
 	UPROPERTY(EditAnywhere)
 	class TSubclassOf<class ABasePickup> pickupClass;

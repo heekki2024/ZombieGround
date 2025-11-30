@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Item/Pickup/WeaponPickup/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.h"
+#include "Item/Pickup/Weapon/PrimaryWeaponPickup/AssaultRiflePickup/BaseAssaultRiflePickup.h"
 
 
 // Sets default values

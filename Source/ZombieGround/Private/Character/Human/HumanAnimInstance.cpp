@@ -4,7 +4,9 @@
 #include "Character/Human/HumanAnimInstance.h"
 #include "Character/Human/HumanCharacter.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
+#include "Item/Instance/Weapon/WeaponInstance.h"
 
 void UHumanAnimInstance::NativeInitializeAnimation()
 {
@@ -13,7 +15,9 @@ void UHumanAnimInstance::NativeInitializeAnimation()
 	//소유 Pawn 을 가져오자.
 	pawnOwner = Cast<AHumanCharacter>(TryGetPawnOwner());
 	
-	currentWeaponNameEnum = EWeaponName::Unarmed;
+	currentWeaponInstance = pawnOwner->currentWeaponInstance;
+	
+	// currentWeaponNameEnum
 }
 
 void UHumanAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -30,22 +34,22 @@ void UHumanAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		//공중 여부 설정
 		isAir = pawnOwner->GetMovementComponent()->IsFalling();
 		
-		if (pawnOwner->GetCurrentWeapon())
+		if (pawnOwner->currentWeaponActor)
 		{
-			bIsRightClicking = pawnOwner->GetCurrentWeapon()->GetbIsRightClicking();
+			bIsRightClicking = pawnOwner->currentWeaponActor->bIsRightClicking;
 		}
 
 		
-		currentWeapon = pawnOwner->GetCurrentWeapon();
-		bHasCurrentWeapon = (currentWeapon != nullptr);
+		currentWeaponActor = pawnOwner->currentWeaponActor;
+		bHasCurrentWeapon = (currentWeaponActor != nullptr);
 		
-		if (IsValid(currentWeapon))
+		if (IsValid(currentWeaponInstance))
 		{
-			WeaponAnimSetToUse = currentWeapon->weaponAnimSet;
+			playerAnimData = currentWeaponInstance->defaultWeaponData->playerAnimData;
 		}
 		else
 		{
-			WeaponAnimSetToUse = DefaultWeaponAnimSet;
+			playerAnimData = defaultPlayerAnimData;
 		}
 	}
 }

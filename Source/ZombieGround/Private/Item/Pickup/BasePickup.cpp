@@ -3,6 +3,9 @@
 
 #include "Item/Pickup/BasePickup.h"
 
+#include "Character/Human/HumanCharacter.h"
+#include "Inventory/InventoryComponent.h"
+
 
 // Sets default values
 ABasePickup::ABasePickup()
@@ -20,7 +23,7 @@ ABasePickup::ABasePickup()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// 1. 컴포넌트 생성 (이름은 "MeshComp"로 지정)
-	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunMesh"));
+	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
 
 	// 2. 루트 컴포넌트로 설정
 	// (만약 이 액터의 기준이 이 메쉬라면 RootComponent로 설정)
@@ -59,5 +62,14 @@ void ABasePickup::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+void ABasePickup::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
+{
+	IInteractInterface::OnInteract_Implementation(interactingCharacter);
+	interactingCharacter->inventoryComponent->PickupItem(interactingCharacter->outLinedPickup);
+
+}
+
+
 
 
