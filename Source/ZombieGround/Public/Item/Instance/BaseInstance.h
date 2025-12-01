@@ -15,6 +15,13 @@ class ZOMBIEGROUND_API UBaseInstance : public UObject
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY()
+	class UStaticMesh* pickupMesh;
+	
+	UPROPERTY()
+	class USkeletalMesh* actorMesh;
+	
+public:
 	
 	UFUNCTION(BlueprintCallable)
 	virtual void InitInstance(class UBaseItemDataAsset* itemDataAsset) {};

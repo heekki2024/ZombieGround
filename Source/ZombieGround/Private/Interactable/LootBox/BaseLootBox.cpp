@@ -3,7 +3,9 @@
 
 #include "Interactable/LootBox/BaseLootBox.h"
 
+#include "Item/DataAsset/Ammo/AmmoDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
+#include "Item/Pickup/Ammo/AmmoPickup.h"
 #include "Item/Pickup/Weapon/BaseWeaponPickup.h"
 
 // Sets default values
@@ -30,8 +32,7 @@ void ABaseLootBox::OnInteract_Implementation(AHumanCharacter* interactingCharact
 {
 	Super::OnInteract_Implementation(interactingCharacter);
 	SpawnPrimaryWeapon();
-	UE_LOG(LogTemp, Warning, TEXT("LootBox TESTING!@@@@@@@@@@@@@@@@@@@@@2"));
-
+	SpawnAmmo();
 }
 
 
@@ -77,6 +78,50 @@ void ABaseLootBox::SpawnPrimaryWeapon()
 	if (newPickup)
 	{
 		newPickup->InitPickup(selectedWeaponDA);
+	}
+}
+
+void ABaseLootBox::SpawnAmmo()
+{
+	// 1. 방어 코드: 배열이 비어있으면 아무것도 안 함 (크래시 방지)
+	if (ammoLootTable.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LootTable is empty in %s"), *GetName());
+		return;
+	}
+	
+	if (!ammoPickupClass) {return;}
+	UAmmoDataAsset* selectedAmmoDA;
+	// 2. 랜덤 뽑기: 0 ~ (배열개수 - 1) 사이의 랜덤 숫자 생성
+	while (true)
+	{
+		int32 randomIndex = FMath::RandRange(0, ammoLootTable.Num() - 1);
+
+		// 3. 당첨된 데이터 에셋 가져오기
+		selectedAmmoDA = ammoLootTable[randomIndex];
+		break;
+		
+	}
+	// 4. 스폰 위치 설정 (상자보다 약간 위)
+	FVector SpawnLocation = GetActorLocation() + FVector(50, 0, 100.0f);
+	FRotator SpawnRotation = GetActorRotation();
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	// 5. 픽업 액터(껍데기) 스폰
+	AAmmoPickup* newPickup = GetWorld()->SpawnActor<AAmmoPickup>(
+		ammoPickupClass, 
+		SpawnLocation, 
+		SpawnRotation, 
+		SpawnParams
+	);
+	
+	// 6. 데이터 주입 (중요: 여기서 랜덤으로 뽑힌 AK나 M4 정보를 넣어줌)
+	if (newPickup)
+	{
+		newPickup->InitPickup(selectedAmmoDA);
 	}
 }
 

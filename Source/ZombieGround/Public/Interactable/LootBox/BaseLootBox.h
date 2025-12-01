@@ -34,10 +34,20 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Loot")
 	TArray<class UWeaponDataAsset*> weaponLootTable; 
     
+	UPROPERTY(EditAnywhere, Category = "Loot")
+	TArray<class UAmmoDataAsset*> ammoLootTable; 
+    
+	
 	// 스폰할 픽업 액터 클래스 (이건 하나만 있어도 됨, 껍데기니까)
 	UPROPERTY(EditAnywhere, Category = "Loot")
 	TSubclassOf<class ABaseWeaponPickup> weaponPickupClass;
 	
+	UPROPERTY(EditAnywhere, Category = "Loot")
+	TSubclassOf<class AAmmoPickup> ammoPickupClass;
+	
 	UFUNCTION()
 	void SpawnPrimaryWeapon();
+	
+	UFUNCTION()
+	void SpawnAmmo();
 };

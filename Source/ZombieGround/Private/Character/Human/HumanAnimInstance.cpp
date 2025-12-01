@@ -48,13 +48,10 @@ void UHumanAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	// if (pawnOwner->inventoryComponent->currentWeaponActor->weaponInstance)
 	// 	currentWeaponInstance = pawnOwner->inventoryComponent->currentWeaponActor->weaponInstance;
 	//
-	if (pawnOwner->currentWeaponActor)
+	if (currentWeaponActor)
 	{
-		bIsRightClicking = pawnOwner->currentWeaponActor->bIsRightClicking;
+		bIsRightClicking = currentWeaponActor->bIsRightClicking;
 	}
-
-	
-	currentWeaponActor = pawnOwner->inventoryComponent->currentWeaponActor;
 	
 	bHasCurrentWeapon = (currentWeaponActor != nullptr);
 	

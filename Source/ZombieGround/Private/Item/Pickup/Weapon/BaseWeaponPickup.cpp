@@ -38,7 +38,7 @@ void ABaseWeaponPickup::InitPickup(class UWeaponDataAsset* initData)
 void ABaseWeaponPickup::LoadWeaponInstance(class UWeaponInstance* updatedWeaponInstance)
 {
 	weaponInstance = updatedWeaponInstance;
-	meshComp->SetStaticMesh(weaponInstance->weaponPickupMesh);
+	meshComp->SetStaticMesh(weaponInstance->pickupMesh);
 }
 
 

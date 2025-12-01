@@ -159,7 +159,16 @@ void UInventoryComponent::DropWeaponFromSlot(class UWeaponInstance* weaponInstan
 		}
 	}
 	
-	primaryWeaponSlot = nullptr;
+	if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Primary)
+	{
+		primaryWeaponSlot = nullptr;
+	}else if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Secondary)
+	{
+		secondaryWeaponSlot = nullptr;
+	}else if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Melee)
+	{
+		meleeWeaponSlot = nullptr;
+	}
 	
 	
 }
@@ -218,10 +227,11 @@ void UInventoryComponent::EquipSecondaryWeapon()
 {
 	if (!IsValid(secondaryWeaponSlot))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: scondaryWeapon is invalid"));
+		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: primaryWeapon is invalid"));
 		return;
 	}
-	if (!IsValid(currentWeaponActor) || currentWeaponActor->weaponInstance == secondaryWeaponSlot) return;
+	if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == secondaryWeaponSlot) return;
+
 
 	// 1️⃣ 기존 장착 무기 제거
 	if (IsValid(currentWeaponActor))
@@ -250,7 +260,6 @@ void UInventoryComponent::EquipSecondaryWeapon()
 	);
 	
 	newCurrentWeapon->LoadWeaponInstance(secondaryWeaponSlot);
-	
 	
 	// 6. 무기 저장
 	currentWeaponActor = newCurrentWeapon;

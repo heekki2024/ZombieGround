@@ -155,7 +155,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Stats")
 	FWeaponStats weaponStats;
 	
-	
+
 	// =============================================================
 	// 4. 애니메이션 (Animations)
 	// =============================================================
@@ -167,7 +167,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
 	UAnimSequence* tempGunAnim;
 	
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABaseWeaponPickup> pickupClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABaseWeaponActor> actorClass;
+	
 	
 	
 	// 소켓 이름 정의 

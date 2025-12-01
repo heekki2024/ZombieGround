@@ -15,21 +15,20 @@ ABaseProjectile::ABaseProjectile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	// 1) Sphere Collision (ROOT)
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComp"));
 	SetRootComponent(CollisionComp);
 	CollisionComp->InitSphereRadius(5.f);
 	CollisionComp->SetCollisionProfileName(TEXT("BlockAll"));
 	CollisionComp->SetNotifyRigidBodyCollision(true);
-	CollisionComp->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnHit);
 
 	// 2) Particle Component (Cascade)
 	ParticleComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComp"));
-	ParticleComp->SetupAttachment(CollisionComp);  
+	ParticleComp->SetupAttachment(CollisionComp);
 
 	// 3) StaticMesh Component (Child of Particle)
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
@@ -41,7 +40,7 @@ ABaseProjectile::ABaseProjectile()
 	RadialForceComp->Radius = 75.f;
 	RadialForceComp->ImpulseStrength = 8000.f;
 	RadialForceComp->bImpulseVelChange = true;
-	RadialForceComp->bAutoActivate = false;   // 필요할 때만 발동시키도록
+	RadialForceComp->bAutoActivate = false; // 필요할 때만 발동시키도록
 
 	// 5) Projectile Movement Component
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
@@ -56,7 +55,7 @@ ABaseProjectile::ABaseProjectile()
 void ABaseProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CollisionComp->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnHit);
 }
 
 // Called every frame
@@ -66,14 +65,17 @@ void ABaseProjectile::Tick(float DeltaTime)
 }
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+                            FVector NormalImpulse,
+                            const FHitResult& Hit)
 {
+	// UE_LOG(LogTemp, Warning, TEXT("Projectile Hit! %s"), *OtherActor->GetName());
+
 	CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	if (RadialForceComp)
 	{
 		RadialForceComp->FireImpulse();
 	}
-	if (ImpactParticle)  // UPROPERTY로 선언했다고 가정
+	if (ImpactParticle) // UPROPERTY로 선언했다고 가정
 	{
 		// Normal → Rotation
 		FRotator Rotation = FRotationMatrix::MakeFromX(Hit.Normal).Rotator();
@@ -85,7 +87,7 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 			Rotation
 		);
 	}
-	
+
 	if (ImpactSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(
@@ -95,6 +97,4 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		);
 	}
 	Destroy();
-
 }
-

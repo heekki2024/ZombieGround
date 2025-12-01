@@ -39,11 +39,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
 	class USkeletalMesh* actorMesh;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class ABaseWeaponPickup> pickupClass;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class ABaseWeaponActor> actorClass;
-	
-
 };

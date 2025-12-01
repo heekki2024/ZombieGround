@@ -269,8 +269,8 @@ AActor* AHumanCharacter::GetCenterScreenInteractable()
 
 	// ───── 디버그 라인 그리기 ─────
 	// Hit 여부에 따라 색상 변경
-	FColor LineColor = bHit ? FColor::Green : FColor::Red;
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, LineColor, false, 1.f, 0, 1.f);
+	// FColor LineColor = bHit ? FColor::Green : FColor::Red;
+	// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, LineColor, false, 1.f, 0, 1.f);
 
 	if (!bHit) return nullptr;
 

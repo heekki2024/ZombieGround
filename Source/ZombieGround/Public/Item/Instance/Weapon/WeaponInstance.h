@@ -26,13 +26,7 @@ public:
 	UPROPERTY()
 	int32 currentAmmo; // 현재 장전된 총알
 	
-	UPROPERTY()
-	class UStaticMesh* weaponPickupMesh;
-	
-	UPROPERTY()
-	class USkeletalMesh* weaponActorMesh;
 
-	
 public:
 	UFUNCTION()
 	virtual void InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset);

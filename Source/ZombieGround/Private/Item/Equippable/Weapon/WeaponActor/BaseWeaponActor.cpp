@@ -43,9 +43,9 @@ void ABaseWeaponActor::LoadWeaponInstance(class UWeaponInstance* updatedInstance
 	weaponInstance = updatedInstance;
 	
 	// 2. [데이터 주도] 데이터 에셋에 있는 Mesh를 내 몸에 입힘
-	if (weaponInstance->weaponActorMesh)
+	if (weaponInstance->actorMesh)
 	{
-		weaponMesh->SetSkeletalMesh(weaponInstance->weaponActorMesh);
+		weaponMesh->SetSkeletalMesh(weaponInstance->actorMesh);
 	}
 	// 3. 부착물 생성 및 부착
 	UpdateAttachments();
