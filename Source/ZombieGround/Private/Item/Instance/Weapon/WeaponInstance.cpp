@@ -10,8 +10,8 @@ void UWeaponInstance::InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset
 {
 	defaultWeaponData = weaponDataAsset;
 	currentAmmo = defaultWeaponData->weaponStats.maxAmmo;
-	weaponPickupMesh = defaultWeaponData->weaponPickupMesh;
-	weaponActorMesh = defaultWeaponData->weaponActorMesh;
+	weaponPickupMesh = defaultWeaponData->pickupMesh;
+	weaponActorMesh = defaultWeaponData->actorMesh;
 }
 
 

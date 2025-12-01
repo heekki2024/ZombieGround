@@ -91,8 +91,8 @@ public:
 	class ABaseWeaponActor* currentWeaponActor;
 	
 	
-	UPROPERTY(EditAnywhere)	
-	class UWeaponInstance* currentWeaponInstance;
+	// UPROPERTY(EditAnywhere)	
+	// class UWeaponInstance* currentWeaponInstance;
 
 	
 	UPROPERTY()
@@ -112,10 +112,10 @@ public:
 	
 	//이전에 하이라이트된 액터 저장용 변수
 	UPROPERTY()
-	class ABasePickup* outLinedPickup = nullptr;
+	class AActor* outLinedInteractable = nullptr;
 	
 	UFUNCTION()
-	void SetActorOutline(ABasePickup* pickup, bool bEnable);
+	void SetInteractableOutline(AActor* interactable, bool bEnable);
 	
 	
 public:
@@ -126,10 +126,10 @@ public:
 	UFUNCTION()
 	ABaseWeaponActor* SpawnWeapon(TSubclassOf<ABaseWeaponActor> weaponToSpawn);
 	
-	//E키로 습득한 무기 클래스를 1인칭에 인스턴스화
-	UFUNCTION()
-	void SwapWeapon(class UWeaponInstance* weaponInstance);
-	
+	// //E키로 습득한 무기 클래스를 1인칭에 인스턴스화
+	// UFUNCTION()
+	// void SwapWeapon(class UWeaponInstance* weaponInstance);
+	//
 	// UFUNCTION()
 	// void DropCurrentWeapon();
 	//

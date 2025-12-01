@@ -13,6 +13,25 @@ ABaseInteractable::ABaseInteractable()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	meshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("meshComp"));
+	
+	// meshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); // 물리 및 쿼리 충돌 켜기
+	// meshComp->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic); // 객체 타입 설정
+	// meshComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block); // 모든 채널 Block
+	// //채널 설정해줘야 아웃라인됨 (중요***)
+	// meshComp->SetCollisionObjectType(ECC_GameTraceChannel2);
+	
+	// 1. 물리 시뮬레이션 켜기
+	meshComp->SetSimulatePhysics(true);
+
+	// 2. (중요) 중력 켜기 (보통 기본값이 true지만 확실하게 하기 위해)
+	meshComp->SetEnableGravity(true);
+
+	// 3. (권장) 물리용 콜리전 프리셋으로 변경
+	// 'BlockAll'이나 'PhysicsActor'를 써야 땅을 뚫고 떨어지지 않습니다.
+	meshComp->SetCollisionProfileName(TEXT("PhysicsActor"));
+	
+	meshComp->SetCollisionObjectType(ECC_GameTraceChannel4);
+	meshComp->SetGenerateOverlapEvents(true);
 }
 
 // Called when the game starts or when spawned

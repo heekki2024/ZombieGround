@@ -8,11 +8,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Inventory/InventoryComponent.h"
-#include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
-#include "Item/Instance/Weapon/WeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
-#include "Item/Pickup/Weapon/BaseWeaponPickup.h"
 
 
 
@@ -78,32 +75,30 @@ void AHumanCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	AActor* HitActor = GetCenterScreenInteractable();
-
-	// 1. 먼저 Pickup인지 확인해봅니다.
-	if (ABasePickup* pickup = Cast<ABasePickup>(HitActor))
+	
+	if(!HitActor)
 	{
 		// 이전에 하이라이트된 액터 끄기
-		if (outLinedPickup && outLinedPickup != HitActor)
+		if (outLinedInteractable)
 		{
-			SetActorOutline(outLinedPickup, false);
+			SetInteractableOutline(outLinedInteractable, false);
 		}
+		outLinedInteractable = nullptr;
+	}else if (HitActor->Implements<UInteractInterface>())
+	{
 
+		// 이전에 하이라이트된 액터 끄기
+		if (outLinedInteractable && outLinedInteractable != HitActor)
+		{
+			SetInteractableOutline(outLinedInteractable, false);
+		}
+	
 		// 새로운 액터 하이라이트
-		if (HitActor && HitActor != outLinedPickup)
+		if (HitActor && HitActor != outLinedInteractable)
 		{
-			SetActorOutline(pickup, true);
-			outLinedPickup = pickup;
+			SetInteractableOutline(HitActor, true);
+			outLinedInteractable = HitActor;
 		}
-	}else if(!HitActor)
-	{
-		
-		// 이전에 하이라이트된 액터 끄기
-		if (outLinedPickup)
-		{
-			SetActorOutline(outLinedPickup, false);
-		}
-		outLinedPickup = nullptr;
-
 	}
 }
 
@@ -125,7 +120,7 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_MouseRightClick, ETriggerEvent::Started, this, &AHumanCharacter::OnRightClickPressed);
 		playerInput->BindAction(IA_MouseRightClick, ETriggerEvent::Completed, this, &AHumanCharacter::OnRightClickReleased);
 		playerInput->BindAction(IA_Num1Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum1KeyPressed);	
-		playerInput->BindAction(IA_Num1Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum2KeyPressed);	
+		playerInput->BindAction(IA_Num2Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum2KeyPressed);	
 	}
 }
 
@@ -165,42 +160,42 @@ void AHumanCharacter::JumpAction(const FInputActionValue& Value)
 
 void AHumanCharacter::Interact(const FInputActionValue& Value)
 {
-	if (!outLinedPickup) return;
+	if (!outLinedInteractable) return;
 	
-	IInteractInterface::Execute_OnInteract(outLinedPickup, this);
+	IInteractInterface::Execute_OnInteract(outLinedInteractable, this);
 
 }
 
 void AHumanCharacter::OnRightClickPressed(const FInputActionValue& Value)
 {	
-	if (currentWeaponActor)
+	if (inventoryComponent->currentWeaponActor)
 	{
-		currentWeaponActor->OnRightClickPressed();
+		inventoryComponent->currentWeaponActor->OnRightClickPressed();
 	}
+
 }
 
 void AHumanCharacter::OnRightClickReleased(const FInputActionValue& Value)
 {
-	if (currentWeaponActor)
+	if (inventoryComponent->currentWeaponActor)
 	{
-		currentWeaponActor->OnRightClickReleased();
+		inventoryComponent->currentWeaponActor->OnRightClickReleased();
 	}
 }
 
 void AHumanCharacter::OnLeftClickPressed(const FInputActionValue& Value)
 {
-	if (currentWeaponActor)
+	if (inventoryComponent->currentWeaponActor)
 	{
-		currentWeaponActor->OnLeftClickPressed();
+		inventoryComponent->currentWeaponActor->OnLeftClickPressed();
 	}
 }
 
 void AHumanCharacter::OnLeftClickReleased(const FInputActionValue& Value)
 {
-	if (currentWeaponActor)
+	if (inventoryComponent->currentWeaponActor)
 	{
-		currentWeaponActor->OnLeftClickReleased();
-
+		inventoryComponent->currentWeaponActor->OnLeftClickReleased();
 	}
 }
 
@@ -210,18 +205,19 @@ void AHumanCharacter::OnNum1KeyPressed(const FInputActionValue& Value)
 	//현재 들고 있는 무기가 인벤토리의 주무기에 해당하면 return;
 	//총기 swap, 스왑한 무기를 현재 들고 있는 무기로 설정
 	if (inventoryComponent->primaryWeaponSlot == nullptr) return;
-	if (currentWeaponInstance == inventoryComponent->primaryWeaponSlot) return;
-	SwapWeapon(inventoryComponent->primaryWeaponSlot);
-	currentWeaponInstance = inventoryComponent->primaryWeaponSlot;
+	if (inventoryComponent->primaryWeaponSlot == inventoryComponent->currentWeaponActor->weaponInstance) return;
+	inventoryComponent->EquipPrimaryWeapon();
+	inventoryComponent->currentWeaponActor->weaponInstance = inventoryComponent->primaryWeaponSlot;
 
 }
 
 void AHumanCharacter::OnNum2KeyPressed(const FInputActionValue& Value)
 {
 	if (inventoryComponent->secondaryWeaponSlot == nullptr) return;
-	if (currentWeaponInstance == inventoryComponent->secondaryWeaponSlot) return;
-	SwapWeapon(inventoryComponent->secondaryWeaponSlot);
-	currentWeaponInstance = inventoryComponent->secondaryWeaponSlot;
+	if (inventoryComponent->secondaryWeaponSlot == inventoryComponent->currentWeaponActor->weaponInstance) return;
+
+	inventoryComponent->EquipSecondaryWeapon();
+	inventoryComponent->currentWeaponActor->weaponInstance = inventoryComponent->secondaryWeaponSlot;
 }
 
 
@@ -229,12 +225,12 @@ void AHumanCharacter::OnInteractableBeginOverlap(UPrimitiveComponent* Overlapped
                                                  UPrimitiveComponent* OtherComp, int32 BodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor) return;
-	if (OtherComp && OtherComp->GetCollisionObjectType() == ECC_GameTraceChannel2)
+	ECollisionChannel ObjType = OtherComp->GetCollisionObjectType();
+	if (ObjType == ECC_GameTraceChannel2 || ObjType == ECC_GameTraceChannel4)
 	{
 		OverlappingInteractables.Add(OtherActor);
 	}
-
-
+	
 }
 
 void AHumanCharacter::OnInteractableEndOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
@@ -273,8 +269,8 @@ AActor* AHumanCharacter::GetCenterScreenInteractable()
 
 	// ───── 디버그 라인 그리기 ─────
 	// Hit 여부에 따라 색상 변경
-	// FColor LineColor = bHit ? FColor::Green : FColor::Red;
-	// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, LineColor, false, 1.f, 0, 1.f);
+	FColor LineColor = bHit ? FColor::Green : FColor::Red;
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, LineColor, false, 1.f, 0, 1.f);
 
 	if (!bHit) return nullptr;
 
@@ -299,22 +295,37 @@ AActor* AHumanCharacter::GetCenterScreenInteractable()
 	return nullptr;
 }
 
-void AHumanCharacter::SetActorOutline(ABasePickup* pickup, bool bEnable)
+void AHumanCharacter::SetInteractableOutline(AActor* interactable, bool bEnable)
 {
-	if (!pickup) return;
+	if (!interactable) return;
 
-	TArray<UStaticMeshComponent*> MeshComponents;
-	pickup->GetComponents<UStaticMeshComponent>(MeshComponents);
+	// 1. StaticMesh 처리
+	TArray<UStaticMeshComponent*> StaticMeshComponents;
+	interactable->GetComponents<UStaticMeshComponent>(StaticMeshComponents);
 
-	for (UStaticMeshComponent* InteractableItemMesh : MeshComponents)
+	for (UStaticMeshComponent* MeshComp : StaticMeshComponents)
 	{
-		if (InteractableItemMesh)
+		if (MeshComp)
 		{
-			InteractableItemMesh->SetRenderCustomDepth(bEnable);
-			// 필요시 Stencil Value도 설정 가능
-			InteractableItemMesh->SetCustomDepthStencilValue(1);
+			MeshComp->SetRenderCustomDepth(bEnable);
+			MeshComp->SetCustomDepthStencilValue(1); // 필요 시 스텐실 값
 		}
 	}
+
+	// 2. SkeletalMesh 처리
+	TArray<USkeletalMeshComponent*> SkeletalMeshComponents;
+	interactable->GetComponents<USkeletalMeshComponent>(SkeletalMeshComponents);
+
+	for (USkeletalMeshComponent* SkeletalComp : SkeletalMeshComponents)
+	{
+		if (SkeletalComp)
+		{
+			SkeletalComp->SetRenderCustomDepth(bEnable);
+			SkeletalComp->SetCustomDepthStencilValue(1);
+		}
+	}
+	
+	
 }
 
 ABaseWeaponActor* AHumanCharacter::SpawnWeapon(TSubclassOf<ABaseWeaponActor> weaponToSpawn)
@@ -355,44 +366,42 @@ ABaseWeaponActor* AHumanCharacter::SpawnWeapon(TSubclassOf<ABaseWeaponActor> wea
 	return NewWeapon;
 }
 
-void AHumanCharacter::SwapWeapon(UWeaponInstance* weaponInstance)
-{
-    // 2. 스폰 파라미터 설정
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Owner = this;
-    SpawnParams.Instigator = this;
-    SpawnParams.SpawnCollisionHandlingOverride = 
-        ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-    // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-    FVector SpawnLocation = GetActorLocation();
-    FRotator SpawnRotation = GetActorRotation();
-
-    // 4. 액터 스폰
-    ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
-        weaponInstance->defaultWeaponData->weaponActorClass,
-        SpawnLocation,
-        SpawnRotation,
-        SpawnParams
-    );
-	
-	newCurrentWeapon->LoadWeaponInstance(weaponInstance);
-	
-	
-    // 6. 무기 저장
-    currentWeaponActor = newCurrentWeapon;
-	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
-	
-    // 7. Attach (부착)
-    currentWeaponActor->AttachToComponent(
-        GetMesh(),
-        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-        weaponInstance->defaultWeaponData->rHandRifleSocketName
-    );
-	
-	
-	outLinedPickup->Destroy();
-}
+// void AHumanCharacter::SwapWeapon(UWeaponInstance* weaponInstance)
+// {
+// 	
+//     // 2. 스폰 파라미터 설정
+//     FActorSpawnParameters SpawnParams;
+//     SpawnParams.Owner = this;
+//     SpawnParams.Instigator = this;
+//     SpawnParams.SpawnCollisionHandlingOverride = 
+//         ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+//
+//     // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+//     FVector SpawnLocation = GetActorLocation();
+//     FRotator SpawnRotation = GetActorRotation();
+//
+//     // 4. 액터 스폰
+//     ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
+//         weaponInstance->defaultWeaponData->actorClass,
+//         SpawnLocation,
+//         SpawnRotation,
+//         SpawnParams
+//     );
+// 	
+// 	newCurrentWeapon->LoadWeaponInstance(weaponInstance);
+// 	
+// 	
+//     // 6. 무기 저장
+//     currentWeaponActor = newCurrentWeapon;
+// 	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
+// 	
+//     // 7. Attach (부착)
+//     currentWeaponActor->AttachToComponent(
+//         GetMesh(),
+//         FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+//         weaponInstance->defaultWeaponData->rHandRifleSocketName
+//     );
+// }
 
 
 // void AHumanCharacter::DropCurrentWeapon()

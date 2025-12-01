@@ -12,6 +12,7 @@ ABaseWeaponPickup::ABaseWeaponPickup()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	weaponInstance = CreateDefaultSubobject<UWeaponInstance>(TEXT("WeaponInstance"));
+	
 }
 
 // Called when the game starts or when spawned
@@ -31,12 +32,13 @@ void ABaseWeaponPickup::InitPickup(class UWeaponDataAsset* initData)
 {
 	weaponInstance->InitWeaponInstance(initData);
 
-	meshComp->SetStaticMesh(initData->weaponPickupMesh);
+	meshComp->SetStaticMesh(initData->pickupMesh);
 }
 
 void ABaseWeaponPickup::LoadWeaponInstance(class UWeaponInstance* updatedWeaponInstance)
 {
 	weaponInstance = updatedWeaponInstance;
+	meshComp->SetStaticMesh(weaponInstance->weaponPickupMesh);
 }
 
 

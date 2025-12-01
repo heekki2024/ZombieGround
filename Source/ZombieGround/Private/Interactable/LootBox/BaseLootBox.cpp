@@ -30,6 +30,8 @@ void ABaseLootBox::OnInteract_Implementation(AHumanCharacter* interactingCharact
 {
 	Super::OnInteract_Implementation(interactingCharacter);
 	SpawnPrimaryWeapon();
+	UE_LOG(LogTemp, Warning, TEXT("LootBox TESTING!@@@@@@@@@@@@@@@@@@@@@2"));
+
 }
 
 
@@ -48,7 +50,7 @@ void ABaseLootBox::SpawnPrimaryWeapon()
 	while (true)
 	{
 		int32 randomIndex = FMath::RandRange(0, weaponLootTable.Num() - 1);
-		if (weaponLootTable[randomIndex]->weaponSlot == EWeaponSlot::Primary)
+		if (weaponLootTable[randomIndex]->weaponSlot == EWeaponSlot::Primary || weaponLootTable[randomIndex]->weaponSlot ==EWeaponSlot::Secondary)
 		{
 			// 3. 당첨된 데이터 에셋 가져오기
 			selectedWeaponDA = weaponLootTable[randomIndex];

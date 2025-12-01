@@ -138,10 +138,7 @@ public:
 	// =============================================================
 	// 2. 비주얼 (Visuals)
 	// =============================================================
-
-	// 장착 시 사용할 스켈레탈 메쉬
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-	USkeletalMesh* weaponMesh;
+	
 
 	// // 총구 소켓 이름 (이펙트/총알 나가는 위치)
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
@@ -170,23 +167,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
 	UAnimSequence* tempGunAnim;
 	
-	// 실제 스폰될 무기 액터 클래스 (블루프린트)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class ABaseWeaponPickup> weaponPickupClass;
-	
-	// 실제 스폰될 무기 액터 클래스 (블루프린트)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class ABaseWeaponActor> weaponActorClass;
 
-	UPROPERTY()
-	class UStaticMesh* weaponPickupMesh;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-	class USkeletalMesh* weaponActorMesh;
 	
 	
 	// 소켓 이름 정의 
-	const FName rHandRifleSocketName = FName("RifleSocket");
-	const FName rHandPistolSocketName = FName("PistolSocket");
+	const FName rHandRifleSocketName = FName("Rifle_Socket");
+	const FName rHandPistolSocketName = FName("Pistol_Socket");
 };
 

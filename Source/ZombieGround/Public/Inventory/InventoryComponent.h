@@ -66,8 +66,12 @@ public:
 	UFUNCTION()
 	void DropWeaponFromSlot(class UWeaponInstance* weaponInstance);
 	
-
-	
+	UFUNCTION()
+	void EquipPrimaryWeapon();
+	UFUNCTION()
+	void EquipSecondaryWeapon();
+	UFUNCTION()
+	void EquipMeleeWeapon();
 	
 	
 

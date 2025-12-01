@@ -18,7 +18,7 @@ enum class EItemType : uint8
 	Gadget      // 키트, 수류탄
 };
 
-UCLASS()
+UCLASS(BlueprintType)
 class ZOMBIEGROUND_API UBaseItemDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
@@ -36,9 +36,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
 	class UStaticMesh* pickupMesh;
 	
-	// 이 아이템을 월드에 버릴 때 생성될 Pickup 클래스
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
-	TSubclassOf<class ABasePickup> pickupClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
+	class USkeletalMesh* actorMesh;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABaseWeaponPickup> pickupClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABaseWeaponActor> actorClass;
 	
 
 };

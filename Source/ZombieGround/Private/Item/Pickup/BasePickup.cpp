@@ -48,6 +48,8 @@ ABasePickup::ABasePickup()
 	meshComp->SetCollisionProfileName(TEXT("PhysicsActor"));
 	
 	meshComp->SetCollisionObjectType(ECC_GameTraceChannel2);
+	meshComp->SetGenerateOverlapEvents(true);
+
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +68,7 @@ void ABasePickup::Tick(float DeltaTime)
 void ABasePickup::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
 {
 	IInteractInterface::OnInteract_Implementation(interactingCharacter);
-	interactingCharacter->inventoryComponent->PickupItem(interactingCharacter->outLinedPickup);
+	interactingCharacter->inventoryComponent->PickupItem(Cast<ABasePickup>(interactingCharacter->outLinedInteractable));
 
 }
 
