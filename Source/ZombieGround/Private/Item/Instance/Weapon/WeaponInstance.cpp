@@ -9,6 +9,7 @@
 void UWeaponInstance::InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset)
 {
 	defaultWeaponData = weaponDataAsset;
+	maxAmmo = defaultWeaponData->weaponStats.maxAmmo;
 	currentAmmo = defaultWeaponData->weaponStats.maxAmmo;
 	pickupMesh = defaultWeaponData->pickupMesh;
 	actorMesh = defaultWeaponData->actorMesh;

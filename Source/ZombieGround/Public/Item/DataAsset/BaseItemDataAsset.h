@@ -18,6 +18,17 @@ enum class EItemType : uint8
 	Gadget      // 키트, 수류탄
 };
 
+UENUM(BlueprintType)
+enum class ESortPriority : uint8
+{
+	AssaultRifleAmmo = 0, // 소총
+	LMGAmmo = 1,          // 기관총
+	SMGAmmo = 2,			//기관단총
+	SniperRifleAmmo = 3,   // 스나이퍼
+	ShotgunAmmo = 4,  //샷건
+	PistolAmmo = 5  //샷건
+};
+
 UCLASS(BlueprintType)
 class ZOMBIEGROUND_API UBaseItemDataAsset : public UPrimaryDataAsset
 {
@@ -39,5 +50,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
 	class USkeletalMesh* actorMesh;
 	
+	UPROPERTY(EditDefaultsOnly)
+	ESortPriority sortPriority;
 	
+	UPROPERTY(EditDefaultsOnly)
+	int32 defaultSpawnQuantity;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int32 maxQuantity;
+	
+public:
+	UFUNCTION(BlueprintCallable)
+	int32 GetSortPriority();
 };

@@ -19,6 +19,7 @@ enum class EWeaponSlot : uint8
 	Secondary,
 	Melee,
 	Throwable,
+	
 	Max
 };
 
@@ -61,7 +62,12 @@ struct FWeaponStats
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 maxAmmo = 30;  // 탄창 용량
-
+	
+	// UPROPERTY(EditAnywhere, Category = "Ammo")
+	// int32 magazineCapacity; // 탄창 용량 (예: 30발)
+	
+	// UPROPERTY(EditAnywhere, Category = "Ammo")
+	// class UAmmoDataAsset* AmmoItemData; // 이 무기가 사용하는 탄약 아이템 데이터 (예: 5.56mm Ammo DataAsset)
 };
 
 // --- Structs (관련된 데이터끼리 묶기) ---
@@ -92,6 +98,8 @@ struct FPlayerAnimData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UBlendSpace* AimOffset; // 위/아래 조준
+	
+	
 };
 
 

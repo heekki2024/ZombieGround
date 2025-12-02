@@ -31,10 +31,4 @@ public:
 	UFUNCTION()
 	virtual void InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset);
 	
-	// //최대 탄창 용량 계산
-	// UFUNCTION()
-	// int32 GetMaxAmmo();
-	//
-	// UFUNCTION()
-	// int32 UpgradeMaxAmmo(int upgradeAmount);
 };

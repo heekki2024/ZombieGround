@@ -21,6 +21,12 @@ public:
 	UPROPERTY()
 	class USkeletalMesh* actorMesh;
 	
+	UPROPERTY()
+	class UBaseItemDataAsset* defaultItemData;
+
+	UPROPERTY()
+	int32 currentQuantity;
+	
 public:
 	
 	UFUNCTION(BlueprintCallable)

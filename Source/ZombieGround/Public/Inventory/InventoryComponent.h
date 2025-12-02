@@ -7,6 +7,32 @@
 #include "InventoryComponent.generated.h"
 
 
+enum class EWeaponType : uint8;
+
+USTRUCT(BlueprintType)
+struct FInventorySlot
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	class UBaseInstance* itemInstance = nullptr;
+
+	UPROPERTY()
+	int32 currentQuantity = 0;   // 슬롯 안에 들어있는 실제 수량
+	
+	// 아이템 들어온 시간
+	UPROPERTY()
+	uint64 timeStamp = 0; 
+
+	bool IsEmpty() const { return itemInstance == nullptr; }
+	void Clear()
+	{
+		itemInstance = nullptr;
+		currentQuantity = 0;
+		timeStamp = 0;
+	}
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ZOMBIEGROUND_API UInventoryComponent : public UActorComponent
 {
@@ -42,7 +68,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UWeaponInstance* meleeWeaponSlot;
 
-	/** 총알 슬롯 8개 */
+	/** 아이템 슬롯 8개 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<class UBaseInstance*> itemSlots;
 
@@ -64,7 +90,13 @@ public:
 	void AddMeleeToSlot(class ABaseWeaponPickup* weaponPickup);
 	
 	UFUNCTION()
+	bool AddItemToSlot(ABasePickup* pickup);
+	
+	UFUNCTION()
 	void DropWeaponFromSlot(class UWeaponInstance* weaponInstance);
+	
+	UFUNCTION()
+	void SortInventory();
 	
 	UFUNCTION()
 	void EquipPrimaryWeapon();
@@ -73,9 +105,17 @@ public:
 	UFUNCTION()
 	void EquipMeleeWeapon();
 	
-	
 
 	
-private:
-	const int32 MaxAmmoSlots = 8;
+	// 탄약(TargetItemData)을 AmountToConsume만큼 찾아서 제거하고, 실제로 제거한 양을 반환
+	int32 ConsumeItem(EWeaponType weaponType, int32 amountToConsume);
+    
+	// 현재 인벤토리에 해당 아이템이 총 몇 개 있는지 확인 (UI 표시용 등)
+	UFUNCTION()
+	int32 GetItemQuantity(class UBaseItemDataAsset* TargetItemData);	
+public:
+	const int32 MaxItemSlots = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FInventorySlot> inventorySlots;
+
 };

@@ -3,6 +3,8 @@
 
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
 
+#include "Character/Human/HumanCharacter.h"
+#include "Inventory/InventoryComponent.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/Projectile/BaseProjectile.h"
 #include "Item/Instance/Weapon/WeaponInstance.h"
@@ -143,14 +145,36 @@ void ABaseWeaponActor::OnRightClickReleased()
 
 void ABaseWeaponActor::Fire()
 {
+	// 0. 데이터 유효성 검사 (안전장치)
+	if (!weaponInstance || !weaponInstance->defaultWeaponData) return;
+	
 	// 현재 시간
-	double CurrentTime = GetWorld()->GetTimeSeconds();
+	double currentTime = GetWorld()->GetTimeSeconds();
 
 	// 다음 발사까지 기다려야 함
-	if (CurrentTime < NextFireTime)
+	if (currentTime < NextFireTime)
 		return;
 
-	// ---- 실제 발사 ----
+	// ---------------------------------------------------------
+	// [추가됨 1] 탄약 확인 (Ammo Check)
+	// 총알이 없으면 발사 로직을 실행하지 않고 종료
+	// ---------------------------------------------------------
+	if (weaponInstance->currentAmmo <= 0)
+	{
+		// (선택사항) 빈 총 소리 재생 (찰칵!)
+		// if (weaponInstance->defaultWeaponData->weaponFX.DryFireSound)
+		// {
+		//    UGameplayStatics::PlaySoundAtLocation(this, DryFireSound, GetActorLocation());
+		// }
+        
+		// 클릭 소리가 너무 자주 나지 않게 하려면 여기서도 NextFireTime 갱신 필요
+		// NextFireTime = currentTime + 0.2f; 
+		return; 
+	}
+	
+	// ---- 실제 발사 로직 시작----
+	weaponInstance->currentAmmo--;
+	
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if (!OwnerPawn) return;
 
@@ -224,11 +248,56 @@ void ABaseWeaponActor::Fire()
 		UGameplayStatics::PlaySoundAtLocation(
 			this,
 			weaponInstance->defaultWeaponData->weaponFX.FireSound,
-			ShootDirection
+			GetActorLocation() // 소리는 총 위치에서 나야 자연스러움 (ShootDirection은 방향임)
 		);
 	}
 	
+	if (AHumanCharacter* Human = Cast<AHumanCharacter>(OwnerPawn))
+	{
+		// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
+		Human->BroadcastAmmoUpdate();
+	}
+	
 	// 다음 발사 가능 시간 갱신
-	NextFireTime = CurrentTime + weaponInstance->defaultWeaponData->weaponStats.fireRate;
+	NextFireTime = currentTime + weaponInstance->defaultWeaponData->weaponStats.fireRate;
+}
+
+void ABaseWeaponActor::Reload()
+{
+	if (!weaponInstance || !weaponInstance->defaultWeaponData) return;
+	
+	// UWeaponDataAsset* defaultWeaponData = weaponInstance->defaultWeaponData;
+	
+	//이미 탄창이 꽉 찼으면 리턴
+	if (weaponInstance->currentAmmo >= weaponInstance->maxAmmo) return;
+	
+	//필요한 탄약 수 계산
+	int32 AmmoNeeded = weaponInstance->maxAmmo - weaponInstance->currentAmmo;
+	
+	//오너의 인벤토리 컴포넌트 가져오기
+	AActor* MyOwner = GetOwner();
+	if (!MyOwner) return;
+	
+	//AHumanCharacter로 캐스팅하거나 Interface를 사용하는 것이 좋음
+	AHumanCharacter* ownerCharacter = Cast<AHumanCharacter>(MyOwner);
+	UInventoryComponent* inventoryComponent = ownerCharacter->inventoryComponent;
+	
+	//인벤토리에 탄약 소비 요청
+	int32 AmmoConsumed = inventoryComponent->ConsumeItem(EWeaponType::AssaultRifle, AmmoNeeded);
+	//무기 탄창 채우기
+	if (AmmoConsumed > 0)
+	{
+		weaponInstance->currentAmmo += AmmoConsumed;
+		if (AHumanCharacter* Human = Cast<AHumanCharacter>(GetOwner()))
+		{
+			// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
+			Human->BroadcastAmmoUpdate();
+		}
+		UE_LOG(LogTemp, Log, TEXT("Reloaded! Current Ammo: %d"), weaponInstance->currentAmmo);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Ammo in Inventory!"));
+	}
 }
 

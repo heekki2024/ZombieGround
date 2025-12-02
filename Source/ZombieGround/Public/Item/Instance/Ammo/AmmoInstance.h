@@ -25,4 +25,6 @@ public:
 public:
 	UFUNCTION()
 	virtual void InitAmmoInstance(class UAmmoDataAsset* ammoDataAsset);
+
+
 };

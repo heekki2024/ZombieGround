@@ -46,30 +46,17 @@ public:
 	class UWeaponInstance* weaponInstance;
 
 
+
 	// 현재 생성된 부착물 액터들을 관리하는 배열 (파괴 시 같이 없애기 위해)
 	UPROPERTY()
 	TArray<AActor*> SpawnedAttachments;
 	
-// public:
-//
-// 	
-// 	UPROPERTY(EditAnywhere)
-// 	FWeaponDetails weaponDetails;
-//
-// 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-// 	FWeaponAnimSet weaponAnimSet;
-// 	
+
 // 	//총 관련
 protected:
 	
 	UPROPERTY()
 	FTimerHandle FireTimerHandle;
-	
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	// bool bIsRightClicking = false;
-	
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
-	// float FireRate = 0.2f;  // 초 단위. 0.1초 → 600RPM
 
 	double NextFireTime = 0.0;  // 다음 발사 가능 시간
 	
@@ -103,6 +90,10 @@ public:
 	virtual void OnRightClickPressed() override;
 	virtual void OnRightClickReleased() override;
 	
+	
 	UFUNCTION()
 	void Fire();
+	
+	UFUNCTION()
+	void Reload();
 };

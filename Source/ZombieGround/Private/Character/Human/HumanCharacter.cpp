@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
+#include "Item/Instance/Weapon/WeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
 
 
@@ -121,6 +122,7 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_MouseRightClick, ETriggerEvent::Completed, this, &AHumanCharacter::OnRightClickReleased);
 		playerInput->BindAction(IA_Num1Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum1KeyPressed);	
 		playerInput->BindAction(IA_Num2Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum2KeyPressed);	
+		playerInput->BindAction(IA_Reload, ETriggerEvent::Started, this, &AHumanCharacter::Reload);	
 	}
 }
 
@@ -218,6 +220,11 @@ void AHumanCharacter::OnNum2KeyPressed(const FInputActionValue& Value)
 
 	inventoryComponent->EquipSecondaryWeapon();
 	inventoryComponent->currentWeaponActor->weaponInstance = inventoryComponent->secondaryWeaponSlot;
+}
+
+void AHumanCharacter::Reload(const FInputActionValue& Value)
+{
+	inventoryComponent->currentWeaponActor->Reload();
 }
 
 
@@ -328,43 +335,26 @@ void AHumanCharacter::SetInteractableOutline(AActor* interactable, bool bEnable)
 	
 }
 
-ABaseWeaponActor* AHumanCharacter::SpawnWeapon(TSubclassOf<ABaseWeaponActor> weaponToSpawn)
+void AHumanCharacter::BroadcastAmmoUpdate()
 {
-	// 2. 스폰 파라미터 설정
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = this;
-	SpawnParams.SpawnCollisionHandlingOverride = 
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	// 인벤토리나 현재 무기가 유효한지 체크
+	if (inventoryComponent && inventoryComponent->currentWeaponActor)
+	{
+		// 현재 들고 있는 무기의 인스턴스 가져오기
+		UWeaponInstance* currentWeaponInstance = inventoryComponent->currentWeaponActor->weaponInstance;
+        
+		if (currentWeaponInstance)
+		{
+			// [방송 송출] 현재 탄약과 (최대 탄약 + 보정치)를 보냄
+			OnCurrentAmmoChanged.Broadcast(currentWeaponInstance->currentAmmo, currentWeaponInstance->maxAmmo);
+			return;
+		}
+	}
 
-	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-	FVector SpawnLocation = GetActorLocation();
-	FRotator SpawnRotation = GetActorRotation();
-
-	// 4. 액터 스폰
-	ABaseWeaponActor* NewWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
-		weaponToSpawn,
-		SpawnLocation,
-		SpawnRotation,
-		SpawnParams
-	);
-	
-	// if (NewWeapon)
-	// {
-	// 	// 1. 메쉬 숨기기
-	// 	if (NewWeapon->gunMesh)
-	// 	{
-	// 		NewWeapon->gunMesh->SetVisibility(false, true); // 자식 컴포넌트까지 모두 숨김
-	// 		NewWeapon->gunMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	// 	}
-	//
-	// 	// 2. 전체 액터 숨기기 (선택 사항)
-	// 	NewWeapon->SetActorHiddenInGame(true);
-	// 	NewWeapon->SetActorEnableCollision(false);
-	// }
-	//
-	return NewWeapon;
+	// 무기가 없거나 오류 상황이면 0, 0으로 방송
+	OnCurrentAmmoChanged.Broadcast(0, 0);
 }
+
 
 // void AHumanCharacter::SwapWeapon(UWeaponInstance* weaponInstance)
 // {

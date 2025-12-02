@@ -7,6 +7,8 @@
 #include "Character/BaseCharacter.h"
 #include "HumanCharacter.generated.h"
 
+// 1. 이벤트 정의 (int32 두 개를 방송: 현재탄, 최대탄)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCurrentAmmoChangedDelegate, int32, CurrentAmmo, int32, MaxAmmo);
 
 UCLASS()
 class ZOMBIEGROUND_API AHumanCharacter : public ABaseCharacter
@@ -69,6 +71,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* IA_Num2Key;
 	
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* IA_Reload;
+	
 	//Input 함수
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -80,17 +85,18 @@ protected:
 	void OnLeftClickReleased(const FInputActionValue& Value);
 	void OnNum1KeyPressed(const FInputActionValue& Value);
 	void OnNum2KeyPressed(const FInputActionValue& Value);
+	void Reload(const FInputActionValue& Value);
 
 public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
 	class UInventoryComponent* inventoryComponent;
 	
-	// 현재 장착하고 있는 무기 인스턴스를 저장할 변수
-	UPROPERTY(EditAnywhere)
-	class ABaseWeaponActor* currentWeaponActor;
-	
-	
+	// // 현재 장착하고 있는 무기 인스턴스를 저장할 변수
+	// UPROPERTY(EditAnywhere)
+	// class ABaseWeaponActor* currentWeaponActor;
+	//
+	//
 	// UPROPERTY(EditAnywhere)	
 	// class UWeaponInstance* currentWeaponInstance;
 
@@ -123,26 +129,13 @@ public:
 	UPROPERTY()
 	class ABaseWeaponActor* BaseWeapon;
 	
-	UFUNCTION()
-	ABaseWeaponActor* SpawnWeapon(TSubclassOf<ABaseWeaponActor> weaponToSpawn);
-	
-	// //E키로 습득한 무기 클래스를 1인칭에 인스턴스화
-	// UFUNCTION()
-	// void SwapWeapon(class UWeaponInstance* weaponInstance);
-	//
-	// UFUNCTION()
-	// void DropCurrentWeapon();
-	//
-	
-protected:
-
-	// EWeaponName currentWeaponNameEnum;
-	//
-	
 public:
-	
-	
-	
-	// UFUNCTION()
-	// EWeaponName GetCurrentWeaponName() const { return currentWeaponNameEnum;};
+	//무기 총 UI 
+	// 2. 방송 송출기 (블루프린트 UI에서 이걸 구독함)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCurrentAmmoChangedDelegate OnCurrentAmmoChanged;
+
+	// 3. 방송을 내보내는 함수 (무기나 인벤토리가 호출할 예정)
+	UFUNCTION(BlueprintCallable)
+	void BroadcastAmmoUpdate();
 };

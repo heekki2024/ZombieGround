@@ -2,3 +2,9 @@
 
 
 #include "Item/DataAsset/BaseItemDataAsset.h"
+
+int32 UBaseItemDataAsset::GetSortPriority()
+{
+	return static_cast<int32>(sortPriority);
+
+}
