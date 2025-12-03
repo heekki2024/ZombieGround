@@ -7,8 +7,10 @@
 #include "Item/DataAsset/Ammo/AmmoDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
+#include "Item/Instance/Ammo/AmmoInstance.h"
 #include "Item/Instance/Weapon/WeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
+#include "Item/Pickup/Ammo/AmmoPickup.h"
 #include "Item/Pickup/Weapon/BaseWeaponPickup.h"
 
 
@@ -26,7 +28,7 @@ UInventoryComponent::UInventoryComponent()
 	meleeWeaponSlot = nullptr;
 	currentWeaponActor = nullptr;
 
-	itemSlots.SetNum(MaxItemSlots); // 초기 8개 nullptr
+	consumableItemSlot.SetNum(MaxItemSlots); // 초기 8개 nullptr
 
 }
 
@@ -74,7 +76,6 @@ void UInventoryComponent::PickupItem(class ABasePickup* pickup)
 			AddMeleeToSlot(weaponPickup);
 			weaponPickup->Destroy();
 			EquipPrimaryWeapon();
-
 		}
 	}
 	else
@@ -120,66 +121,72 @@ void UInventoryComponent::AddMeleeToSlot(class ABaseWeaponPickup* weaponPickup)
 
 bool UInventoryComponent::AddItemToSlot(ABasePickup* pickup)
 {
-	UBaseInstance* itemInstance = pickup->itemInstance;
-	if (!itemInstance) return false;
-	
-	const int32 maxQuantity = itemInstance->defaultItemData->maxQuantity;
-	
-	//한 slot에 60발이 들어가는 소총탄이 80이 들어왔을경우 remaining변수에 넣고 빼나가며 계산
-	int32 remaining = itemInstance->currentQuantity;
-	
-	// 동일 아이템이 있는 슬롯이 최대개수가 아닐경우 그 슬롯부터 채운다.
-	for (FInventorySlot& slot : inventorySlots)
+	int32 maxQuantity;
+	int32 remaining;
+	if (UAmmoInstance* ammoInstance = Cast<AAmmoPickup>(pickup)->ammoInstance)
 	{
-		if (slot.itemInstance == itemInstance && slot.currentQuantity < maxQuantity)
+		if (!ammoInstance) return false;
+	
+		maxQuantity = ammoInstance->defaultAmmoData->maxQuantity;
+	
+		//한 slot에 60발이 들어가는 소총탄이 80이 들어왔을경우 remaining변수에 넣고 빼나가며 계산
+		remaining = ammoInstance->currentQuantity;
+	
+		// 동일 아이템이 있는 슬롯이 최대개수가 아닐경우 그 슬롯부터 채운다.
+		for (FConsumableItemSlot& slot : consumableItemSlot)
 		{
-			
-			//remaining이 10개, 60개가 들어가는 슬롯에서 currentQuantity가 28이면 space는 32,
-			//space 가 32, remaining이 10개. ToAdd는 10개
-			// 기존 슬롯에 10발을 더한다. remaining 에 10발을 뺀다. remaining이 0발 이하면 sorting
-			
-			//remaining이 40개, 60개가 들어가는 슬롯에서 currentQuantity가 28이면 space는 32,
-			//space 가 32, remaining이 40개. ToAdd는 32개
-			// 기존 슬롯에 32발을 더한다. remaining(40)에 ToAdd(32)발을 뺀다 8개. remaining이 1개 이상이면 
-			//for문을 탈출하고 아래 for문에 가서 완전히 빈칸인 곳에 남은 총알을 채운다.
-			const int32 Space = maxQuantity - slot.currentQuantity;
-			const int32 ToAdd = FMath::Min(Space, remaining);
-			
-			
-			slot.currentQuantity += ToAdd;
-			remaining -= ToAdd;
-			if (remaining <= 0)
+			if (slot.itemInstance == ammoInstance && slot.currentQuantity < maxQuantity)
 			{
-				SortInventory();
-				return true;
+			
+				//remaining이 10개, 60개가 들어가는 슬롯에서 currentQuantity가 28이면 space는 32,
+				//space 가 32, remaining이 10개. ToAdd는 10개
+				// 기존 슬롯에 10발을 더한다. remaining 에 10발을 뺀다. remaining이 0발 이하면 sorting
+			
+				//remaining이 40개, 60개가 들어가는 슬롯에서 currentQuantity가 28이면 space는 32,
+				//space 가 32, remaining이 40개. ToAdd는 32개
+				// 기존 슬롯에 32발을 더한다. remaining(40)에 ToAdd(32)발을 뺀다 8개. remaining이 1개 이상이면 
+				//for문을 탈출하고 아래 for문에 가서 완전히 빈칸인 곳에 남은 총알을 채운다.
+				const int32 Space = maxQuantity - slot.currentQuantity;
+				const int32 ToAdd = FMath::Min(Space, remaining);
+			
+			
+				slot.currentQuantity += ToAdd;
+				remaining -= ToAdd;
+				if (remaining <= 0)
+				{
+					SortInventory();
+					return true;
+				}
+			}
+		}
+	
+		// 2) 남은 수량을 빈 슬롯에 배치
+		for (FConsumableItemSlot& slot : consumableItemSlot)
+		{
+			if (slot.IsEmpty())
+			{
+				slot.itemInstance = ammoInstance;
+
+				const int32 ToAdd = FMath::Min(maxQuantity, remaining);
+				slot.currentQuantity = ToAdd;
+
+				// ──────────────── 여기서 Timestamp 설정 ────────────────
+				slot.timeStamp = GFrameCounter; 
+				// or GameInstance에서 TickCount 가져오기
+				// or FDateTime::UtcNow().GetTicks()
+
+				remaining -= ToAdd;
+
+				if (remaining <= 0)
+				{
+					SortInventory();
+					return true;
+				}
 			}
 		}
 	}
-	
-	// 2) 남은 수량을 빈 슬롯에 배치
-	for (FInventorySlot& slot : inventorySlots)
-	{
-		if (slot.IsEmpty())
-		{
-			slot.itemInstance = itemInstance;
+	// UBaseInstance* itemInstance = pickup->itemInstance;
 
-			const int32 ToAdd = FMath::Min(maxQuantity, remaining);
-			slot.currentQuantity = ToAdd;
-
-			// ──────────────── 여기서 Timestamp 설정 ────────────────
-			slot.timeStamp = GFrameCounter; 
-			// or GameInstance에서 TickCount 가져오기
-			// or FDateTime::UtcNow().GetTicks()
-
-			remaining -= ToAdd;
-
-			if (remaining <= 0)
-			{
-				SortInventory();
-				return true;
-			}
-		}
-	}
 	// 3) 여기까지 왔는데 Remaining > 0이면 인벤토리 꽉 찬 상황
 	return remaining <= 0;
 }
@@ -244,21 +251,61 @@ void UInventoryComponent::DropWeaponFromSlot(class UWeaponInstance* weaponInstan
 	
 }
 
+
+
 void UInventoryComponent::SortInventory()
 {
-	inventorySlots.Sort([this](const FInventorySlot& A, const FInventorySlot& B)
-	{
-		if (A.itemInstance == nullptr) return false;
-		if (B.itemInstance == nullptr) return true;
-		
-		const int32 PriorityA = A.itemInstance->defaultItemData->GetSortPriority();
-		const int32 PriorityB = B.itemInstance->defaultItemData->GetSortPriority();
-		
-		if (PriorityA != PriorityB)
-			return PriorityA < PriorityB; //낮을수록 앞으로
-			
-		return A.timeStamp < B.timeStamp;
-	});
+	consumableItemSlot.Sort([](const FConsumableItemSlot& A, const FConsumableItemSlot& B)
+{
+	// A가 nullptr이고 B가 nullptr가 아니면 뒤로
+	if (!A.itemInstance && B.itemInstance) return false;
+
+	// B가 nullptr이고 A가 nullptr가 아니면 뒤로
+	if (A.itemInstance && !B.itemInstance) return true;
+
+	// 둘 다 nullptr이면 순서를 유지
+	if (!A.itemInstance && !B.itemInstance) return false;
+
+	const int32 PriorityA = A.itemInstance->defaultItemData->GetSortPriority();
+	const int32 PriorityB = B.itemInstance->defaultItemData->GetSortPriority();
+
+	if (PriorityA != PriorityB) return PriorityA < PriorityB;
+
+	return A.timeStamp < B.timeStamp;
+});
+	
+	// // [this] 캡처를 통해 멤버 변수에 접근
+	// itemSlots.Sort([this](const FItemSlot& A, const FItemSlot& B)
+	// {
+	// 	// 1. A의 완전한 유효성 검사 (객체 생존 여부 + 데이터 존재 여부)
+	// 	const bool bValidA = (A.itemInstance != nullptr) && IsValid(A.itemInstance) && (A.itemInstance->defaultItemData != nullptr);
+ //        
+	// 	// 2. B의 완전한 유효성 검사
+	// 	const bool bValidB = (B.itemInstance != nullptr) && IsValid(B.itemInstance) && (B.itemInstance->defaultItemData != nullptr);
+	//
+	// 	// 둘 다 유효하지 않으면 순서 변경 없음 (false)
+	// 	if (!bValidA && !bValidB) return false;
+	//
+	// 	// A만 유효하지 않다면(빈칸이거나 깨진 데이터), A를 뒤로 보냄 -> B가 앞으로 (false)
+	// 	if (!bValidA) return false;
+	//
+	// 	// B만 유효하지 않다면, B를 뒤로 보냄 -> A가 앞으로 (true)
+	// 	if (!bValidB) return true;
+	//
+	// 	// --- 여기까지 오면 A와 B 모두 안전함이 보장됨 ---
+	//
+	// 	const int32 PriorityA = A.itemInstance->defaultItemData->GetSortPriority();
+	// 	const int32 PriorityB = B.itemInstance->defaultItemData->GetSortPriority();
+	//
+	// 	// 우선순위가 다르면 낮은 번호가 앞으로 (오름차순 정렬 가정)
+	// 	if (PriorityA != PriorityB)
+	// 	{
+	// 		return PriorityA < PriorityB;
+	// 	}
+	//
+	// 	// 우선순위가 같으면 획득 시간순
+	// 	return A.timeStamp < B.timeStamp;
+	// });
 }
 
 void UInventoryComponent::EquipPrimaryWeapon()
@@ -374,35 +421,39 @@ int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToCon
 	//인벤토리 전체 순회 (여러 슬롯에 나뉘어 있을 수 있음)
 	bool bNeedSort = false; // [핵심] 정렬이 필요한지 체크하는 깃발
 	
-	for (FInventorySlot& slot : inventorySlots)
+	for (FConsumableItemSlot& slot : consumableItemSlot)
 	{
 		//유효성 검사
 		if (slot.IsEmpty()) continue;
 		
 		//AmmoDataAsset에 지정된 총타입과 현재들고 있는 총의 타입이 일치하는지 확인
-		if (Cast<UAmmoDataAsset>(slot.itemInstance->defaultItemData)->weaponType == weaponType)
+		// if (Cast<UAmmoDataAsset>(slot.itemInstance->defaultItemData)->weaponType == weaponType)
+		if (UAmmoInstance* ammoInstance = Cast<UAmmoInstance>(slot.itemInstance))
 		{
-			//차감 계산
-			int32 TakeFromSlot = FMath::Min(slot.currentQuantity, remainingNeeded);
-			
-			//수량 적용
-			slot.currentQuantity -= TakeFromSlot;
-			slot.itemInstance->currentQuantity = slot.currentQuantity;
-			
-			remainingNeeded -= TakeFromSlot;
-			
-			//슬롯이 비었을 때 처리
-			if (slot.currentQuantity <= 0)
+			// 2. 캐스팅이 성공(nullptr이 아님)했을 때만 데이터에 접근합니다.
+			if (ammoInstance->defaultAmmoData && ammoInstance->defaultAmmoData->ammoType == weaponType)
 			{
-				slot.Clear();
-			}
+				//차감 계산
+				int32 TakeFromSlot = FMath::Min(slot.currentQuantity, remainingNeeded);
 			
-			bNeedSort = true;
-		}
-		
-		if (remainingNeeded <= 0)
-		{
-			break;
+				//수량 적용
+				slot.currentQuantity -= TakeFromSlot;
+				ammoInstance->currentQuantity = slot.currentQuantity;
+			
+				remainingNeeded -= TakeFromSlot;
+			
+				//슬롯이 비었을 때 처리
+				if (slot.currentQuantity <= 0)
+				{
+					slot.Clear();
+				}
+			
+				bNeedSort = true;
+			}
+			if (remainingNeeded <= 0)
+			{
+				break;
+			}
 		}
 	}
 	//반복문이 완전히 끝난 후 정렬 실행
@@ -416,12 +467,12 @@ int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToCon
 }
 
 
-int32 UInventoryComponent::GetItemQuantity(class UBaseItemDataAsset* TargetItemData)
+int32 UInventoryComponent::GetItemQuantity(class UBaseItemDataAsset* targetItemData)
 {
 	int32 totalCount = 0;
-	for (const FInventorySlot& slot : inventorySlots)
+	for (const FConsumableItemSlot& slot : consumableItemSlot)
 	{
-		if (!slot.IsEmpty() && slot.itemInstance && slot.itemInstance->defaultItemData == TargetItemData)
+		if (!slot.IsEmpty() && slot.itemInstance && slot.itemInstance->defaultItemData == targetItemData)
 		{
 			totalCount += slot.currentQuantity;
 		}

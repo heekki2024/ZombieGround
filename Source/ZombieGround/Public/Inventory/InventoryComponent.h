@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Item/Instance/Ammo/AmmoInstance.h"
 #include "InventoryComponent.generated.h"
 
 
 enum class EWeaponType : uint8;
-
+// ConsumableInventory
 USTRUCT(BlueprintType)
-struct FInventorySlot
+struct FConsumableItemSlot
 {
 	GENERATED_BODY()
 
@@ -24,7 +25,14 @@ struct FInventorySlot
 	UPROPERTY()
 	uint64 timeStamp = 0; 
 
-	bool IsEmpty() const { return itemInstance == nullptr; }
+	bool IsEmpty() const
+	{
+		if (UAmmoInstance* ammoInstance = Cast<UAmmoInstance>(itemInstance))
+		{
+			return false;
+		}
+		return itemInstance == nullptr;
+	}
 	void Clear()
 	{
 		itemInstance = nullptr;
@@ -70,7 +78,7 @@ public:
 
 	/** 아이템 슬롯 8개 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<class UBaseInstance*> itemSlots;
+	TArray<FConsumableItemSlot> consumableItemSlot;
 
 	/** 현재 장착 무기 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -112,10 +120,9 @@ public:
     
 	// 현재 인벤토리에 해당 아이템이 총 몇 개 있는지 확인 (UI 표시용 등)
 	UFUNCTION()
-	int32 GetItemQuantity(class UBaseItemDataAsset* TargetItemData);	
+	int32 GetItemQuantity(class UBaseItemDataAsset* targetItemData);	
 public:
 	const int32 MaxItemSlots = 10;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FInventorySlot> inventorySlots;
+
 
 };

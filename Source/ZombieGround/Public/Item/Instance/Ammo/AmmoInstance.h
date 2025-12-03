@@ -26,5 +26,6 @@ public:
 	UFUNCTION()
 	virtual void InitAmmoInstance(class UAmmoDataAsset* ammoDataAsset);
 
+	virtual UBaseItemDataAsset* GetItemData() override;
 
 };

@@ -61,5 +61,5 @@ public:
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	int32 GetSortPriority();
+	int32 GetSortPriority() const;
 };

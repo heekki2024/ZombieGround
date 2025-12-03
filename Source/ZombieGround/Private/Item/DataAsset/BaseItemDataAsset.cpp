@@ -3,7 +3,7 @@
 
 #include "Item/DataAsset/BaseItemDataAsset.h"
 
-int32 UBaseItemDataAsset::GetSortPriority()
+int32 UBaseItemDataAsset::GetSortPriority() const
 {
 	return static_cast<int32>(sortPriority);
 

@@ -10,3 +10,8 @@ void UAmmoInstance::InitAmmoInstance(class UAmmoDataAsset* ammoDataAsset)
 	defaultAmmoData = ammoDataAsset;
 	currentQuantity = defaultAmmoData->defaultSpawnQuantity;
 }
+
+UBaseItemDataAsset* UAmmoInstance::GetItemData()
+{
+	return defaultAmmoData;
+}

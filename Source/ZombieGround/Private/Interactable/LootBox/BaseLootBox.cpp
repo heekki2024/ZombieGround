@@ -31,21 +31,21 @@ void ABaseLootBox::Tick(float DeltaTime)
 void ABaseLootBox::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
 {
 	Super::OnInteract_Implementation(interactingCharacter);
-	SpawnPrimaryWeapon();
-	SpawnAmmo();
+	EWeaponType weaponType = SpawnPrimaryWeapon();
+	SpawnAmmo(weaponType);
 }
 
 
-void ABaseLootBox::SpawnPrimaryWeapon()
+EWeaponType ABaseLootBox::SpawnPrimaryWeapon()
 {
 	// 1. 방어 코드: 배열이 비어있으면 아무것도 안 함 (크래시 방지)
 	if (weaponLootTable.Num() == 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LootTable is empty in %s"), *GetName());
-		return;
+		return EWeaponType::Unarmed;
 	}
 	
-	if (!weaponPickupClass) {return;}
+	if (!weaponPickupClass) {return EWeaponType::Unarmed;}
 	UWeaponDataAsset* selectedWeaponDA;
 	// 2. 랜덤 뽑기: 0 ~ (배열개수 - 1) 사이의 랜덤 숫자 생성
 	while (true)
@@ -79,9 +79,10 @@ void ABaseLootBox::SpawnPrimaryWeapon()
 	{
 		newPickup->InitPickup(selectedWeaponDA);
 	}
+	return selectedWeaponDA->weaponType;
 }
 
-void ABaseLootBox::SpawnAmmo()
+void ABaseLootBox::SpawnAmmo(EWeaponType weaponType)
 {
 	// 1. 방어 코드: 배열이 비어있으면 아무것도 안 함 (크래시 방지)
 	if (ammoLootTable.Num() == 0)
@@ -91,17 +92,27 @@ void ABaseLootBox::SpawnAmmo()
 	}
 	
 	if (!ammoPickupClass) {return;}
-	UAmmoDataAsset* selectedAmmoDA;
-	// 2. 랜덤 뽑기: 0 ~ (배열개수 - 1) 사이의 랜덤 숫자 생성
-	while (true)
+	UAmmoDataAsset* selectedAmmoDA = nullptr;
+	
+	for (const auto& ammoDA : ammoLootTable)
 	{
-		int32 randomIndex = FMath::RandRange(0, ammoLootTable.Num() - 1);
-
-		// 3. 당첨된 데이터 에셋 가져오기
-		selectedAmmoDA = ammoLootTable[randomIndex];
-		break;
-		
+		if (ammoDA->ammoType == weaponType)
+		{
+			selectedAmmoDA = ammoDA;
+			break; 
+		}
 	}
+
+	// // 2. 랜덤 뽑기: 0 ~ (배열개수 - 1) 사이의 랜덤 숫자 생성
+	// while (true)
+	// {
+	// 	int32 randomIndex = FMath::RandRange(0, ammoLootTable.Num() - 1);
+	//
+	// 	// 3. 당첨된 데이터 에셋 가져오기
+	// 	selectedAmmoDA = ammoLootTable[randomIndex];
+	// 	break;
+	// 	
+	// }
 	// 4. 스폰 위치 설정 (상자보다 약간 위)
 	FVector SpawnLocation = GetActorLocation() + FVector(50, 0, 100.0f);
 	FRotator SpawnRotation = GetActorRotation();

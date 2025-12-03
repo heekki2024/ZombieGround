@@ -29,8 +29,8 @@ class ZOMBIEGROUND_API UAmmoDataAsset : public UBaseItemDataAsset
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY()
-	EWeaponType weaponType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	EWeaponType ammoType;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
 	TSubclassOf<class AAmmoPickup> pickupClass;

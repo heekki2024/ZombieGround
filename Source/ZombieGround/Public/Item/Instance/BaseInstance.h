@@ -32,4 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void InitInstance(class UBaseItemDataAsset* itemDataAsset) {};
 
+	//UFUNCTION()
+	virtual UBaseItemDataAsset* GetItemData();
+
 };

@@ -2,3 +2,8 @@
 
 
 #include "Item/Instance/BaseInstance.h"
+
+UBaseItemDataAsset* UBaseInstance::GetItemData()
+{
+	return nullptr;
+}

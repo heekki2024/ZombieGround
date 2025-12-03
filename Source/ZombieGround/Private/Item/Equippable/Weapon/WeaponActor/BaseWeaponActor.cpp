@@ -283,7 +283,7 @@ void ABaseWeaponActor::Reload()
 	UInventoryComponent* inventoryComponent = ownerCharacter->inventoryComponent;
 	
 	//인벤토리에 탄약 소비 요청
-	int32 AmmoConsumed = inventoryComponent->ConsumeItem(EWeaponType::AssaultRifle, AmmoNeeded);
+	int32 AmmoConsumed = inventoryComponent->ConsumeItem(weaponInstance->defaultWeaponData->weaponType, AmmoNeeded);
 	//무기 탄창 채우기
 	if (AmmoConsumed > 0)
 	{

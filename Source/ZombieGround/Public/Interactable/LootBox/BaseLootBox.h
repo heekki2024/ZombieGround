@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Interactable/BaseInteractable.h"
+#include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "BaseLootBox.generated.h"
 
 UCLASS()
@@ -46,8 +47,8 @@ public:
 	TSubclassOf<class AAmmoPickup> ammoPickupClass;
 	
 	UFUNCTION()
-	void SpawnPrimaryWeapon();
+	EWeaponType SpawnPrimaryWeapon();
 	
 	UFUNCTION()
-	void SpawnAmmo();
+	void SpawnAmmo(EWeaponType weaponType);
 };
