@@ -120,7 +120,7 @@ public:
     
 	// 현재 인벤토리에 해당 아이템이 총 몇 개 있는지 확인 (UI 표시용 등)
 	UFUNCTION()
-	int32 GetItemQuantity(class UBaseItemDataAsset* targetItemData);	
+	int32 GetItemQuantity(class UBaseDataAsset* targetItemData);	
 public:
 	const int32 MaxItemSlots = 10;
 

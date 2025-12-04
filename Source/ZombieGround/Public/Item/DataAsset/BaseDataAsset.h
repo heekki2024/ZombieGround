@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "BaseItemDataAsset.generated.h"
+#include "BaseDataAsset.generated.h"
 
 /**
  * 
@@ -30,7 +30,7 @@ enum class ESortPriority : uint8
 };
 
 UCLASS(BlueprintType)
-class ZOMBIEGROUND_API UBaseItemDataAsset : public UPrimaryDataAsset
+class ZOMBIEGROUND_API UBaseDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 	

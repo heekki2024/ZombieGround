@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Item/DataAsset/BaseItemDataAsset.h"
+#include "Item/DataAsset/BaseDataAsset.h"
 #include "WeaponDataAsset.generated.h"
 
 /**
@@ -120,7 +120,7 @@ struct FWeaponFXData
 
 
 UCLASS()
-class ZOMBIEGROUND_API UWeaponDataAsset : public UBaseItemDataAsset
+class ZOMBIEGROUND_API UWeaponDataAsset : public UBaseDataAsset
 {
 	GENERATED_BODY()
 	

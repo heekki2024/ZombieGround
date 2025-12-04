@@ -46,11 +46,10 @@ public:
 	class UWeaponInstance* weaponInstance;
 
 
-
+	
 	// 현재 생성된 부착물 액터들을 관리하는 배열 (파괴 시 같이 없애기 위해)
 	UPROPERTY()
 	TArray<AActor*> SpawnedAttachments;
-	
 
 // 	//총 관련
 protected:

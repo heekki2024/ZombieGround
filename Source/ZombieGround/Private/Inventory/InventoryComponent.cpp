@@ -122,9 +122,12 @@ void UInventoryComponent::AddMeleeToSlot(class ABaseWeaponPickup* weaponPickup)
 bool UInventoryComponent::AddItemToSlot(ABasePickup* pickup)
 {
 	int32 maxQuantity;
-	int32 remaining;
-	if (UAmmoInstance* ammoInstance = Cast<AAmmoPickup>(pickup)->ammoInstance)
+	int32 remaining = 1;
+
+	AAmmoPickup* ammoPickup = Cast<AAmmoPickup>(pickup);
+	if (ammoPickup && ammoPickup->ammoInstance)
 	{
+		UAmmoInstance* ammoInstance = ammoPickup->ammoInstance;
 		if (!ammoInstance) return false;
 	
 		maxQuantity = ammoInstance->defaultAmmoData->maxQuantity;
@@ -155,6 +158,12 @@ bool UInventoryComponent::AddItemToSlot(ABasePickup* pickup)
 				if (remaining <= 0)
 				{
 					SortInventory();
+					
+					if(OwnerCharacter)
+					{
+						OwnerCharacter->BroadcastInventoryAmmoUpdate();
+					}
+					
 					return true;
 				}
 			}
@@ -180,6 +189,12 @@ bool UInventoryComponent::AddItemToSlot(ABasePickup* pickup)
 				if (remaining <= 0)
 				{
 					SortInventory();
+					
+					if(OwnerCharacter)
+					{
+						OwnerCharacter->BroadcastInventoryAmmoUpdate();
+					}
+					
 					return true;
 				}
 			}
@@ -187,7 +202,11 @@ bool UInventoryComponent::AddItemToSlot(ABasePickup* pickup)
 	}
 	// UBaseInstance* itemInstance = pickup->itemInstance;
 
-	// 3) 여기까지 왔는데 Remaining > 0이면 인벤토리 꽉 찬 상황
+	// 3) 여기까지 왔는데 Remaining > 0이면 인벤토리 꽉 찬 상황(false 호출)
+	if(OwnerCharacter)
+	{
+		OwnerCharacter->BroadcastInventoryAmmoUpdate();
+	}
 	return remaining <= 0;
 }
 
@@ -256,56 +275,21 @@ void UInventoryComponent::DropWeaponFromSlot(class UWeaponInstance* weaponInstan
 void UInventoryComponent::SortInventory()
 {
 	consumableItemSlot.Sort([](const FConsumableItemSlot& A, const FConsumableItemSlot& B)
-{
-	// A가 nullptr이고 B가 nullptr가 아니면 뒤로
-	if (!A.itemInstance && B.itemInstance) return false;
+	{
+		UBaseDataAsset* DataA = A.itemInstance ? A.itemInstance->GetItemData() : nullptr;
+		UBaseDataAsset* DataB = B.itemInstance ? B.itemInstance->GetItemData() : nullptr;
 
-	// B가 nullptr이고 A가 nullptr가 아니면 뒤로
-	if (A.itemInstance && !B.itemInstance) return true;
+		if (!DataA && !DataB) return false;
+		if (!DataA) return false;
+		if (!DataB) return true;
 
-	// 둘 다 nullptr이면 순서를 유지
-	if (!A.itemInstance && !B.itemInstance) return false;
+		const int32 PriorityA = DataA->GetSortPriority();
+		const int32 PriorityB = DataB->GetSortPriority();
 
-	const int32 PriorityA = A.itemInstance->defaultItemData->GetSortPriority();
-	const int32 PriorityB = B.itemInstance->defaultItemData->GetSortPriority();
+		if (PriorityA != PriorityB) return PriorityA < PriorityB;
 
-	if (PriorityA != PriorityB) return PriorityA < PriorityB;
-
-	return A.timeStamp < B.timeStamp;
-});
-	
-	// // [this] 캡처를 통해 멤버 변수에 접근
-	// itemSlots.Sort([this](const FItemSlot& A, const FItemSlot& B)
-	// {
-	// 	// 1. A의 완전한 유효성 검사 (객체 생존 여부 + 데이터 존재 여부)
-	// 	const bool bValidA = (A.itemInstance != nullptr) && IsValid(A.itemInstance) && (A.itemInstance->defaultItemData != nullptr);
- //        
-	// 	// 2. B의 완전한 유효성 검사
-	// 	const bool bValidB = (B.itemInstance != nullptr) && IsValid(B.itemInstance) && (B.itemInstance->defaultItemData != nullptr);
-	//
-	// 	// 둘 다 유효하지 않으면 순서 변경 없음 (false)
-	// 	if (!bValidA && !bValidB) return false;
-	//
-	// 	// A만 유효하지 않다면(빈칸이거나 깨진 데이터), A를 뒤로 보냄 -> B가 앞으로 (false)
-	// 	if (!bValidA) return false;
-	//
-	// 	// B만 유효하지 않다면, B를 뒤로 보냄 -> A가 앞으로 (true)
-	// 	if (!bValidB) return true;
-	//
-	// 	// --- 여기까지 오면 A와 B 모두 안전함이 보장됨 ---
-	//
-	// 	const int32 PriorityA = A.itemInstance->defaultItemData->GetSortPriority();
-	// 	const int32 PriorityB = B.itemInstance->defaultItemData->GetSortPriority();
-	//
-	// 	// 우선순위가 다르면 낮은 번호가 앞으로 (오름차순 정렬 가정)
-	// 	if (PriorityA != PriorityB)
-	// 	{
-	// 		return PriorityA < PriorityB;
-	// 	}
-	//
-	// 	// 우선순위가 같으면 획득 시간순
-	// 	return A.timeStamp < B.timeStamp;
-	// });
+		return A.timeStamp < B.timeStamp;
+	});
 }
 
 void UInventoryComponent::EquipPrimaryWeapon()
@@ -356,6 +340,12 @@ void UInventoryComponent::EquipPrimaryWeapon()
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 		primaryWeaponSlot->defaultWeaponData->rHandRifleSocketName
 	);
+
+	if(OwnerCharacter)
+	{
+		OwnerCharacter->BroadcastCurrentAmmoUpdate();
+		OwnerCharacter->BroadcastInventoryAmmoUpdate();
+	}
 }
 
 void UInventoryComponent::EquipSecondaryWeapon()
@@ -406,6 +396,11 @@ void UInventoryComponent::EquipSecondaryWeapon()
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 		secondaryWeaponSlot->defaultWeaponData->rHandPistolSocketName
 	);
+
+	if(OwnerCharacter)
+	{
+		OwnerCharacter->BroadcastCurrentAmmoUpdate();
+		OwnerCharacter->BroadcastInventoryAmmoUpdate();	}
 }
 
 void UInventoryComponent::EquipMeleeWeapon()
@@ -462,21 +457,25 @@ int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToCon
 		SortInventory();
 	}
 	
-	//실제로 소모한 양 반환
 	return amountToConsume - remainingNeeded;
 }
 
 
-int32 UInventoryComponent::GetItemQuantity(class UBaseItemDataAsset* targetItemData)
+int32 UInventoryComponent::GetItemQuantity(class UBaseDataAsset* targetItemData)
 {
 	int32 totalCount = 0;
-	for (const FConsumableItemSlot& slot : consumableItemSlot)
+	if (UWeaponDataAsset* weaponDA = Cast<UWeaponDataAsset>(targetItemData))
 	{
-		if (!slot.IsEmpty() && slot.itemInstance && slot.itemInstance->defaultItemData == targetItemData)
+		for (const FConsumableItemSlot& slot : consumableItemSlot)
 		{
-			totalCount += slot.currentQuantity;
+			if (!slot.IsEmpty() && Cast<UAmmoDataAsset>(Cast<UAmmoInstance>(slot.itemInstance)->GetItemData())->ammoType == weaponDA->weaponType)
+			{
+				totalCount += slot.currentQuantity;
+			}
 		}
 	}
+	
+
 	return totalCount;
 }
 

@@ -8,6 +8,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Inventory/InventoryComponent.h"
+#include "Item/DataAsset/BaseDataAsset.h"
+#include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
 #include "Item/Instance/Weapon/WeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
@@ -335,123 +337,42 @@ void AHumanCharacter::SetInteractableOutline(AActor* interactable, bool bEnable)
 	
 }
 
-void AHumanCharacter::BroadcastAmmoUpdate()
+void AHumanCharacter::BroadcastCurrentAmmoUpdate()
 {
 	// 인벤토리나 현재 무기가 유효한지 체크
 	if (inventoryComponent && inventoryComponent->currentWeaponActor)
 	{
 		// 현재 들고 있는 무기의 인스턴스 가져오기
 		UWeaponInstance* currentWeaponInstance = inventoryComponent->currentWeaponActor->weaponInstance;
-        
 		if (currentWeaponInstance)
 		{
 			// [방송 송출] 현재 탄약과 (최대 탄약 + 보정치)를 보냄
-			OnCurrentAmmoChanged.Broadcast(currentWeaponInstance->currentAmmo, currentWeaponInstance->maxAmmo);
+			OnCurrentAmmoChanged.Broadcast(currentWeaponInstance->currentAmmo);
 			return;
 		}
 	}
 
-	// 무기가 없거나 오류 상황이면 0, 0으로 방송
-	OnCurrentAmmoChanged.Broadcast(0, 0);
+	// 무기가 없거나 오류 상황이면 0으로 방송
+	OnCurrentAmmoChanged.Broadcast(0);
+}
+
+void AHumanCharacter::BroadcastInventoryAmmoUpdate()
+{
+	// 인벤토리나 현재 무기가 유효한지 체크
+	if (inventoryComponent && inventoryComponent->currentWeaponActor)
+	{
+		// 현재 들고 있는 무기의 인스턴스 가져오기
+		UWeaponInstance* currentWeaponInstance = inventoryComponent->currentWeaponActor->weaponInstance;
+		if (currentWeaponInstance)
+		{
+			// [방송 송출] 현재 탄약과 (최대 탄약 + 보정치)를 보냄
+			OnInventoryAmmoChanged.Broadcast(inventoryComponent->GetItemQuantity(Cast<UWeaponDataAsset>(currentWeaponInstance->GetItemData())));
+			return;
+		}
+	}
+	// 무기가 없거나 오류 상황이면 0으로 방송
+	OnInventoryAmmoChanged.Broadcast(0);
 }
 
 
-// void AHumanCharacter::SwapWeapon(UWeaponInstance* weaponInstance)
-// {
-// 	
-//     // 2. 스폰 파라미터 설정
-//     FActorSpawnParameters SpawnParams;
-//     SpawnParams.Owner = this;
-//     SpawnParams.Instigator = this;
-//     SpawnParams.SpawnCollisionHandlingOverride = 
-//         ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-//
-//     // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-//     FVector SpawnLocation = GetActorLocation();
-//     FRotator SpawnRotation = GetActorRotation();
-//
-//     // 4. 액터 스폰
-//     ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
-//         weaponInstance->defaultWeaponData->actorClass,
-//         SpawnLocation,
-//         SpawnRotation,
-//         SpawnParams
-//     );
-// 	
-// 	newCurrentWeapon->LoadWeaponInstance(weaponInstance);
-// 	
-// 	
-//     // 6. 무기 저장
-//     currentWeaponActor = newCurrentWeapon;
-// 	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
-// 	
-//     // 7. Attach (부착)
-//     currentWeaponActor->AttachToComponent(
-//         GetMesh(),
-//         FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-//         weaponInstance->defaultWeaponData->rHandRifleSocketName
-//     );
-// }
 
-
-// void AHumanCharacter::DropCurrentWeapon()
-// {
-// 	if (!IsValid(currentWeapon))
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: CurrentWeapon is invalid"));
-// 		return;
-// 	}
-// 	
-// 	// 1. 무기 픽업 클래스가 있는지 확인 (무기 클래스 내부에 있을 것으로 가정)
-// 	TSubclassOf<ABasePickup> PickupClass = currentWeapon->pickupClass;
-// 	if (!PickupClass)
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("DropWeapon: Weapon has no PickupClass"));
-// 		return;
-// 	}
-// 	
-// 	// [수정 포인트 1] 바라보는 방향(Aim Direction) 가져오기
-// 	// GetActorForwardVector() 대신 GetControlRotation()을 사용합니다.
-// 	// GetControlRotation()은 마우스/스틱으로 조종하는 카메라의 회전값(Pitch, Yaw)을 포함합니다.
-// 	FRotator ControlRotation = GetControlRotation();
-// 	FVector AimDirection = ControlRotation.Vector(); // 회전값을 방향 벡터로 변환
-//
-// 	// [수정 포인트 2] 스폰 위치 계산
-// 	// 바라보는 방향으로 100만큼 떨어진 곳에서 스폰
-// 	FVector SpawnLocation = GetActorLocation() + (AimDirection * 50.f); 
-//     
-// 	// [옵션] 스폰 회전값도 시선과 일치시킬지, 아니면 랜덤하게 할지 결정
-// 	// 무기가 날아가는 방향으로 머리를 돌리려면 ControlRotation을 넣으세요.
-// 	FRotator SpawnRotation = ControlRotation; 
-//     
-// 	// 3. 무기 제거 (기존 코드 동일)
-// 	currentWeapon->Destroy();
-// 	currentWeapon = nullptr;
-//     
-// 	// 4. 픽업 액터 스폰 (기존 코드 동일)
-// 	FActorSpawnParameters SpawnParams;
-// 	SpawnParams.Owner = this;
-// 	SpawnParams.Instigator = this;
-// 	SpawnParams.SpawnCollisionHandlingOverride = 
-// 	   ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-//
-// 	ABasePickup* Pickup = GetWorld()->SpawnActor<ABasePickup>(
-// 	   PickupClass,
-// 	   SpawnLocation,
-// 	   SpawnRotation,
-// 	   SpawnParams
-// 	);
-//     
-// 	// 5. 물리 임펄스 적용
-// 	if (Pickup) // Pickup이 잘 생성되었는지 확인
-// 	{
-// 		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(Pickup->GetRootComponent());
-// 		if (RootComp && RootComp->IsSimulatingPhysics())
-// 		{
-// 			// [수정 포인트 3] 바라보는 방향(AimDirection)으로 힘을 가함
-// 			// 400.f는 좀 약할 수 있으니 테스트해보며 조절하세요 (예: 1000.f)
-// 			FVector ThrowForce = AimDirection * 600.f; 
-// 			RootComp->AddImpulse(ThrowForce, NAME_None, true);
-// 		}
-// 	}
-// }

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Item/DataAsset/BaseItemDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "AmmoDataAsset.generated.h"
 
@@ -24,7 +23,7 @@
 
 
 UCLASS()
-class ZOMBIEGROUND_API UAmmoDataAsset : public UBaseItemDataAsset
+class ZOMBIEGROUND_API UAmmoDataAsset : public UBaseDataAsset
 {
 	GENERATED_BODY()
 	

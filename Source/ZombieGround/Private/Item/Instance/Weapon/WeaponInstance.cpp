@@ -15,7 +15,7 @@ void UWeaponInstance::InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset
 	actorMesh = defaultWeaponData->actorMesh;
 }
 
-UBaseItemDataAsset* UWeaponInstance::GetItemData()
+UBaseDataAsset* UWeaponInstance::GetItemData()
 {
 	return defaultWeaponData;
 }

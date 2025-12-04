@@ -31,5 +31,5 @@ public:
 	UFUNCTION()
 	virtual void InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset);
 	
-	virtual UBaseItemDataAsset* GetItemData() override;
+	virtual UBaseDataAsset* GetItemData() override;
 };

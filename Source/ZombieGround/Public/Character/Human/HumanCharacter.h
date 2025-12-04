@@ -8,7 +8,8 @@
 #include "HumanCharacter.generated.h"
 
 // 1. 이벤트 정의 (int32 두 개를 방송: 현재탄, 최대탄)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCurrentAmmoChangedDelegate, int32, CurrentAmmo, int32, MaxAmmo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentAmmoChangedDelegate, int32, currentAmmo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryAmmoChangedDelegate, int32, inventoryAmmo);
 
 UCLASS()
 class ZOMBIEGROUND_API AHumanCharacter : public ABaseCharacter
@@ -134,8 +135,14 @@ public:
 	// 2. 방송 송출기 (블루프린트 UI에서 이걸 구독함)
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnCurrentAmmoChangedDelegate OnCurrentAmmoChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnCurrentAmmoChangedDelegate OnInventoryAmmoChanged;
 
 	// 3. 방송을 내보내는 함수 (무기나 인벤토리가 호출할 예정)
 	UFUNCTION(BlueprintCallable)
-	void BroadcastAmmoUpdate();
+	void BroadcastCurrentAmmoUpdate();	
+	
+	UFUNCTION(BlueprintCallable)
+	void BroadcastInventoryAmmoUpdate();
 };

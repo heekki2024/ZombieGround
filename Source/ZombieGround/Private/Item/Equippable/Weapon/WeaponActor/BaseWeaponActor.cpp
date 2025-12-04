@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
+
 // Sets default values
 ABaseWeaponActor::ABaseWeaponActor()
 {
@@ -31,6 +32,16 @@ void ABaseWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// 1. 이 위젯을 소유한 플레이어 캐릭터를 가져옴
+	AHumanCharacter* ownerCharacter = Cast<AHumanCharacter>(GetOwner());
+
+	if (ownerCharacter)
+	{
+		// 3. (선택사항) 시작하자마자 현재 상태 한 번 갱신 (초기값 0/0 방지)
+		ownerCharacter->BroadcastCurrentAmmoUpdate();
+		ownerCharacter->BroadcastInventoryAmmoUpdate(); 
+
+	}
 }
 
 // Called every frame
@@ -255,7 +266,7 @@ void ABaseWeaponActor::Fire()
 	if (AHumanCharacter* Human = Cast<AHumanCharacter>(OwnerPawn))
 	{
 		// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
-		Human->BroadcastAmmoUpdate();
+		Human->BroadcastCurrentAmmoUpdate();
 	}
 	
 	// 다음 발사 가능 시간 갱신
@@ -291,7 +302,8 @@ void ABaseWeaponActor::Reload()
 		if (AHumanCharacter* Human = Cast<AHumanCharacter>(GetOwner()))
 		{
 			// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
-			Human->BroadcastAmmoUpdate();
+			ownerCharacter->BroadcastCurrentAmmoUpdate();
+			ownerCharacter->BroadcastInventoryAmmoUpdate(); 
 		}
 		UE_LOG(LogTemp, Log, TEXT("Reloaded! Current Ammo: %d"), weaponInstance->currentAmmo);
 	}
@@ -300,4 +312,6 @@ void ABaseWeaponActor::Reload()
 		UE_LOG(LogTemp, Warning, TEXT("No Ammo in Inventory!"));
 	}
 }
+
+
 

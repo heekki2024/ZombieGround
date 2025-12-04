@@ -38,7 +38,7 @@ public:
 public:
 	// 이 픽업이 어떤 아이템인지 정의 (에디터에서 할당)
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category = "Pickup")
-	class UBaseItemDataAsset* itemDataAsset;
+	class UBaseDataAsset* itemDataAsset;
     
 	// (선택) 이미 쓰던 총을 버렸을 때, 남은 탄약을 기억하기 위한 인스턴스 보관
 	UPROPERTY()

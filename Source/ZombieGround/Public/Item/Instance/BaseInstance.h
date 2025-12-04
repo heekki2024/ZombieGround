@@ -22,7 +22,7 @@ public:
 	class USkeletalMesh* actorMesh;
 	
 	UPROPERTY()
-	class UBaseItemDataAsset* defaultItemData;
+	class UBaseDataAsset* defaultItemData;
 
 	UPROPERTY()
 	int32 currentQuantity;
@@ -30,9 +30,9 @@ public:
 public:
 	
 	UFUNCTION(BlueprintCallable)
-	virtual void InitInstance(class UBaseItemDataAsset* itemDataAsset) {};
+	virtual void InitInstance(class UBaseDataAsset* itemDataAsset) {};
 
 	//UFUNCTION()
-	virtual UBaseItemDataAsset* GetItemData();
+	virtual UBaseDataAsset* GetItemData();
 
 };
