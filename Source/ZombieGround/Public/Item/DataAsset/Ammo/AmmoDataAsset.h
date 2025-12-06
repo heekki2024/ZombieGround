@@ -31,7 +31,4 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
 	EWeaponType ammoType;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class AAmmoPickup> pickupClass;
-	
 };

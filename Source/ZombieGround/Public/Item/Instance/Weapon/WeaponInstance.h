@@ -15,9 +15,9 @@ class ZOMBIEGROUND_API UWeaponInstance : public UBaseInstance
 	GENERATED_BODY()
 	
 public:
-	//원본 데이터 에셋
-	UPROPERTY()
-	class UWeaponDataAsset* defaultWeaponData;
+	// //원본 데이터 에셋
+	// UPROPERTY()
+	// class UWeaponDataAsset* defaultWeaponData;
 	
 	UPROPERTY()
 	int32 maxAmmo; // 최대 장전 가능 총알수
@@ -28,8 +28,7 @@ public:
 	
 
 public:
-	UFUNCTION()
-	virtual void InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset);
+	virtual void InitInstance(class UBaseDataAsset* itemDataAsset) override;
 	
-	virtual UBaseDataAsset* GetItemData() override;
+	// virtual UBaseDataAsset* GetItemData() override;
 };

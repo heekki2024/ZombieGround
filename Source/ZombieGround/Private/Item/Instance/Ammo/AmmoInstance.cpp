@@ -2,16 +2,14 @@
 
 
 #include "Item/Instance/Ammo/AmmoInstance.h"
-
 #include "Item/DataAsset/Ammo/AmmoDataAsset.h"
 
-void UAmmoInstance::InitAmmoInstance(class UAmmoDataAsset* ammoDataAsset)
-{
-	defaultAmmoData = ammoDataAsset;
-	currentQuantity = defaultAmmoData->defaultSpawnQuantity;
-}
 
-UBaseDataAsset* UAmmoInstance::GetItemData()
+void UAmmoInstance::InitInstance(class UBaseDataAsset* itemDataAsset)
 {
-	return defaultAmmoData;
+	if (UAmmoDataAsset* ammoData = Cast<UAmmoDataAsset>(itemDataAsset))
+	{
+		this->defaultItemData = itemDataAsset;
+		currentQuantity = this->defaultItemData->defaultSpawnQuantity;
+	}
 }

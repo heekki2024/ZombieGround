@@ -22,4 +22,6 @@ void AZGPlayerController::BeginPlay()
 			// SetInputMode(InputMode);
 		}
 	}
+	
+	
 }

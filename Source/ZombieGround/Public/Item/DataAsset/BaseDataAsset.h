@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Item/Equippable/BaseEquippable.h"
+#include "Item/Pickup/BasePickup.h"
 #include "BaseDataAsset.generated.h"
 
 /**
@@ -59,7 +61,39 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	int32 maxQuantity;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABasePickup> pickupClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	TSubclassOf<class ABaseEquippable> actorClass;
+	
+	
 public:
 	UFUNCTION(BlueprintCallable)
 	int32 GetSortPriority() const;
+	
+	// 반환 타입을 TSubclassOf<T>로 감싸야 합니다.
+	template<typename T>
+	TSubclassOf<T> GetPickupClass() const 
+	{
+		// pickupClass가 T의 자식인지 확인하고 반환
+		if (pickupClass && pickupClass->IsChildOf(T::StaticClass()))
+		{
+			return *pickupClass;
+		}
+		return nullptr;
+	}
+
+	
+	// 반환 타입을 TSubclassOf<T>로 감싸야 합니다.
+	template<typename T>
+	TSubclassOf<T> GetActorClass() const 
+	{
+		// pickupClass가 T의 자식인지 확인하고 반환
+		if (actorClass && actorClass->IsChildOf(T::StaticClass()))
+		{
+			return *actorClass;
+		}
+		return nullptr;
+	}
 };

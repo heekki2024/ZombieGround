@@ -19,13 +19,13 @@ public:
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	// int32 maxAmmo = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	class UAmmoDataAsset* defaultAmmoData; 
-	
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	// class UAmmoDataAsset* defaultAmmoData; 
+	//
 public:
-	UFUNCTION()
-	virtual void InitAmmoInstance(class UAmmoDataAsset* ammoDataAsset);
+	virtual void InitInstance(class UBaseDataAsset* itemDataAsset) override;
 
-	virtual UBaseDataAsset* GetItemData() override;
+	// virtual UBaseDataAsset* GetItemData() const override;
+
 
 };

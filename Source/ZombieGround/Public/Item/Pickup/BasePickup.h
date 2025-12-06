@@ -42,12 +42,29 @@ public:
     
 	// (선택) 이미 쓰던 총을 버렸을 때, 남은 탄약을 기억하기 위한 인스턴스 보관
 	UPROPERTY()
-	class UBaseInstance* itemInstance;
+	class UBaseInstance* instance;
 
+	// 헬퍼 함수: 인스턴스 가져오기
+	UBaseInstance* GetItemInstance() const { return instance; }
+	
 	// // 상호작용 시 호출 (인벤토리에 Instance 생성 후 자폭)
 	// virtual void OnInteract(class ACharacter* Interactor);
 	
 	UFUNCTION()
+	virtual void InitPickup(class UBaseDataAsset* initData){};
+
+	// UFUNCTION()
+	// virtual UBaseInstance* GetInstance() const {return instance;};
+	//
+	UFUNCTION()
 	virtual void OnInteract_Implementation(class AHumanCharacter* interactingCharacter) override;	
 	
+
+
+	//템플릿 함수
+	template <typename T>
+	T* GetInstance() const
+	{
+		return Cast<T>(instance);
+	}
 };

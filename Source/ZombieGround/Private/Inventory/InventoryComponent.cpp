@@ -28,7 +28,7 @@ UInventoryComponent::UInventoryComponent()
 	meleeWeaponSlot = nullptr;
 	currentWeaponActor = nullptr;
 
-	consumableItemSlot.SetNum(MaxItemSlots); // 초기 8개 nullptr
+	consumableSlot.SetNum(MaxItemSlots); // 초기 8개 nullptr
 
 }
 
@@ -39,7 +39,7 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {   
 	Super::BeginPlay();
-	OwnerCharacter = Cast<AHumanCharacter>(GetOwner());
+	ownerCharacter = Cast<AHumanCharacter>(GetOwner());
 
 	// ...
 	
@@ -59,19 +59,18 @@ void UInventoryComponent::PickupItem(class ABasePickup* pickup)
 {
 	if (ABaseWeaponPickup* weaponPickup = Cast<ABaseWeaponPickup>(pickup))
 	{
-		if (weaponPickup->weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Primary)
+		if (weaponPickup->instance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Primary)
 		{
 			AddPrimaryToSlot(weaponPickup);
 			weaponPickup->Destroy();
 			EquipPrimaryWeapon();
-
-		}else if (weaponPickup->weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Secondary)
+		}else if (weaponPickup->instance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Secondary)
 		{
 			AddSecondaryToSlot(weaponPickup);
 			weaponPickup->Destroy();
 			EquipSecondaryWeapon();
 
-		}else if (weaponPickup->weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Melee)
+		}else if (weaponPickup->instance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Melee)
 		{
 			AddMeleeToSlot(weaponPickup);
 			weaponPickup->Destroy();
@@ -80,8 +79,11 @@ void UInventoryComponent::PickupItem(class ABasePickup* pickup)
 	}
 	else
 	{
-		AddItemToSlot(pickup);
-		pickup->Destroy();
+		bool bShouldDestoryPickup = AddConsumableToSlot(pickup);
+		if (bShouldDestoryPickup)
+		{
+			pickup->Destroy();
+		}
 	}
 }
 
@@ -90,13 +92,13 @@ void UInventoryComponent::AddPrimaryToSlot(class ABaseWeaponPickup* weaponPickup
 	if (!IsValid(primaryWeaponSlot))
 	{
 		// 슬롯이 비어있거나 GC로 삭제됨
-		primaryWeaponSlot = weaponPickup->weaponInstance;
+		primaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
 	}
 	else
 	{
-		DropWeaponFromSlot(primaryWeaponSlot);
+		DropItemFromSlot(primaryWeaponSlot);
 		// 정상적으로 무기 존재
-		primaryWeaponSlot = weaponPickup->weaponInstance;
+		primaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
 	}
 }
 
@@ -105,13 +107,13 @@ void UInventoryComponent::AddSecondaryToSlot(class ABaseWeaponPickup* weaponPick
 	if (!IsValid(secondaryWeaponSlot))
 	{
 		// 슬롯이 비어있거나 GC로 삭제됨
-		secondaryWeaponSlot = weaponPickup->weaponInstance;
+		secondaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
 	}
 	else
 	{
-		DropWeaponFromSlot(secondaryWeaponSlot);
+		DropItemFromSlot(secondaryWeaponSlot);
 		// 정상적으로 무기 존재
-		secondaryWeaponSlot = weaponPickup->weaponInstance;
+		secondaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
 	}
 }
 
@@ -119,162 +121,246 @@ void UInventoryComponent::AddMeleeToSlot(class ABaseWeaponPickup* weaponPickup)
 {
 }
 
-bool UInventoryComponent::AddItemToSlot(ABasePickup* pickup)
+
+bool UInventoryComponent::AddConsumableToSlot(ABasePickup* pickup)
 {
-	int32 maxQuantity;
-	int32 remaining = 1;
+	// // 1. 유효성 검사 (특정 타입이 아닌 Base 클래스로 접근)
+	// if (!pickup) return false;
+	
+	UBaseInstance* incomingInstance = pickup->GetItemInstance();
+	if (!incomingInstance || !incomingInstance->GetItemData()) return false;
+	
+	//아이템 정보 추출
+	const int32 MaxQuantity = incomingInstance->GetItemData()->maxQuantity;
+	
+	// [중요] 시작 전 원래 수량 저장
+	const int32 StartQuantity = incomingInstance->currentQuantity;
 
-	AAmmoPickup* ammoPickup = Cast<AAmmoPickup>(pickup);
-	if (ammoPickup && ammoPickup->ammoInstance)
+	// ... 기존 로직 (MaxQuantity, remaining 초기화 등) ...
+	int32 remaining = StartQuantity;
+	
+	//아이템이 겹칠 수 있는 타입인지 확인(최대 수량이 1보다 크면 겹치기 가능
+	const bool bIsStackable = (MaxQuantity > 1);
+	
+	//1단계 : 이미 있는 슬롯에 합치기 (Stackable 아이템만 해당)
+	if (bIsStackable)
 	{
-		UAmmoInstance* ammoInstance = ammoPickup->ammoInstance;
-		if (!ammoInstance) return false;
-	
-		maxQuantity = ammoInstance->defaultAmmoData->maxQuantity;
-	
-		//한 slot에 60발이 들어가는 소총탄이 80이 들어왔을경우 remaining변수에 넣고 빼나가며 계산
-		remaining = ammoInstance->currentQuantity;
-	
-		// 동일 아이템이 있는 슬롯이 최대개수가 아닐경우 그 슬롯부터 채운다.
-		for (FConsumableItemSlot& slot : consumableItemSlot)
+		for (FConsumableSlotData& slot : consumableSlot)
 		{
-			if (slot.itemInstance == ammoInstance && slot.currentQuantity < maxQuantity)
+			//슬롯이 비어있지 않고 같은 종류의 아이템이며 꽉 차지 않았을 때 
+			if (!slot.IsEmpty() && slot.itemInstance->GetItemData<UAmmoDataAsset>() && slot.itemInstance->currentQuantity < MaxQuantity)
 			{
-			
-				//remaining이 10개, 60개가 들어가는 슬롯에서 currentQuantity가 28이면 space는 32,
-				//space 가 32, remaining이 10개. ToAdd는 10개
-				// 기존 슬롯에 10발을 더한다. remaining 에 10발을 뺀다. remaining이 0발 이하면 sorting
-			
-				//remaining이 40개, 60개가 들어가는 슬롯에서 currentQuantity가 28이면 space는 32,
-				//space 가 32, remaining이 40개. ToAdd는 32개
-				// 기존 슬롯에 32발을 더한다. remaining(40)에 ToAdd(32)발을 뺀다 8개. remaining이 1개 이상이면 
-				//for문을 탈출하고 아래 for문에 가서 완전히 빈칸인 곳에 남은 총알을 채운다.
-				const int32 Space = maxQuantity - slot.currentQuantity;
+				const int32 Space = MaxQuantity - slot.itemInstance->currentQuantity;
 				const int32 ToAdd = FMath::Min(Space, remaining);
-			
-			
-				slot.currentQuantity += ToAdd;
+				
+				slot.itemInstance->currentQuantity += ToAdd;
 				remaining -= ToAdd;
+				
+				//다 넣었으면 종료
 				if (remaining <= 0)
 				{
+					incomingInstance->currentQuantity = 0; //원본 비우기
 					SortInventory();
+					// if(OwnerCharacter) OwnerCharacter->BroadcastInventoryUpdate();
+					if (OnInventoryUpdated.IsBound()) OnInventoryUpdated.Broadcast();
 					
-					if(OwnerCharacter)
-					{
-						OwnerCharacter->BroadcastInventoryAmmoUpdate();
-					}
-					
+					if (ownerCharacter) ownerCharacter->BroadcastInventoryAmmoUpdate();
 					return true;
 				}
 			}
 		}
+	}
 	
-		// 2) 남은 수량을 빈 슬롯에 배치
-		for (FConsumableItemSlot& slot : consumableItemSlot)
+	//2단계 : 빈슬롯 채우기
+	for (FConsumableSlotData& slot : consumableSlot)
+	{
+		if (slot.IsEmpty())
 		{
-			if (slot.IsEmpty())
+			//이 슬롯에 넣을 수 있는 최대량 계산
+			//stackable이 아니면 MaxStackSize가 1일테니 한개만 들어감
+			const int32 ToAdd = FMath::Min(MaxQuantity, remaining);
+			
+			//Cast A : 남은 걸 전부 이 슬롯에 넣을 수 있는 경우 -> 원본 객체를 그대로 이동
+			if (remaining <= ToAdd)
 			{
-				slot.itemInstance = ammoInstance;
+				UBaseInstance* newInstance = DuplicateObject<UBaseInstance>(incomingInstance, this);
 
-				const int32 ToAdd = FMath::Min(maxQuantity, remaining);
-				slot.currentQuantity = ToAdd;
-
-				// ──────────────── 여기서 Timestamp 설정 ────────────────
-				slot.timeStamp = GFrameCounter; 
-				// or GameInstance에서 TickCount 가져오기
-				// or FDateTime::UtcNow().GetTicks()
-
+				slot.itemInstance = newInstance;
+				slot.itemInstance->currentQuantity = ToAdd;
+				remaining = 0;
+			}
+			else
+			{
+				UBaseInstance* newInstance = DuplicateObject<UBaseInstance>(incomingInstance, this);
+				
+				slot.itemInstance = newInstance;
+				slot.itemInstance->currentQuantity = ToAdd;
+				
 				remaining -= ToAdd;
-
-				if (remaining <= 0)
-				{
-					SortInventory();
-					
-					if(OwnerCharacter)
-					{
-						OwnerCharacter->BroadcastInventoryAmmoUpdate();
-					}
-					
-					return true;
-				}
+			}
+			
+			//타임 스탬프 갱신
+			slot.timeStamp = GFrameCounter;
+			
+			//다 넣었으면 종료
+			if (remaining <= 0)
+			{
+				incomingInstance->currentQuantity = 0; //원본 비우기
+				SortInventory();
+				if (OnInventoryUpdated.IsBound()) OnInventoryUpdated.Broadcast();
+				
+				if (ownerCharacter) ownerCharacter->BroadcastInventoryAmmoUpdate();
+				return true;
 			}
 		}
 	}
-	// UBaseInstance* itemInstance = pickup->itemInstance;
+	
+	// ----------------------------------------------------------------
+	// 3단계: 마무리 (일부만 들어갔거나, 아예 못 들어간 경우)
+	// ----------------------------------------------------------------
+    
+	// 원본(Pickup)의 남은 수량 갱신 (예: 50개 중 20개만 먹고 30개 남음)
+	incomingInstance->currentQuantity = remaining;
 
-	// 3) 여기까지 왔는데 Remaining > 0이면 인벤토리 꽉 찬 상황(false 호출)
-	if(OwnerCharacter)
+	if(ownerCharacter)
 	{
-		OwnerCharacter->BroadcastInventoryAmmoUpdate();
+		ownerCharacter->BroadcastInventoryAmmoUpdate();
 	}
+	
+
+	
+	// 결과 판단 로직
+	EInventoryPickupResult Result;
+
+	if (remaining <= 0)
+	{
+		Result = EInventoryPickupResult::Success; // 다 먹음
+	}
+	else if (remaining == StartQuantity)
+	{
+		Result = EInventoryPickupResult::Failed_Full; // 하나도 안 줄어듦 -> 꽉 차서 못 먹음
+		// UE_LOG(LogTemp, Warning, TEXT("꽉 차서 못 먹음"));
+
+	}
+	else
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("일부만 먹고 꽉 참"));
+		Result = EInventoryPickupResult::Partial; // 줄어들긴 함 -> 일부만 먹고 꽉 참
+	}
+
+	// [추가 3] 부분적으로 먹었을 때도 UI 갱신 필요 (StartQuantity와 다르면 무언가 먹은 것임)
+	if (Result == EInventoryPickupResult::Partial)
+	{
+		if (OnInventoryUpdated.IsBound()) OnInventoryUpdated.Broadcast();
+	}
+	
+	// 결과 방송 (UI에서 받아서 처리)
+	// Success가 아닐 때만 알림을 띄우고 싶다면 조건문 추가
+	// if (Result != EInventoryPickupResult::Success)
+	// {
+	// 	if (OnPickupResult.IsBound())
+	// 	{
+	// 		OnPickupResult.Broadcast(Result);
+	// 	}
+	// }
+	
+	// 남은 게 없으면(0) true 반환 -> Pickup Actor 파괴
+	// 남은 게 있으면(>0) false 반환 -> Pickup Actor 유지 (수량만 줄어듦)
 	return remaining <= 0;
 }
 
 
-void UInventoryComponent::DropWeaponFromSlot(class UWeaponInstance* weaponInstance)
+void UInventoryComponent::DropItemFromSlot(class UBaseInstance* itemInstance)
 {
 	// 2. 스폰 파라미터 설정
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = OwnerCharacter;
-	SpawnParams.Instigator = OwnerCharacter;
-	SpawnParams.SpawnCollisionHandlingOverride = 
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Owner = ownerCharacter;
+	SpawnParams.Instigator = ownerCharacter;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	
 	// [수정 포인트 1] 바라보는 방향(Aim Direction) 가져오기
 	// GetActorForwardVector() 대신 GetControlRotation()을 사용합니다.
 	// GetControlRotation()은 마우스/스틱으로 조종하는 카메라의 회전값(Pitch, Yaw)을 포함합니다.
-	FRotator ControlRotation = OwnerCharacter->GetControlRotation();
+	FRotator ControlRotation = ownerCharacter->GetControlRotation();
 	FVector AimDirection = ControlRotation.Vector(); // 회전값을 방향 벡터로 변환
 
 	// [수정 포인트 2] 스폰 위치 계산
 	// 바라보는 방향으로 100만큼 떨어진 곳에서 스폰
-	FVector SpawnLocation = OwnerCharacter->GetActorLocation() + (AimDirection * 50.f); 
+	FVector SpawnLocation = ownerCharacter->GetActorLocation() + (AimDirection * 50.f); 
     
 	// [옵션] 스폰 회전값도 시선과 일치시킬지, 아니면 랜덤하게 할지 결정
 	// 무기가 날아가는 방향으로 머리를 돌리려면 ControlRotation을 넣으세요.
 	FRotator SpawnRotation = ControlRotation; 
 	
-	ABaseWeaponPickup* newPickup = GetWorld()->SpawnActor<ABaseWeaponPickup>(
-	weaponInstance->defaultWeaponData->pickupClass,
-	SpawnLocation,
-	SpawnRotation,
-	SpawnParams
-);
-	
-	newPickup->LoadWeaponInstance(weaponInstance);
-	
-	// 5. 물리 임펄스 적용
-	if (newPickup) // Pickup이 잘 생성되었는지 확인
+	if (UWeaponInstance* weaponInstance = Cast<UWeaponInstance>(itemInstance))
 	{
-		UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(newPickup->GetRootComponent());
-		if (RootComp && RootComp->IsSimulatingPhysics())
+		ABaseWeaponPickup* newPickup = GetWorld()->SpawnActor<ABaseWeaponPickup>(
+		weaponInstance->GetItemData<UWeaponDataAsset>()->pickupClass,
+		SpawnLocation,
+		SpawnRotation,
+		SpawnParams
+		);
+		
+	
+		// 5. 물리 임펄스 적용
+		if (newPickup) // Pickup이 잘 생성되었는지 확인
 		{
-			// [수정 포인트 3] 바라보는 방향(AimDirection)으로 힘을 가함
-			// 400.f는 좀 약할 수 있으니 테스트해보며 조절하세요 (예: 1000.f)
-			FVector ThrowForce = AimDirection * 1000.f; 
-			RootComp->AddImpulse(ThrowForce, NAME_None, true);
+			newPickup->LoadWeaponInstance(weaponInstance);
+
+			// Force direction: 캐릭터의 정면 방향
+			FVector ThrowDirection = ownerCharacter->GetActorForwardVector();
+
+			// 물리력 가하기
+			UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(newPickup->GetRootComponent());
+			if (RootComp && RootComp->IsSimulatingPhysics())
+			{
+				RootComp->AddImpulse(ThrowDirection * 100.f, NAME_None, true);
+			}
+		}
+	
+		if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Primary)
+		{
+			primaryWeaponSlot = nullptr;
+		}else if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Secondary)
+		{
+			secondaryWeaponSlot = nullptr;
+		}else if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Melee)
+		{
+			meleeWeaponSlot = nullptr;
+		}
+	}else if (UAmmoInstance* ammoInstance = Cast<UAmmoInstance>(itemInstance))
+	{
+		AAmmoPickup* newPickup = GetWorld()->SpawnActor<AAmmoPickup>(
+			ammoInstance->GetItemData<UAmmoDataAsset>()->GetPickupClass<AAmmoPickup>(),
+			SpawnLocation,
+			ControlRotation,
+			SpawnParams
+		);
+
+		if (newPickup)
+		{
+			// 기존 인스턴스 복제 혹은 데이터 전달 로직 필요
+			// 여기서는 기존 로직의 LoadWeaponInstance 패턴을 따른다고 가정합니다.
+			newPickup->LoadAmmoInstance(ammoInstance); // << 픽업 클래스에 맞는 초기화 함수 호출 필요
+                 
+			// Force direction: 캐릭터의 정면 방향
+			FVector ThrowDirection = ownerCharacter->GetActorForwardVector();
+
+			// 물리력 가하기
+			UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(newPickup->GetRootComponent());
+			if (RootComp && RootComp->IsSimulatingPhysics())
+			{
+				RootComp->AddImpulse(ThrowDirection * 100.f, NAME_None, true);
+			}
 		}
 	}
-	
-	if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Primary)
-	{
-		primaryWeaponSlot = nullptr;
-	}else if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Secondary)
-	{
-		secondaryWeaponSlot = nullptr;
-	}else if (weaponInstance->defaultWeaponData->weaponSlot == EWeaponSlot::Melee)
-	{
-		meleeWeaponSlot = nullptr;
-	}
-	
-	
 }
 
 
 
 void UInventoryComponent::SortInventory()
 {
-	consumableItemSlot.Sort([](const FConsumableItemSlot& A, const FConsumableItemSlot& B)
+	consumableSlot.Sort([](const FConsumableSlotData& A, const FConsumableSlotData& B)
 	{
 		UBaseDataAsset* DataA = A.itemInstance ? A.itemInstance->GetItemData() : nullptr;
 		UBaseDataAsset* DataB = B.itemInstance ? B.itemInstance->GetItemData() : nullptr;
@@ -311,18 +397,18 @@ void UInventoryComponent::EquipPrimaryWeapon()
 	
 	// 2. 스폰 파라미터 설정
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = OwnerCharacter;
-	SpawnParams.Instigator = OwnerCharacter;
+	SpawnParams.Owner = ownerCharacter;
+	SpawnParams.Instigator = ownerCharacter;
 	SpawnParams.SpawnCollisionHandlingOverride = 
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-	FVector SpawnLocation = OwnerCharacter->GetActorLocation();
-	FRotator SpawnRotation = OwnerCharacter->GetActorRotation();
+	FVector SpawnLocation = ownerCharacter->GetActorLocation();
+	FRotator SpawnRotation = ownerCharacter->GetActorRotation();
 
 	// 4. 액터 스폰
 	ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
-		primaryWeaponSlot->defaultWeaponData->actorClass,
+		primaryWeaponSlot->GetItemData<UWeaponDataAsset>()->actorClass,
 		SpawnLocation,
 		SpawnRotation,
 		SpawnParams
@@ -336,15 +422,15 @@ void UInventoryComponent::EquipPrimaryWeapon()
 	
 	// 7. Attach (부착)
 	currentWeaponActor->AttachToComponent(
-		OwnerCharacter->GetMesh(),
+		ownerCharacter->GetMesh(),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		primaryWeaponSlot->defaultWeaponData->rHandRifleSocketName
+		primaryWeaponSlot->GetItemData<UWeaponDataAsset>()->rHandRifleSocketName
 	);
 
-	if(OwnerCharacter)
+	if(ownerCharacter)
 	{
-		OwnerCharacter->BroadcastCurrentAmmoUpdate();
-		OwnerCharacter->BroadcastInventoryAmmoUpdate();
+		ownerCharacter->BroadcastCurrentAmmoUpdate();
+		ownerCharacter->BroadcastInventoryAmmoUpdate();
 	}
 }
 
@@ -367,18 +453,18 @@ void UInventoryComponent::EquipSecondaryWeapon()
 	
 	// 2. 스폰 파라미터 설정
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = OwnerCharacter;
-	SpawnParams.Instigator = OwnerCharacter;
+	SpawnParams.Owner = ownerCharacter;
+	SpawnParams.Instigator = ownerCharacter;
 	SpawnParams.SpawnCollisionHandlingOverride = 
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-	FVector SpawnLocation = OwnerCharacter->GetActorLocation();
-	FRotator SpawnRotation = OwnerCharacter->GetActorRotation();
+	FVector SpawnLocation = ownerCharacter->GetActorLocation();
+	FRotator SpawnRotation = ownerCharacter->GetActorRotation();
 
 	// 4. 액터 스폰
 	ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
-		secondaryWeaponSlot->defaultWeaponData->actorClass,
+		secondaryWeaponSlot->GetItemData<UWeaponDataAsset>()->actorClass,
 		SpawnLocation,
 		SpawnRotation,
 		SpawnParams
@@ -392,15 +478,15 @@ void UInventoryComponent::EquipSecondaryWeapon()
 	
 	// 7. Attach (부착)
 	currentWeaponActor->AttachToComponent(
-		OwnerCharacter->GetMesh(),
+		ownerCharacter->GetMesh(),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		secondaryWeaponSlot->defaultWeaponData->rHandPistolSocketName
+		secondaryWeaponSlot->GetItemData<UWeaponDataAsset>()->rHandPistolSocketName
 	);
 
-	if(OwnerCharacter)
+	if(ownerCharacter)
 	{
-		OwnerCharacter->BroadcastCurrentAmmoUpdate();
-		OwnerCharacter->BroadcastInventoryAmmoUpdate();	}
+		ownerCharacter->BroadcastCurrentAmmoUpdate();
+		ownerCharacter->BroadcastInventoryAmmoUpdate();	}
 }
 
 void UInventoryComponent::EquipMeleeWeapon()
@@ -416,7 +502,7 @@ int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToCon
 	//인벤토리 전체 순회 (여러 슬롯에 나뉘어 있을 수 있음)
 	bool bNeedSort = false; // [핵심] 정렬이 필요한지 체크하는 깃발
 	
-	for (FConsumableItemSlot& slot : consumableItemSlot)
+	for (FConsumableSlotData& slot : consumableSlot)
 	{
 		//유효성 검사
 		if (slot.IsEmpty()) continue;
@@ -426,19 +512,19 @@ int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToCon
 		if (UAmmoInstance* ammoInstance = Cast<UAmmoInstance>(slot.itemInstance))
 		{
 			// 2. 캐스팅이 성공(nullptr이 아님)했을 때만 데이터에 접근합니다.
-			if (ammoInstance->defaultAmmoData && ammoInstance->defaultAmmoData->ammoType == weaponType)
+			if (ammoInstance->GetItemData<UAmmoDataAsset>() && ammoInstance->GetItemData<UAmmoDataAsset>()->ammoType == weaponType)
 			{
 				//차감 계산
-				int32 TakeFromSlot = FMath::Min(slot.currentQuantity, remainingNeeded);
+				int32 TakeFromSlot = FMath::Min(slot.itemInstance->currentQuantity, remainingNeeded);
 			
 				//수량 적용
-				slot.currentQuantity -= TakeFromSlot;
-				ammoInstance->currentQuantity = slot.currentQuantity;
+				slot.itemInstance->currentQuantity -= TakeFromSlot;
+				ammoInstance->currentQuantity = slot.itemInstance->currentQuantity;
 			
 				remainingNeeded -= TakeFromSlot;
 			
 				//슬롯이 비었을 때 처리
-				if (slot.currentQuantity <= 0)
+				if (slot.itemInstance->currentQuantity <= 0)
 				{
 					slot.Clear();
 				}
@@ -456,6 +542,11 @@ int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToCon
 	{
 		SortInventory();
 	}
+	// 5. UI 업데이트 알림
+	if (OnInventoryUpdated.IsBound())
+	{
+		OnInventoryUpdated.Broadcast();
+	}
 	
 	return amountToConsume - remainingNeeded;
 }
@@ -466,17 +557,49 @@ int32 UInventoryComponent::GetItemQuantity(class UBaseDataAsset* targetItemData)
 	int32 totalCount = 0;
 	if (UWeaponDataAsset* weaponDA = Cast<UWeaponDataAsset>(targetItemData))
 	{
-		for (const FConsumableItemSlot& slot : consumableItemSlot)
+		for (const FConsumableSlotData& slot : consumableSlot)
 		{
 			if (!slot.IsEmpty() && Cast<UAmmoDataAsset>(Cast<UAmmoInstance>(slot.itemInstance)->GetItemData())->ammoType == weaponDA->weaponType)
 			{
-				totalCount += slot.currentQuantity;
+				totalCount += slot.itemInstance->currentQuantity;
 			}
 		}
 	}
 	
 
 	return totalCount;
+}
+
+void UInventoryComponent::DropConsumableByIndex(int32 SlotIndex)
+{
+	if (!consumableSlot.IsValidIndex(SlotIndex)) return;
+
+    FConsumableSlotData& slot = consumableSlot[SlotIndex];
+    
+    // 빈 슬롯이면 무시
+    if (slot.IsEmpty()) return;
+    
+	if (UAmmoInstance* ammoInstance = slot.GetInstance<UAmmoInstance>())
+	{
+		if (!ammoInstance) return;
+
+		// AAmmoPickup* ammoPickup = ;
+		
+	    // 1. 실제 pickup 드롭
+		DropItemFromSlot(ammoInstance);
+
+	    // 3. 인벤토리에서 제거
+	    slot.Clear(); // 슬롯 비우기 (Instance = nullptr, Qty = 0)
+
+	    // 4. 정렬
+	    SortInventory();
+
+	    // 5. UI 업데이트 알림
+	    if (OnInventoryUpdated.IsBound())
+	    {
+	        OnInventoryUpdated.Broadcast();
+	    }
+	}
 }
 
 

@@ -32,7 +32,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void InitInstance(class UBaseDataAsset* itemDataAsset) {};
 
-	//UFUNCTION()
-	virtual UBaseDataAsset* GetItemData();
+	UFUNCTION()
+	virtual UBaseDataAsset* GetItemData() const {return defaultItemData;};
 
+	//템플릿 함수
+	template <typename T>
+	T* GetItemData() const
+	{
+		return Cast<T>(defaultItemData);
+	}
 };

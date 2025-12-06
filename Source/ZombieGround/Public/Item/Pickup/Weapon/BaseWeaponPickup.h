@@ -26,16 +26,12 @@ public:
 	
 	// TSubclassOf를 사용하면 에디터에서 BaseWeapon을 상속받은 블루프린트만 선택할 수 있게 필터링됩니다.
 	
-public:
-	
-	UPROPERTY()
-	class UWeaponInstance* weaponInstance;
-	
 
 public:
-	UFUNCTION()
-	void InitPickup(class UWeaponDataAsset* initData);
+	virtual void InitPickup(class UBaseDataAsset* initData) override;
 
+	
+	
 	UFUNCTION(BlueprintCallable)
 	void LoadWeaponInstance(class UWeaponInstance* updatedWeaponInstance);
 };

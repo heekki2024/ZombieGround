@@ -6,21 +6,14 @@
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 
 
-void UWeaponInstance::InitWeaponInstance(class UWeaponDataAsset* weaponDataAsset)
+void UWeaponInstance::InitInstance(class UBaseDataAsset* itemDataAsset)
 {
-	defaultWeaponData = weaponDataAsset;
-	maxAmmo = defaultWeaponData->weaponStats.maxAmmo;
-	currentAmmo = defaultWeaponData->weaponStats.maxAmmo;
-	pickupMesh = defaultWeaponData->pickupMesh;
-	actorMesh = defaultWeaponData->actorMesh;
+	if (UWeaponDataAsset* weaponDataAsset = Cast<UWeaponDataAsset>(itemDataAsset))
+	{
+		this->defaultItemData = weaponDataAsset;
+		maxAmmo = weaponDataAsset->weaponStats.maxAmmo;
+		currentAmmo = weaponDataAsset->weaponStats.maxAmmo;
+		pickupMesh = weaponDataAsset->pickupMesh;
+		actorMesh = weaponDataAsset->actorMesh;
+	}
 }
-
-UBaseDataAsset* UWeaponInstance::GetItemData()
-{
-	return defaultWeaponData;
-}
-
-
-
-
-

@@ -175,12 +175,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animation")
 	UAnimSequence* tempGunAnim;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class ABaseWeaponPickup> pickupClass;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
-	TSubclassOf<class ABaseWeaponActor> actorClass;
-	
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	// TSubclassOf<class ABaseWeaponPickup> pickupClass;
+	//
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Setup")
+	// TSubclassOf<class ABaseWeaponActor> actorClass;
+	//
 	
 	
 	// 소켓 이름 정의 

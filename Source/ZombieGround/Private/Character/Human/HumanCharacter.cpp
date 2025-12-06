@@ -13,7 +13,7 @@
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
 #include "Item/Instance/Weapon/WeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
-
+#include "UI/InGame/Human/HumanHUD.h"
 
 
 // Sets default values
@@ -47,6 +47,8 @@ void AHumanCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	PC = Cast<APlayerController>(GetController());
+	
 	// Overlap 이벤트 바인딩
 	InteractionCapsule->OnComponentBeginOverlap.AddDynamic(this, &AHumanCharacter::OnInteractableBeginOverlap);
 	InteractionCapsule->OnComponentEndOverlap.AddDynamic(this, &AHumanCharacter::OnInteractableEndOverlap);
@@ -55,7 +57,7 @@ void AHumanCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = 400.f;
 	
 	// Enhanced Input Subsystem 활성화
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	if (IsValid(PC))
 	{
 		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
 		{
@@ -125,6 +127,7 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_Num1Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum1KeyPressed);	
 		playerInput->BindAction(IA_Num2Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum2KeyPressed);	
 		playerInput->BindAction(IA_Reload, ETriggerEvent::Started, this, &AHumanCharacter::Reload);	
+		playerInput->BindAction(IA_Tab, ETriggerEvent::Started, this, &AHumanCharacter::OnTabPressed);	
 	}
 }
 
@@ -229,6 +232,11 @@ void AHumanCharacter::Reload(const FInputActionValue& Value)
 	inventoryComponent->currentWeaponActor->Reload();
 }
 
+void AHumanCharacter::OnTabPressed(const FInputActionValue& Value)
+{
+	humanHud->ToggleInventory();
+}
+
 
 void AHumanCharacter::OnInteractableBeginOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
                                                  UPrimitiveComponent* OtherComp, int32 BodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -251,7 +259,7 @@ void AHumanCharacter::OnInteractableEndOverlap(UPrimitiveComponent* Overlapped, 
 
 AActor* AHumanCharacter::GetCenterScreenInteractable()
 {
-	APlayerController* PC = Cast<APlayerController>(GetController());
+	
 	if (!PC) return nullptr;
 
 	int32 SizeX = 0, SizeY = 0;

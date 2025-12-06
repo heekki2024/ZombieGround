@@ -103,17 +103,7 @@ void ABaseLootBox::SpawnAmmo(EWeaponType weaponType)
 		}
 	}
 
-	// // 2. 랜덤 뽑기: 0 ~ (배열개수 - 1) 사이의 랜덤 숫자 생성
-	// while (true)
-	// {
-	// 	int32 randomIndex = FMath::RandRange(0, ammoLootTable.Num() - 1);
-	//
-	// 	// 3. 당첨된 데이터 에셋 가져오기
-	// 	selectedAmmoDA = ammoLootTable[randomIndex];
-	// 	break;
-	// 	
-	// }
-	// 4. 스폰 위치 설정 (상자보다 약간 위)
+
 	FVector SpawnLocation = GetActorLocation() + FVector(50, 0, 100.0f);
 	FRotator SpawnRotation = GetActorRotation();
 	

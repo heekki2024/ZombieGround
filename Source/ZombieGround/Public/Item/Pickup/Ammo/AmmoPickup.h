@@ -24,13 +24,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 public:
-	UPROPERTY()
-	class UAmmoInstance* ammoInstance;
-	
 
 public:
-	UFUNCTION()
-	void InitPickup(class UAmmoDataAsset* initData);
+	void InitPickup(class UBaseDataAsset* initData) override;
 
 	UFUNCTION(BlueprintCallable)
 	void LoadAmmoInstance(class UAmmoInstance* updatedAmmoInstance);

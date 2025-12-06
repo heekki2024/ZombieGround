@@ -3,7 +3,7 @@
 
 #include "Item/Instance/BaseInstance.h"
 
-UBaseDataAsset* UBaseInstance::GetItemData()
-{
-	return nullptr;
-}
+// UBaseDataAsset* UBaseInstance::GetItemData()
+// {
+// 	return nullptr;
+// }

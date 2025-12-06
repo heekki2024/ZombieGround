@@ -17,15 +17,20 @@ class ZOMBIEGROUND_API UHumanHUD : public UBaseUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	// 델리게이트에 바인딩할 함수 (UFUNCTION 필수)
-	UFUNCTION()
-	void UpdateCurrentAmmo(int32 currentAmmo);
-	
-	UFUNCTION()
-	void UpdateInventoryAmmo(int32 inventoryAmmo);
-
-protected:
+public:
 	// WBP_HumanHUD 안에서 만든 위젯 이름과 변수명이 같아야 함 (meta = (BindWidget))
+	UPROPERTY()
+	class AHumanCharacter* ownerCharacter;
+	
 	UPROPERTY(meta = (BindWidget))
 	class UAmmoCounter* WBP_AmmoCounter;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UInventoryWidget* WBP_Inventory;
+	
+public:
+	// 외부(Character)에서 호출하는 함수
+	void ToggleInventory();
+	
+	
 };

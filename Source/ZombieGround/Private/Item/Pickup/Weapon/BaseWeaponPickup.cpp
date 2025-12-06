@@ -11,7 +11,7 @@ ABaseWeaponPickup::ABaseWeaponPickup()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	weaponInstance = CreateDefaultSubobject<UWeaponInstance>(TEXT("WeaponInstance"));
+	instance = CreateDefaultSubobject<UWeaponInstance>(TEXT("WeaponInstance"));
 	
 }
 
@@ -28,17 +28,18 @@ void ABaseWeaponPickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABaseWeaponPickup::InitPickup(class UWeaponDataAsset* initData)
-{
-	weaponInstance->InitWeaponInstance(initData);
 
+//pickup쪽에서는 자세한 ammo,weapon dataasset내용을 몰라도 됨으로 casting하지 않아도 됨
+void ABaseWeaponPickup::InitPickup(class UBaseDataAsset* initData)
+{
+	instance->InitInstance(initData);
 	meshComp->SetStaticMesh(initData->pickupMesh);
 }
 
 void ABaseWeaponPickup::LoadWeaponInstance(class UWeaponInstance* updatedWeaponInstance)
 {
-	weaponInstance = updatedWeaponInstance;
-	meshComp->SetStaticMesh(weaponInstance->pickupMesh);
+	instance = updatedWeaponInstance;
+	meshComp->SetStaticMesh(instance->pickupMesh);
 }
 
 

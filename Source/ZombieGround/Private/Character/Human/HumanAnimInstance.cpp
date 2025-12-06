@@ -57,7 +57,7 @@ void UHumanAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 	if (IsValid(currentWeaponInstance))
 	{
-		playerAnimData = currentWeaponInstance->defaultWeaponData->playerAnimData;
+		playerAnimData = currentWeaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData;
 	}
 	else
 	{

@@ -75,6 +75,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	class UInputAction* IA_Reload;
 	
+	UPROPERTY(EditAnywhere, Category="Input")
+	class UInputAction* IA_Tab;
+	
 	//Input 함수
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -87,8 +90,11 @@ protected:
 	void OnNum1KeyPressed(const FInputActionValue& Value);
 	void OnNum2KeyPressed(const FInputActionValue& Value);
 	void Reload(const FInputActionValue& Value);
+	void OnTabPressed(const FInputActionValue& Value);
 
 public:
+	UPROPERTY()
+	APlayerController* PC;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Inventory")
 	class UInventoryComponent* inventoryComponent;
@@ -130,6 +136,8 @@ public:
 	UPROPERTY()
 	class ABaseWeaponActor* BaseWeapon;
 	
+	UPROPERTY()
+	class UHumanHUD* humanHud;
 public:
 	//무기 총 UI 
 	// 2. 방송 송출기 (블루프린트 UI에서 이걸 구독함)
