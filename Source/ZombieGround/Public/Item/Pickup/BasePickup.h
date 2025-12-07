@@ -57,7 +57,7 @@ public:
 	// virtual UBaseInstance* GetInstance() const {return instance;};
 	//
 	UFUNCTION()
-	virtual void OnInteract_Implementation(class AHumanCharacter* interactingCharacter) override;	
+	virtual void OnInteract_Implementation(class ABaseCharacter* interactingCharacter) override;	
 	
 
 

@@ -27,7 +27,7 @@ public:
 
 public:
 
-	virtual void OnInteract_Implementation(class AHumanCharacter* interactingCharacter) override;
+	virtual void OnInteract_Implementation(class ABaseCharacter* interactingCharacter) override;
 
 	
 	// [변경] 단일 변수 -> 배열(Array)

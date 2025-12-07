@@ -28,7 +28,7 @@ void ABaseLootBox::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABaseLootBox::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
+void ABaseLootBox::OnInteract_Implementation(ABaseCharacter* interactingCharacter)
 {
 	Super::OnInteract_Implementation(interactingCharacter);
 	EWeaponType weaponType = SpawnPrimaryWeapon();

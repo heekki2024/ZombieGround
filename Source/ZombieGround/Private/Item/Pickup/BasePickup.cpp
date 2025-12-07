@@ -65,10 +65,11 @@ void ABasePickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABasePickup::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
+void ABasePickup::OnInteract_Implementation(ABaseCharacter* interactingCharacter)
 {
+	AHumanCharacter* HumanCharacter = Cast<AHumanCharacter>(interactingCharacter);
 	IInteractInterface::OnInteract_Implementation(interactingCharacter);
-	interactingCharacter->inventoryComponent->PickupItem(Cast<ABasePickup>(interactingCharacter->outLinedInteractable));
+	HumanCharacter->inventoryComponent->PickupItem(Cast<ABasePickup>(HumanCharacter->outLinedInteractable));
 
 }
 

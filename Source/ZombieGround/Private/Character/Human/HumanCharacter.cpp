@@ -179,7 +179,6 @@ void AHumanCharacter::OnRightClickPressed(const FInputActionValue& Value)
 	{
 		inventoryComponent->currentWeaponActor->OnRightClickPressed();
 	}
-
 }
 
 void AHumanCharacter::OnRightClickReleased(const FInputActionValue& Value)

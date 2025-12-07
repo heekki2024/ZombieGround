@@ -47,7 +47,7 @@ void ABaseInteractable::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABaseInteractable::OnInteract_Implementation(AHumanCharacter* interactingCharacter)
+void ABaseInteractable::OnInteract_Implementation(ABaseCharacter* interactingCharacter)
 {
 	IInteractInterface::OnInteract_Implementation(interactingCharacter);
 	// 기본 구현: 단순 로그

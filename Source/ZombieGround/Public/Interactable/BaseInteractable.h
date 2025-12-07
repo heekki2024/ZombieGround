@@ -34,7 +34,7 @@ public:
 public:
 	
 	// 인터페이스 구현
-	virtual void OnInteract_Implementation(class AHumanCharacter* interactingCharacter) override;
+	virtual void OnInteract_Implementation(class ABaseCharacter* interactingCharacter) override;
 	// virtual FText GetInteractText() const override;
 
 	

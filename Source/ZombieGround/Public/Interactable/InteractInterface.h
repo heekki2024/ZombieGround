@@ -25,7 +25,7 @@ public:
 	
 	// E키 눌렀을 때 호출
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category="Interaction")
-	void OnInteract(class AHumanCharacter* interactingCharacter);
+	void OnInteract(class ABaseCharacter* interactingCharacter);
 	
 	// // UI 표시용
 	// virtual FText GetInteractText() const = 0;

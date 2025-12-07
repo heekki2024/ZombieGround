@@ -79,18 +79,18 @@ protected:
 	class UInputAction* IA_Tab;
 	
 	//Input 함수
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	void JumpAction(const FInputActionValue& Value);
-	void Interact(const FInputActionValue& Value);
-	void OnRightClickPressed(const FInputActionValue& Value);
-	void OnRightClickReleased(const FInputActionValue& Value);
-	void OnLeftClickPressed(const FInputActionValue& Value);
-	void OnLeftClickReleased(const FInputActionValue& Value);
-	void OnNum1KeyPressed(const FInputActionValue& Value);
-	void OnNum2KeyPressed(const FInputActionValue& Value);
-	void Reload(const FInputActionValue& Value);
-	void OnTabPressed(const FInputActionValue& Value);
+	void Move(const struct FInputActionValue& Value);
+	void Look(const struct FInputActionValue& Value);
+	void JumpAction(const struct FInputActionValue& Value);
+	void Interact(const struct FInputActionValue& Value);
+	void OnRightClickPressed(const struct FInputActionValue& Value);
+	void OnRightClickReleased(const struct FInputActionValue& Value);
+	void OnLeftClickPressed(const struct FInputActionValue& Value);
+	void OnLeftClickReleased(const struct FInputActionValue& Value);
+	void OnNum1KeyPressed(const struct FInputActionValue& Value);
+	void OnNum2KeyPressed(const struct FInputActionValue& Value);
+	void Reload(const struct FInputActionValue& Value);
+	void OnTabPressed(const struct FInputActionValue& Value);
 
 public:
 	UPROPERTY()
