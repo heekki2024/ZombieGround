@@ -94,6 +94,42 @@ public:
 	void Reload(const struct FInputActionValue& Value);
 	void OnTabPressed(const struct FInputActionValue& Value);
 	
+public:
+	class UAnimInstance* AnimInstance;
+	// 에디터에서 할당할 공격 애니메이션 몽타주
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	UAnimMontage* basicAttackMontage;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	UAnimMontage* DamageMontage;
+
+	virtual void PlayBasicAttackMontage();
+	virtual void PlayDamageMontage();
+	
+public:
+	// 공격 판정 함수 (AnimNotify에서 호출)
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void AttackHitCheck();
+
+	// 공격 거리 및 범위 설정
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float AttackRange = 150.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float AttackRadius = 50.0f;
+	
 	void SetInteractableOutline(AActor* interactable, bool bEnable);
 	AActor* GetCenterScreenInteractable();
+	
+	
+	UPROPERTY(EditAnywhere)
+	int32 MAX_HP = 30;
+	int32 currentHP = MAX_HP;
+
+	UPROPERTY(EditAnywhere)
+	float knockbackPower = 5;
+	FVector knockbackPos;
+	virtual void OnDamageProcess(FVector hitDirection);
+	
+
 };

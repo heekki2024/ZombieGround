@@ -24,6 +24,13 @@ ABaseWeaponActor::ABaseWeaponActor()
 
 	// 무기는 캐릭터가 손에 들고 다니므로 물리 충돌은 보통 끕니다.
 	weaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	
+	static ConstructorHelpers::FClassFinder<UCameraShakeBase> tempCS
+	(TEXT("/Game/Characters/Human/Blueprints/miscellaneous/BP_FireCameraShake.BP_FireCameraShake_C"));
+	if (tempCS.Succeeded())
+	{
+		fireCameraShake = tempCS.Class;
+	}
 
 }
 
@@ -271,6 +278,11 @@ void ABaseWeaponActor::Fire()
 	
 	// 다음 발사 가능 시간 갱신
 	NextFireTime = currentTime + weaponInstance->GetItemData<UWeaponDataAsset>()->weaponStats.fireRate;
+	
+	//카메라 셰이크 재생
+	auto controller = GetWorld()->GetFirstPlayerController();
+	controller->PlayerCameraManager->StartCameraShake(fireCameraShake);
+	
 }
 
 void ABaseWeaponActor::Reload()

@@ -33,6 +33,10 @@ public:
 	// 1. Components
 	// =================================================================
     
+public://카메라 셰이크
+	UPROPERTY(BlueprintReadOnly)
+	TSubclassOf<class UCameraShakeBase> fireCameraShake;
+	
 	// 총기 본체 (애니메이션 재생을 위해 스켈레탈 메쉬 사용)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class USkeletalMeshComponent* weaponMesh;

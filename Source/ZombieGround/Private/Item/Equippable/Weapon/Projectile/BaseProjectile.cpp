@@ -3,6 +3,7 @@
 
 #include "Item/Equippable/Weapon/Projectile/BaseProjectile.h"
 
+#include "Character/Zombie/ZombieCharacter.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -96,5 +97,12 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 			Hit.ImpactPoint
 		);
 	}
+	
+	if (AZombieCharacter* hitZombie = Cast<AZombieCharacter>(Hit.GetActor()))
+	{
+		
+		hitZombie->OnDamageProcess(GetVelocity().GetSafeNormal());
+	}
+	
 	Destroy();
 }

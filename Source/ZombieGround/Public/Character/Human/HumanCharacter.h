@@ -7,6 +7,8 @@
 #include "Character/BaseCharacter.h"
 #include "HumanCharacter.generated.h"
 
+class AZombieCharacter;
+
 // 1. 이벤트 정의 (int32 두 개를 방송: 현재탄, 최대탄)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentAmmoChangedDelegate, int32, currentAmmo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryAmmoChangedDelegate, int32, inventoryAmmo);
@@ -30,8 +32,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Zombie")
+	TSubclassOf<AZombieCharacter> ZombieClassToSpawn;
 	
-	
+
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Collision")

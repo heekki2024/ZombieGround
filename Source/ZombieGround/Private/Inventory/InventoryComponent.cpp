@@ -314,7 +314,7 @@ void UInventoryComponent::DropItemFromSlot(class UBaseInstance* itemInstance)
 			UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(newPickup->GetRootComponent());
 			if (RootComp && RootComp->IsSimulatingPhysics())
 			{
-				RootComp->AddImpulse(ThrowDirection * 100.f, NAME_None, true);
+				RootComp->AddImpulse(ThrowDirection * 300.f, NAME_None, true);
 			}
 		}
 	
@@ -350,7 +350,7 @@ void UInventoryComponent::DropItemFromSlot(class UBaseInstance* itemInstance)
 			UPrimitiveComponent* RootComp = Cast<UPrimitiveComponent>(newPickup->GetRootComponent());
 			if (RootComp && RootComp->IsSimulatingPhysics())
 			{
-				RootComp->AddImpulse(ThrowDirection * 100.f, NAME_None, true);
+				RootComp->AddImpulse(ThrowDirection * 300.f, NAME_None, true);
 			}
 		}
 	}

@@ -3,6 +3,7 @@
 
 #include "Character/Human/HumanCharacter.h"
 
+#include "Character/Zombie/ZombieCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/CapsuleComponent.h"
@@ -105,6 +106,34 @@ void AHumanCharacter::Tick(float DeltaTime)
 			outLinedInteractable = HitActor;
 		}
 	}
+}
+
+float AHumanCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (DamageCauser && DamageCauser->IsA(AZombieCharacter::StaticClass()))
+	{
+		AController* CurrentController = GetController();
+		
+		if (ZombieClassToSpawn && CurrentController)
+		{
+			FVector SpawnLocation = GetActorLocation();
+			FRotator SpawnRotation = GetActorRotation();
+			
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			AZombieCharacter* NewZombie = GetWorld()->SpawnActor<AZombieCharacter>(ZombieClassToSpawn, SpawnLocation, SpawnRotation, SpawnParams);
+			if (NewZombie)
+			{
+				CurrentController->Possess(NewZombie);
+				Destroy();
+			}
+		}
+	}
+
+	return ActualDamage;
 }
 
 // Called to bind functionality to input

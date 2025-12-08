@@ -54,4 +54,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	FPlayerAnimData defaultPlayerAnimData;
+	
+
 };

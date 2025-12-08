@@ -59,3 +59,16 @@ void UZombieAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	// 	playerAnimData = defaultPlayerAnimData;
 	// }
 }
+
+void UZombieAnimInstance::OnAttackHitEvent()
+{
+	if (pawnOwner)
+	{
+		// 소유자가 좀비 캐릭터인지 확인 후 함수 호출
+		AZombieCharacter* ZombieCharacter = Cast<AZombieCharacter>(pawnOwner);
+		if (ZombieCharacter)
+		{
+			ZombieCharacter->AttackHitCheck();
+		}
+	}
+}

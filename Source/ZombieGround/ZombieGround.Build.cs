@@ -18,7 +18,9 @@ public class ZombieGround : ModuleRules
 			"StateTreeModule",
 			"GameplayStateTreeModule",
 			"UMG",
-			"Slate"
+			"Slate",
+			"NavigationSystem",
+			"AIModule"
 		});
 		
 		PublicIncludePaths.Add(ModuleDirectory);

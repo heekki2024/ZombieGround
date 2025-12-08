@@ -35,8 +35,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float groundSpeed;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool bIsRightClicking;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	// bool bIsRightClicking = false;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class ABaseWeaponActor* currentWeaponActor;
@@ -46,4 +46,14 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BlueprintThreadSafe))
 	class UWeaponInstance* currentWeaponInstance;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bAttackPlay = false;
+	
+	UFUNCTION(BlueprintCallable)
+	void OnAttackHitEvent();
+	
+	// UFUNCTION(BlueprintImplementableEvent)
+	// void PlayDamageAnim(FName sectionName);
 };
+
