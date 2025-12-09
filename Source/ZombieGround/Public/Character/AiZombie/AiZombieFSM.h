@@ -41,7 +41,7 @@ public:
 	
 	//컴포넌트 소유자 선언
 	UPROPERTY()
-	class AZombieCharacter* compOwner;
+	class AAiZombie* compOwner;
 	
 	UPROPERTY(EditAnywhere, Category=FSM)
 	float idleDelayTime = 0.1;
@@ -51,9 +51,13 @@ public:
 	UPROPERTY(EditAnywhere, Category=FSM)
 	class AHumanCharacter* target;
 	
+private:
+	// 가장 가까운 인간을 찾아 반환하는 함수
+	class AHumanCharacter* FindNearestTarget();
+	
 	//필요 속성 : 공격범위
 	UPROPERTY(EditAnywhere, Category = FSM)
-	float attackRange = 205;
+	float attackRange = 150;
 	
 
 	void MoveState();
@@ -71,8 +75,12 @@ public:
 	void DamageState();
 	void DieState();
 
-
+	// [추가] 이동 중 타겟 재검색 주기 (0.5 ~ 1.0초 권장)
+	float ReSearchRate = 1.0f; 
+    
+	// [추가] 재검색 타이머 누적 변수
+	float ReSearchTimer = 0.0f;
 	
 	UPROPERTY()
-	class AAIController* ai;
+	class AAIController* aiController;
 };

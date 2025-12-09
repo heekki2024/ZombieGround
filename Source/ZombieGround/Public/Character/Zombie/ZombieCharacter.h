@@ -130,6 +130,10 @@ public:
 	float knockbackPower = 5;
 	FVector knockbackPos;
 	virtual void OnDamageProcess(FVector hitDirection);
+
+	// 생성 시 재생될 전역 사운드 (요청하신 dieSound)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	class USoundBase* DieSound;
 	
 
 };

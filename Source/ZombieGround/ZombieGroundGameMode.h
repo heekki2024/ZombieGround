@@ -6,9 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "ZombieGroundGameMode.generated.h"
 
-/**
- *  Simple GameMode for a third person game
- */
+
 UCLASS(abstract)
 class AZombieGroundGameMode : public AGameModeBase
 {
@@ -18,6 +16,7 @@ public:
 	
 	/** Constructor */
 	AZombieGroundGameMode();
+	
 };
 
 

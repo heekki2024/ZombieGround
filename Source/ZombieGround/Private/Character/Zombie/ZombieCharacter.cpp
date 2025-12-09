@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interactable/InteractInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 
 
 // Sets default values
@@ -46,7 +47,7 @@ void AZombieCharacter::BeginPlay()
 	
 
 
-	GetCharacterMovement()->MaxWalkSpeed = 400.f;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
 	
 	// Enhanced Input Subsystem 활성화
 	if (IsValid(PC))
@@ -62,6 +63,11 @@ void AZombieCharacter::BeginPlay()
 				}
 			}
 		}
+	}
+
+	if (DieSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), DieSound);
 	}
 }
 

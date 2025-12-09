@@ -4,6 +4,7 @@
 #include "Character/AiZombie/AiZombieFSM.h"
 
 #include "AIController.h"
+#include "Character/AiZombie/AiZombie.h"
 #include "Character/Human/HumanCharacter.h"
 #include "Character/Zombie/ZombieCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -27,11 +28,10 @@ void UAiZombieFSM::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	compOwner = Cast<AZombieCharacter>(GetOwner());	
-	target = Cast<AHumanCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), AHumanCharacter::StaticClass()));
-	
-	//ai controller 할당
-	ai = Cast<AAIController>(compOwner->GetController());
+	compOwner = Cast<AAiZombie>(GetOwner());
+    
+	// [수정 1] BeginPlay에서는 AI Controller를 못 가져올 수도 있으므로 변수 초기화만 합니다.
+	// 타겟 찾는 로직도 여기서 제거하고 Tick이나 IdleState로 넘기는 것이 안전합니다.
 }
 
 
@@ -40,14 +40,25 @@ void UAiZombieFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// 1. [핵심 수정] 타겟 유효성 검사 (안전 장치)
-	// 타겟이 유효하지 않고, 현재 상태가 Die가 아니라면 Idle로 강제 전환
+	if (!IsValid(compOwner)) return;
+
+	// [수정 2] AIController가 없다면 매 프레임 다시 찾기를 시도합니다 (Lazy Initialization)
+	// 좀비가 스폰되고 컨트롤러가 빙의될 때까지 약간의 딜레이가 있기 때문입니다.
+	if (!IsValid(aiController))
+	{
+		aiController = Cast<AAIController>(compOwner->GetController());
+		// 아직도 컨트롤러가 없다면 아무것도 하지 않고 리턴 (오류 방지)
+		if (!IsValid(aiController)) return; 
+	}
+
+	// [수정 3] 타겟 유효성 검사 및 상태 복구
+	// 타겟이 죽거나 사라졌다면 다시 Idle로 가서 새로운 타겟을 찾도록 유도
 	if (!IsValid(target))
 	{
-		if (zombieState != EZombieState::Die && zombieState != EZombieState::Idle)
+		// 죽은 상태가 아니라면 Idle로 전환하여 재탐색 유도
+		if (zombieState != EZombieState::Die)
 		{
 			zombieState = EZombieState::Idle;
-			currentTime = 0.0f; // 타이머 초기화
 		}
 	}
 
@@ -76,46 +87,128 @@ void UAiZombieFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
 void UAiZombieFSM::IdleState()
 {
+	// 타겟이 없거나 유효하지 않으면 가장 가까운 인간 탐색
+	if (!IsValid(target))
+	{
+		target = FindNearestTarget();
+	}
+
+	// 타겟을 찾았다면 바로 이동 상태로 전환 (또는 딜레이 후 전환)
+	if (IsValid(target))
+	{
+		// 원한다면 바로 추격 시작
+		zombieState = EZombieState::Move;
+		currentTime = 0;
+		return; 
+	}
+
+	// 타겟을 못 찾았을 때만 대기 시간 로직 수행
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	if (currentTime > idleDelayTime)
 	{
-		// 3. 상태를 이동으로 전환한다.
-		zombieState = EZombieState::Move;
+		// 여기서는 랜덤 패트롤 로직 등을 넣을 수 있음
+		// 지금은 타겟 없으면 계속 Idle 유지
 	}
 	
+}
+
+class AHumanCharacter* UAiZombieFSM::FindNearestTarget()
+{
+	// 1. 맵의 모든 HumanCharacter 찾기
+	TArray<AActor*> FoundHumans;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AHumanCharacter::StaticClass(), FoundHumans);
+
+	// 찾은 사람이 없으면 nullptr 반환
+	if (FoundHumans.Num() == 0) return nullptr;
+
+	AHumanCharacter* NearestHuman = nullptr;
+	float MinDistanceSq = FLT_MAX; // 비교를 위해 가장 큰 숫자로 초기화
+
+	FVector MyPos = compOwner->GetActorLocation();
+
+	// 2. 반복문을 돌며 거리 비교
+	for (AActor* Actor : FoundHumans)
+	{
+		AHumanCharacter* Human = Cast<AHumanCharacter>(Actor);
+		if (Human)
+		{
+			// 현재 좀비와 인간 사이의 거리(제곱) 계산
+			// DistSquared가 Dist보다 루트 연산이 없어서 성능이 조금 더 좋습니다.
+			float DistSq = FVector::DistSquared(MyPos, Human->GetActorLocation());
+
+			// 현재까지 찾은 최소 거리보다 더 가깝다면 갱신
+			if (DistSq < MinDistanceSq)
+			{
+				MinDistanceSq = DistSq;
+				NearestHuman = Human;
+			}
+		}
+	}
+
+	return NearestHuman;
 }
 
 void UAiZombieFSM::MoveState()
 {
-	//플레이어가 없으면???
-	//아무처리하지 않는다.
-	if (!IsValid(target))
+	// 1. 예외 처리
+	if (!IsValid(target) || !IsValid(compOwner))
 	{
 		zombieState = EZombieState::Idle;
 		return;
 	}
-	FVector direction = target->GetActorLocation() - compOwner->GetActorLocation();
-	
-	// 루트 a제곱+b제곱+c제곱
-	float distance = direction.Size();
-	
-	direction.Normalize();
-	
-	// compOwner->AddMovementInput(direction);
-	ai->MoveToLocation(target->GetActorLocation());
-	
-	//타겟이 공격범위 안에 들어오면 상태를 공격으로 전환한다.
+
+	// AI Controller Lazy Init
+	if (!IsValid(aiController))
+	{
+		aiController = Cast<AAIController>(compOwner->GetController());
+		if (!IsValid(aiController)) return;
+	}
+    
+	// ----------------------------------------------------------------
+	// [추가된 로직] 주기적으로 더 가까운 타겟이 있는지 확인
+	// ----------------------------------------------------------------
+	ReSearchTimer += GetWorld()->DeltaTimeSeconds;
+    
+	// 설정한 주기(ReSearchRate)가 지났으면 재검색
+	if (ReSearchTimer > ReSearchRate)
+	{
+		ReSearchTimer = 0.0f; // 타이머 초기화
+
+		// 현재 타겟보다 더 가까운 타겟이 있는지 찾음
+		AHumanCharacter* NewTarget = FindNearestTarget();
+
+		// 새로운 타겟이 존재하고, 기존 타겟과 다르다면 교체
+		if (NewTarget && NewTarget != target)
+		{
+			target = NewTarget;
+			// 타겟이 바뀌었으니 이동 명령을 즉시 갱신하기 위해 Stop을 한 번 호출해주는 것도 좋음(선택 사항)
+			// aiController->StopMovement(); 
+		}
+	}
+	// ----------------------------------------------------------------
+
+	// 2. 이동 처리
+	// (매 프레임 호출해도 되지만, MoveToLocation은 내부적으로 최적화되어 있어 괜찮습니다)
+	aiController->MoveToLocation(target->GetActorLocation());
+    
+	// 3. 거리 계산 및 공격 범위 확인
+	// 현재 타겟과의 거리 계산
+	float distance = FVector::Dist(target->GetActorLocation(), compOwner->GetActorLocation());
+    
+	// 타겟이 공격범위 안에 들어오면 상태를 공격으로 전환한다.
 	if (distance < attackRange)
 	{
 		zombieState = EZombieState::Attack;
 		currentTime = attackDelayTime;
+       
+		// 상태가 바뀌면 타이머도 초기화 해주는 습관을 들이면 좋습니다.
+		ReSearchTimer = 0.0f; 
 	}
-	
 }
 
 void UAiZombieFSM::AttackState()
 {
-	if (!IsValid(target))
+	if (!IsValid(target) || !IsValid(compOwner))
 	{
 		zombieState = EZombieState::Idle;
 		return;
@@ -145,6 +238,11 @@ void UAiZombieFSM::AttackState()
 
 void UAiZombieFSM::DamageState()
 {
+	if (!IsValid(compOwner))
+	{
+		return;
+	}
+
 	currentTime += GetWorld()->DeltaTimeSeconds;
 	if (currentTime > damageDelayTime)
 	{
@@ -170,6 +268,11 @@ void UAiZombieFSM::DamageState()
 
 void UAiZombieFSM::DieState()
 {
+	if (!IsValid(compOwner))
+	{
+		return;
+	}
+
 	compOwner->SetActorEnableCollision(false);
 	compOwner->SetActorLocation(compOwner->GetActorLocation() + (-compOwner->GetActorUpVector() * 100 * GetWorld()->GetWorld()->DeltaTimeSeconds));
 	if (compOwner->GetActorLocation().Z < -80)

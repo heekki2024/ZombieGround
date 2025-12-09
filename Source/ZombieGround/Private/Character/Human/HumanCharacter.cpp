@@ -14,6 +14,7 @@
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
 #include "Item/Instance/Weapon/WeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
+#include "Kismet/GameplayStatics.h"
 #include "UI/InGame/Human/HumanHUD.h"
 
 
@@ -132,7 +133,7 @@ float AHumanCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const&
 			}
 		}
 	}
-
+	
 	return ActualDamage;
 }
 

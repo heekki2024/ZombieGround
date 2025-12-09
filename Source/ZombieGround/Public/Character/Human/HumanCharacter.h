@@ -145,6 +145,8 @@ public:
 	
 	UPROPERTY()
 	class UHumanHUD* humanHud;
+	
+
 public:
 	//무기 총 UI 
 	// 2. 방송 송출기 (블루프린트 UI에서 이걸 구독함)
