@@ -115,7 +115,7 @@ void UUQ3CharacterMovementComponent::Q3GroundMove(float DeltaTime)
 	// 점프 처리
 	if (bJumpQueued)
 	{
-		DoJump(false); // 언리얼 기본 점프 함수 호출
+		DoJump(false, DeltaTime); // 언리얼 기본 점프 함수 호출
 		Velocity.Z = Q3JumpForce; // 점프 힘 적용
 		bJumpQueued = false;
 	}

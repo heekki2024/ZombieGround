@@ -19,6 +19,7 @@ public class ZombieGround : ModuleRules
 			"GameplayStateTreeModule",
 			"UMG",
 			"Slate",
+			"SlateCore",
 			"NavigationSystem",
 			"AIModule"
 		});
