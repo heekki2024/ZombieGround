@@ -6,6 +6,7 @@
 #include "Character/Human/HumanCharacter.h"
 #include "UI/InGame/Human/AmmoCounter.h"
 #include "UI/InGame/Human/InventoryWidget.h"
+#include "UI/InGame/Human/StaminaBar.h"
 
 void UHumanHUD::NativeConstruct()
 {
@@ -49,6 +50,31 @@ void UHumanHUD::NativeConstruct()
 				{
 					WBP_Inventory->InitInventory(InventoryComp);
 				}
+			}
+		}
+		
+		
+		if (WBP_StaminaBar)
+		{
+			// 1. 위젯을 소유한 폰(캐릭터) 가져오기
+			APawn* OwningPawn = GetOwningPlayerPawn();
+    
+			// 2. HumanCharacter로 캐스팅
+			AHumanCharacter* Character = Cast<AHumanCharacter>(OwningPawn);
+			if (Character)
+			{
+					// 1. 델리게이트 연결 (캐릭터의 스태미나가 변하면 -> 위젯 함수 실행)
+					// 이미 AddDynamic이 되어 있다면 중복 방지를 위해 Remove 후 Add 하거나, 
+					// BeginPlay는 한 번만 실행되므로 그냥 두셔도 됩니다.
+					if (!Character->OnStaminaChanged.IsAlreadyBound(WBP_StaminaBar, &UStaminaBar::UpdateStaminaBar))
+					{
+						Character->OnStaminaChanged.AddDynamic(WBP_StaminaBar, &UStaminaBar::UpdateStaminaBar);
+					}
+
+					// 2. 초기값 강제 업데이트 (중요!)
+					// 게임 시작 시 델리게이트(변화)가 발생하기 전까지는 게이지가 비어있을 수 있습니다.
+					// 방금 만든 Getter 함수를 이용해 현재 상태로 UI를 1회 갱신합니다.
+					WBP_StaminaBar->UpdateStaminaBar(Character->CurrentStamina, Character->MaxStamina);
 			}
 		}
 	}

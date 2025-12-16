@@ -4,11 +4,14 @@
 #include "Inventory/InventoryComponent.h"
 
 #include "Character/Human/HumanCharacter.h"
+#include "Components/SpotLightComponent.h"
 #include "Item/DataAsset/Ammo/AmmoDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
+#include "Item/Equippable/Flashlight/Flashlight.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
+#include "Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistolActor.h"
 #include "Item/Instance/Ammo/AmmoInstance.h"
-#include "Item/Instance/Weapon/WeaponInstance.h"
+#include "Item/Instance/Weapon/BaseWeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
 #include "Item/Pickup/Ammo/AmmoPickup.h"
 #include "Item/Pickup/Weapon/BaseWeaponPickup.h"
@@ -42,6 +45,36 @@ void UInventoryComponent::BeginPlay()
 	ownerCharacter = Cast<AHumanCharacter>(GetOwner());
 
 	// ...
+
+	// 초기 보조 무기 지급
+	if (StartingSecondaryWeaponDataAsset)
+	{
+		UBaseWeaponInstance* NewWeaponInstance = NewObject<UBaseWeaponInstance>(this);
+		NewWeaponInstance->InitInstance(StartingSecondaryWeaponDataAsset);
+		
+		// [추가] 기본 지급 무기에만 숨겨진 탄약 100발 부여
+		NewWeaponInstance->InternalReserveAmmo = 100;
+		
+		secondaryWeaponSlot = NewWeaponInstance;
+	}
+	EquipSecondaryWeapon();
+	
+	
+	// // 게임 시작 시 플래시 라이트 생성 및 손에 부착
+	if (flashlightClass)
+	{
+        
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = ownerCharacter;
+		
+		currentFlashlight = GetWorld()->SpawnActor<AFlashlight>(flashlightClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
+	
+		if (currentFlashlight)
+		{
+			// Mesh의 소켓 이름(예: "Hand_R_Socket")에 부착
+			currentFlashlight->AttachToComponent(ownerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_l_flashlight"));
+		}
+	}
 	
 }
 
@@ -92,13 +125,13 @@ void UInventoryComponent::AddPrimaryToSlot(class ABaseWeaponPickup* weaponPickup
 	if (!IsValid(primaryWeaponSlot))
 	{
 		// 슬롯이 비어있거나 GC로 삭제됨
-		primaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
+		primaryWeaponSlot = weaponPickup->GetInstance<UBaseWeaponInstance>();
 	}
 	else
 	{
 		DropItemFromSlot(primaryWeaponSlot);
 		// 정상적으로 무기 존재
-		primaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
+		primaryWeaponSlot = weaponPickup->GetInstance<UBaseWeaponInstance>();
 	}
 }
 
@@ -107,13 +140,13 @@ void UInventoryComponent::AddSecondaryToSlot(class ABaseWeaponPickup* weaponPick
 	if (!IsValid(secondaryWeaponSlot))
 	{
 		// 슬롯이 비어있거나 GC로 삭제됨
-		secondaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
+		secondaryWeaponSlot = weaponPickup->GetInstance<UBaseWeaponInstance>();
 	}
 	else
 	{
 		DropItemFromSlot(secondaryWeaponSlot);
 		// 정상적으로 무기 존재
-		secondaryWeaponSlot = weaponPickup->GetInstance<UWeaponInstance>();
+		secondaryWeaponSlot = weaponPickup->GetInstance<UBaseWeaponInstance>();
 	}
 }
 
@@ -292,7 +325,7 @@ void UInventoryComponent::DropItemFromSlot(class UBaseInstance* itemInstance)
 	// 무기가 날아가는 방향으로 머리를 돌리려면 ControlRotation을 넣으세요.
 	FRotator SpawnRotation = ControlRotation; 
 	
-	if (UWeaponInstance* weaponInstance = Cast<UWeaponInstance>(itemInstance))
+	if (UBaseWeaponInstance* weaponInstance = Cast<UBaseWeaponInstance>(itemInstance))
 	{
 		ABaseWeaponPickup* newPickup = GetWorld()->SpawnActor<ABaseWeaponPickup>(
 		weaponInstance->GetItemData<UWeaponDataAsset>()->pickupClass,
@@ -436,6 +469,7 @@ void UInventoryComponent::EquipPrimaryWeapon()
 
 void UInventoryComponent::EquipSecondaryWeapon()
 {
+	
 	if (!IsValid(secondaryWeaponSlot))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: primaryWeapon is invalid"));
@@ -458,12 +492,23 @@ void UInventoryComponent::EquipSecondaryWeapon()
 	SpawnParams.SpawnCollisionHandlingOverride = 
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+	// if (!IsValid(currentFlashlight))
+	// {
+	// 	currentFlashlight = GetWorld()->SpawnActor<AFlashlight>(flashlightClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
+	//
+	// 	if (currentFlashlight)
+	// 	{
+	// 		// Mesh의 소켓 이름(예: "Hand_R_Socket")에 부착
+	// 		currentFlashlight->AttachToComponent(ownerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_l_flashlight"));
+	// 	}
+	// }
+	
 	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
 	FVector SpawnLocation = ownerCharacter->GetActorLocation();
 	FRotator SpawnRotation = ownerCharacter->GetActorRotation();
 
 	// 4. 액터 스폰
-	ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
+	ABasePistolActor* newCurrentWeapon = GetWorld()->SpawnActor<ABasePistolActor>(
 		secondaryWeaponSlot->GetItemData<UWeaponDataAsset>()->actorClass,
 		SpawnLocation,
 		SpawnRotation,
@@ -493,8 +538,9 @@ void UInventoryComponent::EquipMeleeWeapon()
 {
 }
 
-int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToConsume)
+int32 UInventoryComponent::ConsumeItem(int32 amountToConsume)
 {
+	// weaponInstance->GetItemData<UWeaponDataAsset>()->weaponType,
 	if (amountToConsume <= 0) return 0;
 	
 	int32 remainingNeeded = amountToConsume;
@@ -512,7 +558,7 @@ int32 UInventoryComponent::ConsumeItem(EWeaponType weaponType, int32 amountToCon
 		if (UAmmoInstance* ammoInstance = Cast<UAmmoInstance>(slot.itemInstance))
 		{
 			// 2. 캐스팅이 성공(nullptr이 아님)했을 때만 데이터에 접근합니다.
-			if (ammoInstance->GetItemData<UAmmoDataAsset>() && ammoInstance->GetItemData<UAmmoDataAsset>()->ammoType == weaponType)
+			if (ammoInstance->GetItemData<UAmmoDataAsset>() && ammoInstance->GetItemData<UAmmoDataAsset>()->ammoType == Cast<UWeaponDataAsset>(currentWeaponActor->weaponInstance->defaultItemData)->weaponType)
 			{
 				//차감 계산
 				int32 TakeFromSlot = FMath::Min(slot.itemInstance->currentQuantity, remainingNeeded);

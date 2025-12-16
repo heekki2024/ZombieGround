@@ -28,6 +28,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UInventoryWidget* WBP_Inventory;
 	
+	// 실제 생성된 위젯을 담을 포인터
+	UPROPERTY(meta = (BindWidget))
+	class UStaminaBar* WBP_StaminaBar;
+	
+	
 public:
 	// 외부(Character)에서 호출하는 함수
 	void ToggleInventory();

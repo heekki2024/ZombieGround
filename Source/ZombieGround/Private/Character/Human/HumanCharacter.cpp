@@ -6,13 +6,16 @@
 #include "Character/Zombie/ZombieCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Item/DataAsset/BaseDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
+#include "Item/Equippable/Flashlight/Flashlight.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
-#include "Item/Instance/Weapon/WeaponInstance.h"
+#include "Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistolActor.h"
+#include "Item/Instance/Weapon/BaseWeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/InGame/Human/HumanHUD.h"
@@ -54,9 +57,21 @@ void AHumanCharacter::BeginPlay()
 	// Overlap 이벤트 바인딩
 	InteractionCapsule->OnComponentBeginOverlap.AddDynamic(this, &AHumanCharacter::OnInteractableBeginOverlap);
 	InteractionCapsule->OnComponentEndOverlap.AddDynamic(this, &AHumanCharacter::OnInteractableEndOverlap);
-	
 
-	GetCharacterMovement()->MaxWalkSpeed = 400.f;
+	
+	if (!FirstPersonCamera)
+	{
+		// 블루프린트에 추가된 CameraComponent를 찾아 연결합니다.
+		FirstPersonCamera = GetComponentByClass<UCameraComponent>();
+	}
+
+	// 게임 시작 시 기본 FOV 적용
+	if (FirstPersonCamera)
+	{
+		FirstPersonCamera->SetFieldOfView(DefaultFOV);
+	}
+
+	GetCharacterMovement()->MaxWalkSpeed = 350.f;
 	
 	// Enhanced Input Subsystem 활성화
 	if (IsValid(PC))
@@ -74,6 +89,17 @@ void AHumanCharacter::BeginPlay()
 		}
 	}
 	
+	
+	
+	// [추가] 스태미나 초기화
+	CurrentStamina = MaxStamina;
+    
+	// 초기 UI 업데이트 (필요 시)
+	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	
+	
+
+	
 }
 
 // Called every frame
@@ -81,32 +107,13 @@ void AHumanCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	AActor* HitActor = GetCenterScreenInteractable();
-	
-	if(!HitActor)
-	{
-		// 이전에 하이라이트된 액터 끄기
-		if (outLinedInteractable)
-		{
-			SetInteractableOutline(outLinedInteractable, false);
-		}
-		outLinedInteractable = nullptr;
-	}else if (HitActor->Implements<UInteractInterface>())
-	{
 
-		// 이전에 하이라이트된 액터 끄기
-		if (outLinedInteractable && outLinedInteractable != HitActor)
-		{
-			SetInteractableOutline(outLinedInteractable, false);
-		}
+	UpdateInteractableHighlight();
+	UpdateRunSpeed(DeltaTime);
 	
-		// 새로운 액터 하이라이트
-		if (HitActor && HitActor != outLinedInteractable)
-		{
-			SetInteractableOutline(HitActor, true);
-			outLinedInteractable = HitActor;
-		}
-	}
+	
+
+
 }
 
 float AHumanCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
@@ -158,6 +165,10 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_Num2Key, ETriggerEvent::Started, this, &AHumanCharacter::OnNum2KeyPressed);	
 		playerInput->BindAction(IA_Reload, ETriggerEvent::Started, this, &AHumanCharacter::Reload);	
 		playerInput->BindAction(IA_Tab, ETriggerEvent::Started, this, &AHumanCharacter::OnTabPressed);	
+		playerInput->BindAction(IA_Run, ETriggerEvent::Started, this, &AHumanCharacter::StartRun);	
+		playerInput->BindAction(IA_Run, ETriggerEvent::Completed, this, &AHumanCharacter::StopRun);	
+		playerInput->BindAction(IA_Toggle, ETriggerEvent::Started, this, &AHumanCharacter::Toggle);	
+
 	}
 }
 
@@ -192,7 +203,27 @@ void AHumanCharacter::Look(const FInputActionValue& Value)
 
 void AHumanCharacter::JumpAction(const FInputActionValue& Value)
 {
-	Jump();
+	// 1. 현재 스태미나가 점프 비용(30)보다 많은지 확인
+	// (Unreal의 CanJump()는 공중에 있는지 등을 체크하므로, 스태미나 체크를 먼저 함)
+	if (CurrentStamina >= JumpStaminaCost)
+	{
+		// 2. 스태미나 즉시 차감 (30 감소)
+		CurrentStamina -= JumpStaminaCost;
+        
+		// [추가] 스태미나를 썼으니 현재 시간을 기록 (회복 딜레이 리셋)
+		LastStaminaUseTime = GetWorld()->GetTimeSeconds();
+		
+		// 3. UI 업데이트 (중요: 값이 확 변했으니 즉시 알려줌)
+		OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+
+		// 4. 실제 캐릭터 점프 실행
+		Jump();
+	}
+	else
+	{
+		// 스태미나 부족 시 효과음이나 로그 등을 여기에 추가 가능
+		// UE_LOG(LogTemp, Warning, TEXT("Not enough stamina to jump!"));
+	}
 }
 
 void AHumanCharacter::Interact(const FInputActionValue& Value)
@@ -207,6 +238,16 @@ void AHumanCharacter::OnRightClickPressed(const FInputActionValue& Value)
 {	
 	if (inventoryComponent->currentWeaponActor)
 	{
+		// 1. 조준 플래그 켜기
+		bIsAiming = true;
+       
+		// 2. [핵심] 달리고 있었다면 즉시 취소
+		// 플래그를 false로 만들면, 다시 Shift를 눌러서 StartRun을 호출하기 전까지는 걷기 상태가 됨
+		// if (bWantsToSprint)
+		// {
+		// 	bWantsToSprint = false;
+		// }
+
 		inventoryComponent->currentWeaponActor->OnRightClickPressed();
 	}
 }
@@ -215,7 +256,15 @@ void AHumanCharacter::OnRightClickReleased(const FInputActionValue& Value)
 {
 	if (inventoryComponent->currentWeaponActor)
 	{
+		// 1. 조준 플래그 비활성화
+		bIsAiming = false;
+
 		inventoryComponent->currentWeaponActor->OnRightClickReleased();
+	}
+	// [추가] 무기가 없어도 버튼을 떼면 플래그는 꺼주는 게 안전함
+	else 
+	{
+		bIsAiming = false;
 	}
 }
 
@@ -258,12 +307,20 @@ void AHumanCharacter::OnNum2KeyPressed(const FInputActionValue& Value)
 
 void AHumanCharacter::Reload(const FInputActionValue& Value)
 {
-	inventoryComponent->currentWeaponActor->Reload();
+	inventoryComponent->currentWeaponActor->TryReload();
 }
 
 void AHumanCharacter::OnTabPressed(const FInputActionValue& Value)
 {
 	humanHud->ToggleInventory();
+}
+
+void AHumanCharacter::Toggle(const struct FInputActionValue& Value)
+{
+	if (ABasePistolActor* PistolActor = Cast<ABasePistolActor>(inventoryComponent->currentWeaponActor))
+	{
+		inventoryComponent->currentFlashlight->ToggleLight();
+	}
 }
 
 
@@ -374,13 +431,43 @@ void AHumanCharacter::SetInteractableOutline(AActor* interactable, bool bEnable)
 	
 }
 
+void AHumanCharacter::UpdateInteractableHighlight()
+{
+	AActor* HitActor = GetCenterScreenInteractable();
+	
+	if(!HitActor)
+	{
+		// 이전에 하이라이트된 액터 끄기
+		if (outLinedInteractable)
+		{
+			SetInteractableOutline(outLinedInteractable, false);
+		}
+		outLinedInteractable = nullptr;
+	}else if (HitActor->Implements<UInteractInterface>())
+	{
+
+		// 이전에 하이라이트된 액터 끄기
+		if (outLinedInteractable && outLinedInteractable != HitActor)
+		{
+			SetInteractableOutline(outLinedInteractable, false);
+		}
+	
+		// 새로운 액터 하이라이트
+		if (HitActor && HitActor != outLinedInteractable)
+		{
+			SetInteractableOutline(HitActor, true);
+			outLinedInteractable = HitActor;
+		}
+	}
+}
+
 void AHumanCharacter::BroadcastCurrentAmmoUpdate()
 {
 	// 인벤토리나 현재 무기가 유효한지 체크
 	if (inventoryComponent && inventoryComponent->currentWeaponActor)
 	{
 		// 현재 들고 있는 무기의 인스턴스 가져오기
-		UWeaponInstance* currentWeaponInstance = inventoryComponent->currentWeaponActor->weaponInstance;
+		UBaseWeaponInstance* currentWeaponInstance = inventoryComponent->currentWeaponActor->weaponInstance;
 		if (currentWeaponInstance)
 		{
 			// [방송 송출] 현재 탄약과 (최대 탄약 + 보정치)를 보냄
@@ -399,11 +486,17 @@ void AHumanCharacter::BroadcastInventoryAmmoUpdate()
 	if (inventoryComponent && inventoryComponent->currentWeaponActor)
 	{
 		// 현재 들고 있는 무기의 인스턴스 가져오기
-		UWeaponInstance* currentWeaponInstance = inventoryComponent->currentWeaponActor->weaponInstance;
+		UBaseWeaponInstance* currentWeaponInstance = inventoryComponent->currentWeaponActor->weaponInstance;
 		if (currentWeaponInstance)
 		{
-			// [방송 송출] 현재 탄약과 (최대 탄약 + 보정치)를 보냄
-			OnInventoryAmmoChanged.Broadcast(inventoryComponent->GetItemQuantity(Cast<UWeaponDataAsset>(currentWeaponInstance->GetItemData())));
+			// 1. 인벤토리에 있는 탄약 수
+			int32 InventoryAmmo = inventoryComponent->GetItemQuantity(Cast<UWeaponDataAsset>(currentWeaponInstance->GetItemData()));
+			
+			// 2. 무기 내부에 숨겨진 예비 탄약 수
+			int32 InternalAmmo = currentWeaponInstance->InternalReserveAmmo;
+
+			// [방송 송출] 두 값을 합쳐서 보냄 (UI는 이 합계만 알면 됨)
+			OnInventoryAmmoChanged.Broadcast(InventoryAmmo + InternalAmmo);
 			return;
 		}
 	}
@@ -411,5 +504,148 @@ void AHumanCharacter::BroadcastInventoryAmmoUpdate()
 	OnInventoryAmmoChanged.Broadcast(0);
 }
 
+void AHumanCharacter::StartRun(const FInputActionValue& Value)
+{
+	// [수정] 스태미나가 최소 요구량보다 많을 때만 달리기 시작 가능
+	if (CurrentStamina > MinStaminaToRun)
+	{
+		bWantsToSprint = true;
+	}}
+
+void AHumanCharacter::StopRun(const FInputActionValue& Value)
+{
+	bWantsToSprint = false; // 초기화
+
+}
+
+void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
+{
+	float CurrentActualSpeed = GetVelocity().Size2D();
+    float CurrentMaxSpeed = GetCharacterMovement()->MaxWalkSpeed;
+    float CurrentTimeForRun = GetWorld()->GetTimeSeconds();
+    bool bIsStaminaChanged = false; 
+
+    // -------------------------------------------------------
+    // 1. 목표 속도 결정 (우선순위: 조준 > 달리기 > 걷기)
+    // -------------------------------------------------------
+    float TargetMaxSpeed = WalkSpeed; // 350
+
+    if (bIsAiming)
+    {
+        TargetMaxSpeed = AimWalkSpeed; // 250
+    }
+    else if (bWantsToSprint)
+    {
+        TargetMaxSpeed = runSpeed; // 650
+    }
+
+    // -------------------------------------------------------
+    // 2. 가속도(Alpha) 및 속도 적용
+    // -------------------------------------------------------
+    
+    // "달리기를 원하고" AND "조준 중이 아닐 때"만 가속 게이지가 차오름
+    if (bWantsToSprint && !bIsAiming)
+    {
+        // A. 시간 경과에 따른 가속
+        runAlpha += (DeltaTime / runAccelerationTime);
+
+        // B. 벽 충돌 감지 (막히면 가속도 리셋)
+        bool bIsBlocked = (CurrentMaxSpeed > WalkSpeed + 10.0f) && (CurrentActualSpeed < WalkSpeed - 50.0f);
+        if (bIsBlocked)
+        {
+            runAlpha = FMath::FInterpTo(runAlpha, 0.0f, DeltaTime, 10.0f);
+        }
+
+        // C. 속도 적용 (Ease-In)
+        runAlpha = FMath::Clamp(runAlpha, 0.0f, 1.0f);
+        float NewSpeed = FMath::InterpEaseIn(WalkSpeed, runSpeed, runAlpha, runEaseExp);
+        GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+    }
+    else
+    {
+        // [핵심] 걷거나 '조준 중'일 때는 가속도(Alpha)를 0으로 초기화
+        // 이렇게 해야 조준을 풀었을 때 Alpha가 0(속도 350)부터 다시 시작됨!
+        runAlpha = 0.0f;
+        
+        // 조준(250)이나 걷기(350)로 갈 때는 FInterpTo로 빠르게 전환
+        if (!FMath::IsNearlyEqual(CurrentMaxSpeed, TargetMaxSpeed))
+        {
+            float NewSpeed = FMath::FInterpTo(CurrentMaxSpeed, TargetMaxSpeed, DeltaTime, 10.0f);
+            GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+        }
+    }
+
+
+    // -------------------------------------------------------
+    // 3. 스태미나 로직 (조준 중에는 소모 안 함)
+    // -------------------------------------------------------
+    if (bWantsToSprint && !bIsAiming) 
+    {
+        CurrentStamina -= StaminaDrainRate * DeltaTime;
+        LastStaminaUseTime = CurrentTimeForRun;
+        bIsStaminaChanged = true;
+
+        if (CurrentStamina <= 0.0f)
+        {
+            CurrentStamina = 0.0f;
+            // 스태미나 다 닳았을 때만 강제로 달리기 해제
+            bWantsToSprint = false; 
+        }
+    }
+    else
+    {
+        // 회복 로직
+        if (CurrentTimeForRun - LastStaminaUseTime >= StaminaRecoveryDelay)
+        {
+            if (CurrentStamina < MaxStamina)
+            {
+                CurrentStamina += StaminaRegenRate * DeltaTime;
+                if (CurrentStamina > MaxStamina) CurrentStamina = MaxStamina;
+                bIsStaminaChanged = true;
+            }
+        }
+    }
+
+    if (bIsStaminaChanged)
+    {
+        OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+    }
+
+
+    // ----------------------------------------------------------------
+    // 4. FOV 로직 (기존 유지)
+    // ----------------------------------------------------------------
+    if (FirstPersonCamera)
+    {
+        float TargetFOV = DefaultFOV;
+
+        if (bIsAiming)
+        {
+            TargetFOV = AimingFOV;
+        }
+        else 
+        {
+            TargetFOV = FMath::GetMappedRangeValueClamped(
+                FVector2D(WalkSpeed, runSpeed),
+                FVector2D(DefaultFOV, RunFOV),
+                CurrentActualSpeed
+            );
+        }
+
+        float InterpSpeed = bIsAiming ? 15.0f : 10.0f;
+        float NewFOV = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, InterpSpeed);
+        FirstPersonCamera->SetFieldOfView(NewFOV);
+    }
+    
+    // 디버그 (수치 확인용)
+    if (IsLocallyControlled() && GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(
+            -1, 0.0f, FColor::Yellow,
+            FString::Printf(TEXT("Real: %.0f / Max: %.0f / Alpha: %.2f"), 
+            CurrentActualSpeed, GetCharacterMovement()->MaxWalkSpeed, runAlpha)
+        );
+    }
+}
 
 

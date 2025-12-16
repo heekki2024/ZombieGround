@@ -4,14 +4,14 @@
 #include "Item/Pickup/Weapon/BaseWeaponPickup.h"
 
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
-#include "Item/Instance/Weapon/WeaponInstance.h"
+#include "Item/Instance/Weapon/BaseWeaponInstance.h"
 // Sets default values
 ABaseWeaponPickup::ABaseWeaponPickup()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	instance = CreateDefaultSubobject<UWeaponInstance>(TEXT("WeaponInstance"));
+	instance = CreateDefaultSubobject<UBaseWeaponInstance>(TEXT("WeaponInstance"));
 	
 }
 
@@ -36,7 +36,7 @@ void ABaseWeaponPickup::InitPickup(class UBaseDataAsset* initData)
 	meshComp->SetStaticMesh(initData->pickupMesh);
 }
 
-void ABaseWeaponPickup::LoadWeaponInstance(class UWeaponInstance* updatedWeaponInstance)
+void ABaseWeaponPickup::LoadWeaponInstance(class UBaseWeaponInstance* updatedWeaponInstance)
 {
 	instance = updatedWeaponInstance;
 	meshComp->SetStaticMesh(instance->pickupMesh);

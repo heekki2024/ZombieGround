@@ -22,6 +22,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+protected:
+	// 액터가 파괴되거나 게임에서 제거될 때 호출되는 함수
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -33,13 +36,15 @@ public:
 	// 1. Components
 	// =================================================================
     
-public://카메라 셰이크
+public:
+	
+	class AHumanCharacter* ownerCharacter;
+	
+	//카메라 셰이크
 	UPROPERTY(BlueprintReadOnly)
 	TSubclassOf<class UCameraShakeBase> fireCameraShake;
 	
-	// 총기 본체 (애니메이션 재생을 위해 스켈레탈 메쉬 사용)
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	class USkeletalMeshComponent* weaponMesh;
+
 
 	// =================================================================
 	// 2. State (데이터 연결)
@@ -47,9 +52,10 @@ public://카메라 셰이크
 
 	// 이 무기의 현재 상태 (탄약, 부착물 목록 등) - 인벤토리에서 넘어옴
 	UPROPERTY(BlueprintReadOnly, Category = "State")
-	class UWeaponInstance* weaponInstance;
+	class UBaseWeaponInstance* weaponInstance;
 
-
+	UPROPERTY(BlueprintReadOnly)
+	class UInventoryComponent* inventoryComponent;
 	
 	// 현재 생성된 부착물 액터들을 관리하는 배열 (파괴 시 같이 없애기 위해)
 	UPROPERTY()
@@ -68,6 +74,21 @@ protected:
 
 	//칼 타입만
 	
+	//장전
+protected:
+	
+	// [추가] 장전 타이머 핸들
+	FTimerHandle ReloadTimerHandle;
+
+
+
+public:
+	UFUNCTION()
+	void TryReload();
+	
+	// [추가] 실제 장전 로직 (3초 뒤에 실행될 함수)
+	void FinishReload();
+	
 public:
 	
 	bool bIsRightClicking = false;
@@ -78,7 +99,7 @@ public:
 	// =================================================================
 
 	// [핵심] 인벤토리 데이터(Instance)를 기반으로 무기 초기화 (메쉬 변경, 부착물 장착)
-	virtual void LoadWeaponInstance(class UWeaponInstance* updatedInstance);
+	virtual void LoadWeaponInstance(class UBaseWeaponInstance* updatedInstance);
 	
 	UPROPERTY(EditAnywhere)
 	class TSubclassOf<class ABasePickup> pickupClass;
@@ -97,6 +118,5 @@ public:
 	UFUNCTION()
 	void Fire();
 	
-	UFUNCTION()
-	void Reload();
+
 };

@@ -7,7 +7,7 @@
 #include "Inventory/InventoryComponent.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/Projectile/BaseProjectile.h"
-#include "Item/Instance/Weapon/WeaponInstance.h"
+#include "Item/Instance/Weapon/BaseWeaponInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -19,11 +19,11 @@ ABaseWeaponActor::ABaseWeaponActor()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	// 루트 컴포넌트 없이 스켈레탈 메쉬를 루트로 씁니다.
-	weaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	RootComponent = weaponMesh;
+	mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	RootComponent = mesh;
 
 	// 무기는 캐릭터가 손에 들고 다니므로 물리 충돌은 보통 끕니다.
-	weaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	mesh->SetCollisionProfileName(TEXT("NoCollision"));
 	
 	static ConstructorHelpers::FClassFinder<UCameraShakeBase> tempCS
 	(TEXT("/Game/Characters/Human/Blueprints/miscellaneous/BP_FireCameraShake.BP_FireCameraShake_C"));
@@ -39,8 +39,11 @@ void ABaseWeaponActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
+	
 	// 1. 이 위젯을 소유한 플레이어 캐릭터를 가져옴
-	AHumanCharacter* ownerCharacter = Cast<AHumanCharacter>(GetOwner());
+	ownerCharacter = Cast<AHumanCharacter>(GetOwner());
+	inventoryComponent = ownerCharacter->inventoryComponent;
 
 	if (ownerCharacter)
 	{
@@ -51,6 +54,43 @@ void ABaseWeaponActor::BeginPlay()
 	}
 }
 
+void ABaseWeaponActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	// 1. 돌아가고 있던 장전 타이머 강제 종료
+	// 액터가 사라지는데 타이머가 남아서 함수를 호출하려고 하면 크래시가 날 수 있음
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+	}
+
+	// 2. WeaponInstance의 장전 중 상태 해제
+	// (액터는 사라져도 인스턴스 데이터는 인벤토리에 남아있을 수 있으므로 중요)
+	if (weaponInstance)
+	{
+		weaponInstance->bIsReloading = false;
+	}
+
+	if (ownerCharacter)
+	{
+		USkeletalMeshComponent* CharacterMesh = ownerCharacter->FindComponentByClass<USkeletalMeshComponent>();
+		// 현재 재생 중인 몽타주가 리로드 몽타주라면 즉시 정지 (블렌드 아웃 시간 0.2초)
+		
+		// CharacterMesh->GetAnimInstance()->Montage_Stop(0.0f, ReloadMontage);
+		if (CharacterMesh)
+		{
+			UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+			if (AnimInstance)
+			{
+				AnimInstance->Montage_Stop(0.0f, nullptr);
+			}
+		}
+	}
+	
+	UE_LOG(LogTemp, Log, TEXT("WeaponActor Destroyed: Reload Cancelled & Cleaned up."));
+}
+
 // Called every frame
 void ABaseWeaponActor::Tick(float DeltaTime)
 {
@@ -58,14 +98,15 @@ void ABaseWeaponActor::Tick(float DeltaTime)
 }
 
 
-void ABaseWeaponActor::LoadWeaponInstance(class UWeaponInstance* updatedInstance)
+
+void ABaseWeaponActor::LoadWeaponInstance(class UBaseWeaponInstance* updatedInstance)
 {
 	weaponInstance = updatedInstance;
 	
 	// 2. [데이터 주도] 데이터 에셋에 있는 Mesh를 내 몸에 입힘
 	if (weaponInstance->actorMesh)
 	{
-		weaponMesh->SetSkeletalMesh(weaponInstance->actorMesh);
+		mesh->SetSkeletalMesh(weaponInstance->actorMesh);
 	}
 	// 3. 부착물 생성 및 부착
 	UpdateAttachments();
@@ -107,6 +148,8 @@ void ABaseWeaponActor::UpdateAttachments()
 
 void ABaseWeaponActor::OnLeftClickPressed()
 {
+	if(weaponInstance->bIsReloading == true) return;
+	
 	if (bIsRightClicking == true)
 	{
 		if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Primary || 
@@ -208,8 +251,8 @@ void ABaseWeaponActor::Fire()
 	// -------------------------------
 	// 2) 총구 위치 가져오기 (Muzzle 소켓)
 	// -------------------------------
-	if (!weaponMesh) return;
-	FVector MuzzleLocation = weaponMesh->GetSocketLocation(TEXT("MuzzleFlash"));
+	if (!mesh) return;
+	FVector MuzzleLocation = mesh->GetSocketLocation(TEXT("MuzzleFlash"));
 
 	// -------------------------------
 	// 3) Projectile 생성
@@ -233,7 +276,7 @@ void ABaseWeaponActor::Fire()
 	// -------------------------------
 	if (weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim)
 	{
-		weaponMesh->PlayAnimation(weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim, false);
+		mesh->PlayAnimation(weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim, false);
 	}
 	
 	// -------------------------------
@@ -285,43 +328,179 @@ void ABaseWeaponActor::Fire()
 	
 }
 
-void ABaseWeaponActor::Reload()
+// void ABaseWeaponActor::Reload()
+//
+// {
+//
+// 	if (!weaponInstance || !weaponInstance->GetItemData<UWeaponDataAsset>()) return;
+//
+//
+// 	// UWeaponDataAsset* defaultWeaponData = weaponInstance->defaultWeaponData;
+//
+//
+// 	//이미 탄창이 꽉 찼으면 리턴
+//
+// 	if (weaponInstance->currentAmmo >= weaponInstance->maxAmmo) return;
+//
+//
+// 	//필요한 탄약 수 계산
+//
+// 	int32 AmmoNeeded = weaponInstance->maxAmmo - weaponInstance->currentAmmo;
+//
+//
+// 	//오너의 인벤토리 컴포넌트 가져오기
+//
+// 	AActor* MyOwner = GetOwner();
+//
+// 	if (!MyOwner) return;
+//
+//
+// 	//AHumanCharacter로 캐스팅하거나 Interface를 사용하는 것이 좋음
+//
+// 	AHumanCharacter* ownerCharacter = Cast<AHumanCharacter>(MyOwner);
+//
+// 	inventoryComponent = ownerCharacter->inventoryComponent;
+//
+//
+// 	//인벤토리에 탄약 소비 요청
+//
+// 	int32 AmmoConsumed = inventoryComponent->ConsumeItem(AmmoNeeded);
+//
+// 	//무기 탄창 채우기
+//
+// 	if (AmmoConsumed > 0)
+//
+// 	{
+//
+// 		weaponInstance->currentAmmo += AmmoConsumed;
+//
+// 		if (AHumanCharacter* Human = Cast<AHumanCharacter>(GetOwner()))
+//
+// 		{
+//
+// 			// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
+//
+// 			ownerCharacter->BroadcastCurrentAmmoUpdate();
+//
+// 			ownerCharacter->BroadcastInventoryAmmoUpdate();
+//
+// 		}
+//
+// 		UE_LOG(LogTemp, Log, TEXT("Reloaded! Current Ammo: %d"), weaponInstance->currentAmmo);
+//
+// 	}
+//
+// 	else
+//
+// 	{
+//
+// 		UE_LOG(LogTemp, Warning, TEXT("No Ammo in Inventory!"));
+//
+// 	}
+//
+// }
+void ABaseWeaponActor::TryReload()
 {
 	if (!weaponInstance || !weaponInstance->GetItemData<UWeaponDataAsset>()) return;
-	
-	// UWeaponDataAsset* defaultWeaponData = weaponInstance->defaultWeaponData;
 	
 	//이미 탄창이 꽉 찼으면 리턴
 	if (weaponInstance->currentAmmo >= weaponInstance->maxAmmo) return;
 	
-	//필요한 탄약 수 계산
-	int32 AmmoNeeded = weaponInstance->maxAmmo - weaponInstance->currentAmmo;
-	
-	//오너의 인벤토리 컴포넌트 가져오기
-	AActor* MyOwner = GetOwner();
-	if (!MyOwner) return;
-	
-	//AHumanCharacter로 캐스팅하거나 Interface를 사용하는 것이 좋음
-	AHumanCharacter* ownerCharacter = Cast<AHumanCharacter>(MyOwner);
-	UInventoryComponent* inventoryComponent = ownerCharacter->inventoryComponent;
-	
-	//인벤토리에 탄약 소비 요청
-	int32 AmmoConsumed = inventoryComponent->ConsumeItem(weaponInstance->GetItemData<UWeaponDataAsset>()->weaponType, AmmoNeeded);
-	//무기 탄창 채우기
-	if (AmmoConsumed > 0)
+	// [수정] 인벤토리 탄약 OR 내부 예비 탄약 둘 중 하나라도 있어야 장전 시도
+	bool bHasInventoryAmmo = inventoryComponent->GetItemQuantity(weaponInstance->GetItemData<UWeaponDataAsset>()) > 0;
+	bool bHasInternalAmmo = weaponInstance->InternalReserveAmmo > 0;
+
+	if (!bHasInventoryAmmo && !bHasInternalAmmo)
 	{
-		weaponInstance->currentAmmo += AmmoConsumed;
-		if (AHumanCharacter* Human = Cast<AHumanCharacter>(GetOwner()))
-		{
-			// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
-			ownerCharacter->BroadcastCurrentAmmoUpdate();
-			ownerCharacter->BroadcastInventoryAmmoUpdate(); 
-		}
-		UE_LOG(LogTemp, Log, TEXT("Reloaded! Current Ammo: %d"), weaponInstance->currentAmmo);
+		// 둘 다 없으면 장전 불가 (빈 소리 재생 등 가능)
+		return;
+	}
+	
+	UWeaponDataAsset* WeaponDA = weaponInstance->GetItemData<UWeaponDataAsset>();
+	float reloadDuration = WeaponDA->weaponStats.reloadDuration;
+	weaponInstance->bIsReloading = true;
+	// 2. 애니메이션 재생 및 속도 자동 조절
+	UAnimMontage* reloadMontage = WeaponDA->playerAnimData.ReloadMontage;
+	float MontageLength = reloadMontage->GetPlayLength();
+	
+	// B. 3초 안에 끝내기 위한 배속 계산
+	// 공식: (원본 길이 4.5초) / (목표 시간 3.0초) = 1.5배속
+	float PlayRate = 1.0f;
+	if (reloadDuration > 0.0f)
+	{
+		PlayRate = MontageLength / reloadDuration;
+	}
+	// C. 계산된 배속으로 재생 (두 번째 인자에 PlayRate 전달)
+	USkeletalMeshComponent* CharacterMesh = ownerCharacter->FindComponentByClass<USkeletalMeshComponent>();
+	CharacterMesh->GetAnimInstance()->Montage_Play(reloadMontage, PlayRate);
+            
+	UE_LOG(LogTemp, Log, TEXT("Reload Anim Speed: x%.2f (Original: %.2fs -> Target: %.2fs)"), PlayRate, MontageLength, reloadDuration);
+	
+	UE_LOG(LogTemp, Log, TEXT("Reload Started... (Wait 3s)"));
+	// 3. 타이머 설정 (정확히 목표 시간 뒤에 완료)
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ABaseWeaponActor::FinishReload, reloadDuration, false);
+	// (총기 자체 애니메이션 - 탄창 빠지는 모션 등)
+	// if (SomeGunReloadAnim) { ... }
+	// 3. 타이머 설정 (3초 뒤에 FinishReload 호출)
+	// 3.0f 대신 데이터 에셋에 있는 ReloadTime 변수를 쓰면 더 좋음
+}
+
+void ABaseWeaponActor::FinishReload()
+{
+	// 장전 상태 해제
+	if (weaponInstance)
+	{
+		weaponInstance->bIsReloading = false;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No Ammo in Inventory!"));
+		return;
+	}
+	
+	//필요한 탄약 수 계산
+	int32 AmmoNeeded = weaponInstance->maxAmmo - weaponInstance->currentAmmo;
+	int32 TotalAmmoConsumed = 0;
+
+	// [추가] 1. 내부 예비 탄약(보이지 않는 탄약) 먼저 소모
+	if (weaponInstance->InternalReserveAmmo > 0)
+	{
+		int32 TakeFromInternal = FMath::Min(weaponInstance->InternalReserveAmmo, AmmoNeeded);
+		weaponInstance->InternalReserveAmmo -= TakeFromInternal;
+		TotalAmmoConsumed += TakeFromInternal;
+		AmmoNeeded -= TakeFromInternal; // 남은 필요량 갱신
+
+		UE_LOG(LogTemp, Log, TEXT("Reloaded from Internal Ammo. Used: %d, Remaining: %d"), TakeFromInternal, weaponInstance->InternalReserveAmmo);
+	}
+
+	// [수정] 2. 아직 부족하면 인벤토리에서 소모
+	if (AmmoNeeded > 0)
+	{
+		// tryReload 중 탄약을 버렸을경우 체크. (단, 내부 탄약이 있었다면 인벤토리에 없어도 장전은 성공해야 함)
+		// 따라서 인벤토리에 탄약이 있는지 체크하는 건 '내부 탄약도 없고 인벤토리 탄약도 없을 때'만 의미가 있음.
+		
+		inventoryComponent = ownerCharacter->inventoryComponent;
+		if (inventoryComponent)
+		{
+			// 인벤토리에 탄약 소비 요청
+			int32 InventoryConsumed = inventoryComponent->ConsumeItem(AmmoNeeded);
+			TotalAmmoConsumed += InventoryConsumed;
+		}
+	}
+
+	// 3. 최종적으로 무기 탄창 채우기
+	if (TotalAmmoConsumed > 0)
+	{
+		weaponInstance->currentAmmo += TotalAmmoConsumed;
+		
+		// 델리게이트 호출 -> UI 갱신
+		ownerCharacter->BroadcastCurrentAmmoUpdate();
+		ownerCharacter->BroadcastInventoryAmmoUpdate();
+		
+		UE_LOG(LogTemp, Log, TEXT("Reloaded Complete! Current Ammo: %d"), weaponInstance->currentAmmo);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reload Failed: No Ammo Available (Internal or Inventory)"));
 	}
 }
 

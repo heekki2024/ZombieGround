@@ -80,6 +80,10 @@ public:
 	
 public:
 	const int32 MaxItemSlots = 10;
+
+	// 게임 시작 시 지급할 보조 무기 데이터
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Starting Item")
+	class UWeaponDataAsset* StartingSecondaryWeaponDataAsset;
 	
 public:
 	
@@ -89,15 +93,15 @@ public:
 
 	/** 주무기 슬롯 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UWeaponInstance* primaryWeaponSlot;
+	class UBaseWeaponInstance* primaryWeaponSlot;
 
 	/** 보조무기 슬롯 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UWeaponInstance* secondaryWeaponSlot;
+	class UBaseWeaponInstance* secondaryWeaponSlot;
 	
 	/** 근접무기 슬롯 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UWeaponInstance* meleeWeaponSlot;
+	class UBaseWeaponInstance* meleeWeaponSlot;
 
 	/** 아이템 슬롯 8개 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -144,7 +148,7 @@ public:
 
 	
 	// 탄약(TargetItemData)을 AmountToConsume만큼 찾아서 제거하고, 실제로 제거한 양을 반환
-	int32 ConsumeItem(EWeaponType weaponType, int32 amountToConsume);
+	int32 ConsumeItem(int32 amountToConsume);
     
 	// 현재 인벤토리에 해당 아이템이 총 몇 개 있는지 확인 (UI 표시용 등)
 	UFUNCTION()
@@ -159,5 +163,22 @@ public:
 	
 
 
+	// 플래시 라이트 클래스 저장용 변수 (에디터에서 BP_Flashlight 지정)
+	UPROPERTY(EditAnywhere, Category = "Equipment")
+	TSubclassOf<class AFlashlight> flashlightClass;
+	
+	// 실제 생성된 플래시 라이트 객체
+	UPROPERTY()
+	class AFlashlight* currentFlashlight;
+	
+public:
+	// 빛을 쏘는 컴포넌트
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class USpotLightComponent* lightCone;
+	
 
+	
+	// 켜고 끌 때 재생할 효과음 (에디터에서 할당)
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	class USoundBase* toggleSound;
 };

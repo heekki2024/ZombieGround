@@ -45,7 +45,7 @@ public:
 	bool bHasCurrentWeapon;	
 	
 	UPROPERTY(BlueprintReadOnly, meta = (BlueprintThreadSafe))
-	class UWeaponInstance* currentWeaponInstance;
+	class UBaseWeaponInstance* currentWeaponInstance;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bAttackPlay = false;

@@ -33,5 +33,5 @@ public:
 	
 	
 	UFUNCTION(BlueprintCallable)
-	void LoadWeaponInstance(class UWeaponInstance* updatedWeaponInstance);
+	void LoadWeaponInstance(class UBaseWeaponInstance* updatedWeaponInstance);
 };
