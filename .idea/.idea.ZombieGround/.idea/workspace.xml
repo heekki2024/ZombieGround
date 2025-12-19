@@ -13,58 +13,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4f3ddc7-86d1-42a1-bb7c-fedf326fe68d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistolActor.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/UI/InGame/Human/StaminaBar.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistolActor.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/UI/InGame/Human/StaminaBar.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_Idle_Pistol.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_Idle_Pistol.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_LowReady_Pistol.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_LowReady_Pistol.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/AI_Zombie/Blueprints/BP_AI_Zombie.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/AI_Zombie/Blueprints/BP_AI_Zombie.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_Idle_Rifle_IronSight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/AnimStarterPack/UE5_SKM_Manny_Simple/UE5_Idle_Rifle_IronSight.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/ABP_HumanAnim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/ABP_HumanAnim.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/BS_UnarmedWalk.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/AO_ADS.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/BS_ADS_Walk.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/BS_ADS_Walk.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/BS_Lowready_Walk.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/BS_Lowready_Walk.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/BP_Human.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/BP_Human.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Lvl_DemoTestLevel.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Lvl_DemoTestLevel.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Anims/Pistol/Aim/AO_Pistol.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Anims/Pistol/Aim/AO_Pistol.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Anims/Pistol/Aim/MF_Pistol_Idle_ADS1.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Anims/Rifle/AIM/AO_Rifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Anims/Rifle/AIM/AO_Rifle.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Anims/Unarmed/ABP_Unarmed.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Anims/Unarmed/ABP_Unarmed.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Quinn_Simple.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SKM_Quinn_Simple.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SK_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Mannequins/Meshes/SK_Mannequin.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Pistol_A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Pistol_A.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Rifle_A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Rifle_A.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Sniper_Rifle_A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Sniper_Rifle_A.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/MilitaryWeapSilver/Weapons/Pistols_A_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/MilitaryWeapSilver/Weapons/Pistols_A_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_ThirdPersonGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ThirdPerson/Blueprints/BP_ThirdPersonGameMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/InGame/Human/WBP_HumanHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/InGame/Human/WBP_HumanHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ZombieMale_AAB/Blueprints/ThirdPersonBP/BP_ZombieGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ZombieMale_AAB/Blueprints/ThirdPersonBP/BP_ZombieGameMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/HS/2J9RXN36O160A6L9U7C2GD.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/VQ/B3OU9PSS3SH5JZBDOE4NJX.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/8B/XX2O5ZZ75I97QMQZTD60VS.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/Y0/KTNF8DPHT90BCWL30RORAW.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/Y0/KTNF8DPHT90BCWL30RORAW.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/SW/91WGPKZ8DPORFWCTLJSKZA.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/XM/90UHRQIOIIUOY63X3LWE0A.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/GU/XQ8N554ZWLNLAHWBVYKYXG.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/7/J7/4ND5ROGMPBOW5N2JYKB4V3.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/7/J7/4ND5ROGMPBOW5N2JYKB4V3.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/F/4G/TYFCMQ9MC435YW6FZBF5FS.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/F/4G/TYFCMQ9MC435YW6FZBF5FS.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/HV/IN4GMC8F97RE32WD5CM1UW.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/HV/IN4GMC8F97RE32WD5CM1UW.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/PI/PFLP1V1OID7PWE3676VS1S.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/PI/PFLP1V1OID7PWE3676VS1S.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanAnimInstance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Inventory/InventoryComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Inventory/InventoryComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/BaseEquippable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/BaseEquippable.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistol.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Flashlight/Flashlight.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Instance/Weapon/WeaponInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Instance/Weapon/BaseWeaponInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Pickup/Weapon/BaseWeaponPickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Pickup/Weapon/BaseWeaponPickup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/UI/InGame/Human/HumanHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/UI/InGame/Human/HumanHUD.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanAnimInstance.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieAnimInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Inventory/InventoryComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Inventory/InventoryComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/DataAsset/Weapon/WeaponDataAsset.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/DataAsset/Weapon/WeaponDataAsset.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/BaseEquippable.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/BaseEquippable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistol.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Flashlight/Flashlight.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Instance/Weapon/WeaponInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Instance/Weapon/BaseWeaponInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Pickup/Weapon/BaseWeaponPickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Pickup/Weapon/BaseWeaponPickup.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/UI/InGame/Human/HumanHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/UI/InGame/Human/HumanHUD.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -480,7 +450,7 @@
       <workItem from="1765499353848" duration="22855000" />
       <workItem from="1765606850618" duration="2609000" />
       <workItem from="1765709500655" duration="4302000" />
-      <workItem from="1765777706323" duration="35372000" />
+      <workItem from="1765777706323" duration="61416000" />
     </task>
     <servers />
   </component>

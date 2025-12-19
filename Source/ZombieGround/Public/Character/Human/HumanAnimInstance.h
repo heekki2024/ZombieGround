@@ -21,7 +21,7 @@ public:
 	
 public:
 	//Animation 소유 Pawn
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class AHumanCharacter* humanCharacter;
 	
 	// //이동 속도
@@ -56,6 +56,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation")
 	FPlayerAnimData defaultPlayerAnimData;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float deltaYaw;
 	
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float deltaPitch;
 };

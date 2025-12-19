@@ -82,8 +82,11 @@ struct FPlayerAnimData
 	GENERATED_BODY()
     
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimSequence* AimDownSight; // 줌 상태 포즈
-    
+	class UBlendSpace* AO_ADS;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequence* AO_ADS_BasePose; // 위/아래 조준
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimSequence* LowReady; // 평상시 포즈 (Idle)
     
@@ -99,8 +102,7 @@ struct FPlayerAnimData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* FireMontage; // 발사
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UBlendSpace* AimOffset; // 위/아래 조준
+
 	
 	
 };

@@ -31,7 +31,6 @@ ABaseWeaponActor::ABaseWeaponActor()
 	{
 		fireCameraShake = tempCS.Class;
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -59,29 +58,27 @@ void ABaseWeaponActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 	
 	// 1. 돌아가고 있던 장전 타이머 강제 종료
-	// 액터가 사라지는데 타이머가 남아서 함수를 호출하려고 하면 크래시가 날 수 있음
 	if (GetWorld())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
 	}
 
 	// 2. WeaponInstance의 장전 중 상태 해제
-	// (액터는 사라져도 인스턴스 데이터는 인벤토리에 남아있을 수 있으므로 중요)
-	if (weaponInstance)
+	// IsValid를 사용하여 GC된 객체에 접근하는 것을 방지
+	if (IsValid(weaponInstance))
 	{
 		weaponInstance->bIsReloading = false;
 	}
 
-	if (ownerCharacter)
+	// 3. 캐릭터 애니메이션 정리
+	if (IsValid(ownerCharacter))
 	{
 		USkeletalMeshComponent* CharacterMesh = ownerCharacter->FindComponentByClass<USkeletalMeshComponent>();
-		// 현재 재생 중인 몽타주가 리로드 몽타주라면 즉시 정지 (블렌드 아웃 시간 0.2초)
 		
-		// CharacterMesh->GetAnimInstance()->Montage_Stop(0.0f, ReloadMontage);
-		if (CharacterMesh)
+		if (IsValid(CharacterMesh))
 		{
 			UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
-			if (AnimInstance)
+			if (IsValid(AnimInstance))
 			{
 				AnimInstance->Montage_Stop(0.0f, nullptr);
 			}

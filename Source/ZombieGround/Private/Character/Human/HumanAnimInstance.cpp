@@ -8,6 +8,7 @@
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
 #include "Item/Instance/Weapon/BaseWeaponInstance.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UHumanAnimInstance::NativeInitializeAnimation()
 {
@@ -65,5 +66,24 @@ void UHumanAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		playerAnimData = defaultPlayerAnimData;
 	}
+	
+	
+	FRotator ctrlRot = humanCharacter->GetControlRotation();
+	FRotator actorRot = humanCharacter->GetActorRotation();
+	FRotator deltaRot = UKismetMathLibrary::NormalizedDeltaRotator(ctrlRot, actorRot);
+	
+	
+	float TempDeltaPitch = deltaRot.Pitch;
+	
+	if (TempDeltaPitch > 180.0f)
+	{
+		deltaPitch = (360.0f - deltaPitch) * - 1;
+	}
+	else
+	{
+		deltaPitch = TempDeltaPitch;
+	}
+	
+	deltaYaw = ctrlRot.Pitch;
 	
 }

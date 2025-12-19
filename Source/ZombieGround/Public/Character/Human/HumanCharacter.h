@@ -41,7 +41,9 @@ public:
 	
 
 protected:
-	// ... 기존 변수들 ...
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USpringArmComponent* springArmComponent;
+	
 
 	// Ease-In 곡선의 휘어짐 정도 (기본값 2.0)
 	// 1.0 = 직선(선형), 2.0 = 제곱(부드러움), 3.0~ = 급격한 변화
@@ -264,7 +266,7 @@ protected:
 
 	// [추가] 조준 FOV (줌 인) - 숫자가 작을수록 확대됩니다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
-	float AimingFOV = 70.0f; 
+	float AimingFOV = 75.0f; 
 
 	// [추가] 조준 상태 플래그
 	bool bIsAiming = false;

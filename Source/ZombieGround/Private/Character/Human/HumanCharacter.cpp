@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Item/DataAsset/BaseDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
@@ -26,6 +27,20 @@ AHumanCharacter::AHumanCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	springArmComponent = CreateDefaultSubobject<USpringArmComponent>(FName("SpringArm"));
+	springArmComponent->TargetArmLength = 0.f;
+	springArmComponent->bUsePawnControlRotation = true;
+	springArmComponent->bInheritPitch = true;
+	springArmComponent->bInheritYaw = true;
+	springArmComponent->bInheritRoll = false;
+	springArmComponent->bDoCollisionTest = false;
+	springArmComponent->SetupAttachment(GetRootComponent());
+	
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(FName("Camera"));
+	FirstPersonCamera->SetupAttachment(springArmComponent, FName("camera"));
+	FirstPersonCamera->SetFieldOfView(DefaultFOV);
+
 	
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 	
@@ -59,17 +74,17 @@ void AHumanCharacter::BeginPlay()
 	InteractionCapsule->OnComponentEndOverlap.AddDynamic(this, &AHumanCharacter::OnInteractableEndOverlap);
 
 	
-	if (!FirstPersonCamera)
-	{
-		// 블루프린트에 추가된 CameraComponent를 찾아 연결합니다.
-		FirstPersonCamera = GetComponentByClass<UCameraComponent>();
-	}
+	// if (!FirstPersonCamera)
+	// {
+	// 	// 블루프린트에 추가된 CameraComponent를 찾아 연결합니다.
+	// 	FirstPersonCamera = GetComponentByClass<UCameraComponent>();
+	// }
 
 	// 게임 시작 시 기본 FOV 적용
-	if (FirstPersonCamera)
-	{
-		FirstPersonCamera->SetFieldOfView(DefaultFOV);
-	}
+	// if (FirstPersonCamera)
+	// {
+	// 	FirstPersonCamera->SetFieldOfView(DefaultFOV);
+	// }
 
 	GetCharacterMovement()->MaxWalkSpeed = 350.f;
 	
@@ -110,10 +125,6 @@ void AHumanCharacter::Tick(float DeltaTime)
 
 	UpdateInteractableHighlight();
 	UpdateRunSpeed(DeltaTime);
-	
-	
-
-
 }
 
 float AHumanCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
@@ -455,6 +466,7 @@ void AHumanCharacter::UpdateInteractableHighlight()
 		// 새로운 액터 하이라이트
 		if (HitActor && HitActor != outLinedInteractable)
 		{
+			SetInteractableOutline(HitActor, true);
 			SetInteractableOutline(HitActor, true);
 			outLinedInteractable = HitActor;
 		}
