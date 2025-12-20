@@ -24,9 +24,16 @@ public:
 	// 카운트다운 종료 시 실행될 함수
 	void PickRandomHuman();
 	
+	
 	// 변신시킬 좀비 클래스 (에디터에서 할당)
 	UPROPERTY(EditDefaultsOnly, Category = "GameRule")
-	TSubclassOf<class AAiZombie> AiZombieClass;
+	TSubclassOf<class AZombieCharacter> ZombieClassToSpawn;
+	
+	
+	// 변신시킬 Ai좀비 클래스 (에디터에서 할당)
+	UPROPERTY(EditDefaultsOnly, Category = "GameRule")
+	TSubclassOf<class AAiZombie> AIZombieClassToSpawn;
+	
 	
 	// 감염까지 남은 시간
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameRule")

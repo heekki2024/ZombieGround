@@ -65,7 +65,13 @@ struct FWeaponStats
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float reloadDuration = 3.0f;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ADSWalkSpeed = 350.f;
+	
+	
+	
+	
 	// UPROPERTY(EditAnywhere, Category = "Ammo")
 	// int32 magazineCapacity; // 탄창 용량 (예: 30발)
 	

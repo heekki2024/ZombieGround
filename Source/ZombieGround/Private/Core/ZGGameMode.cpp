@@ -5,6 +5,7 @@
 
 #include "Character/AiZombie/AiZombie.h"
 #include "Character/Human/HumanCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void AZGGameMode::BeginPlay()
@@ -47,59 +48,74 @@ void AZGGameMode::PickRandomHuman()
 	if (HumanActors.Num() == 0) return;
 	
 	int32 RandomIndex = FMath::RandRange(0, HumanActors.Num() - 1);
-	AHumanCharacter* SelectedHuman = Cast<AHumanCharacter>(HumanActors[RandomIndex]);
-    
-	if (!SelectedHuman || !AiZombieClass) return;
-
-	// 기존 컨트롤러 가져오기
-	AController* OldController = SelectedHuman->GetController();
-    
-	// 위치값 저장
-	FVector SpawnLoc = SelectedHuman->GetActorLocation();
-	FRotator SpawnRot = SelectedHuman->GetActorRotation();
-    
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	// 좀비 스폰
-	AZombieCharacter* NewZombie = GetWorld()->SpawnActor<AZombieCharacter>(AiZombieClass, SpawnLoc, SpawnRot, SpawnParams);
-
-	if (NewZombie)
-	{
-		// === [핵심 수정 부분] ===
-        
-		// 1. 플레이어인 경우: 컨트롤러를 그대로 유지 (화면 전환)
-		if (OldController && OldController->IsPlayerController())
-		{
-			OldController->Possess(NewZombie);
-			UE_LOG(LogTemp, Warning, TEXT("Player turned into Zombie!"));
-		}
-		// 2. AI인 경우: 인간 AI 컨트롤러는 버리고, 좀비 AI 컨트롤러를 새로 생성
-		else
-		{
-			// 인간 컨트롤러는 좀비 로직을 모를 확률이 높으므로 UnPossess 후 제거 권장
-			if (OldController)
-			{
-				OldController->UnPossess();
-				OldController->Destroy(); // 기존 인간 뇌 제거
-			}
-
-			// 좀비 블루프린트에 설정된 'Default AI Controller'를 사용하여 자동으로 생성시키거나
-			// 강제로 SpawnDefaultController()를 호출해 줍니다.
-			NewZombie->SpawnDefaultController();
-            
-			UE_LOG(LogTemp, Warning, TEXT("AI Unit turned into Zombie! New AI Controller Spawned."));
-		}
-
-		// 기존 인간 삭제
-		SelectedHuman->Destroy();
-
-		if (OnZombieAppeared.IsBound())
-		{
-			// 이름 처리가 애매해지므로 단순히 알림만 보냄
-			OnZombieAppeared.Broadcast(TEXT("Someone"));
-		}
-	}
+	AHumanCharacter* selectedHuman = Cast<AHumanCharacter>(HumanActors[RandomIndex]);
+	
+	selectedHuman->OnInfected();
+	// // 기존 컨트롤러 가져오기
+	// AController* selectedHumanController = SelectedHuman->GetController();
+	// UWorld* World = GetWorld();
+	//
+	// // 필수 요소가 없으면 중단
+	// if (!selectedHumanController || !World) 
+	// {
+	// 	return; 
+	// }
+	//
+	// // 2. [추출] 인간의 현재 운동 상태 저장
+	// FVector LastVelocity = SelectedHuman->GetVelocity();
+	// EMovementMode LastMode = SelectedHuman->GetCharacterMovement()->MovementMode;
+	// FVector SpawnLocation = SelectedHuman->GetActorLocation();
+	// FRotator SpawnRotation = SelectedHuman->GetActorRotation();
+	//
+	// // 3. 스폰할 클래스 결정 (Player vs AI)
+	// // 삼항 연산자를 쓰거나 if문으로 'ClassToSpawn' 변수에만 할당합니다.
+	// TSubclassOf<AZombieCharacter> TargetClass = nullptr;
+	//
+	// if (selectedHumanController->IsA(APlayerController::StaticClass()))
+	// {
+	// 	TargetClass = ZombieClassToSpawn;
+	// }
+	// else
+	// {
+	// 	// AAiZombie가 AZombieCharacter를 상속받았다면 이렇게 하나로 퉁칠 수 있습니다.
+	// 	TargetClass = AIZombieClassToSpawn; 
+	// }
+	//
+	// // 클래스가 비어있으면 중단
+	// if (!TargetClass) return;
+	//
+	// // 4. 좀비 스폰 (한 번만 작성)
+	// FActorSpawnParameters SpawnParams;
+	// SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//
+	// // 부모 클래스인 AZombieCharacter로 받아도 자식 기능(AI 등)은 정상 작동합니다.
+	// AZombieCharacter* NewZombie = World->SpawnActor<AZombieCharacter>(TargetClass, SpawnLocation, SpawnRotation, SpawnParams);
+	//
+	// if (NewZombie)
+	// {
+	// 	// 5. [중요] 빙의 (영혼 옮기기)
+	// 	// 이걸 안 하면 플레이어가 좀비를 조종할 수 없습니다.
+	// 	selectedHumanController->Possess(NewZombie);
+	//
+	// 	// 6. 운동량 주입
+	// 	UCharacterMovementComponent* ZombieCMC = NewZombie->GetCharacterMovement();
+	// 	if (ZombieCMC)
+	// 	{
+	// 		// 이동 모드 동기화
+	// 		if (LastMode == MOVE_Falling || LastMode == MOVE_Flying)
+	// 		{
+	// 			ZombieCMC->SetMovementMode(LastMode);
+	// 		}
+	//
+	// 		// 속도 주입
+	// 		ZombieCMC->Velocity = LastVelocity;
+	// 		ZombieCMC->UpdateComponentVelocity();
+	// 	}
+	// }
+	//
+	// // 7. 인간 파괴
+	// SelectedHuman->Destroy();
+	//
 }
 
 float AZGGameMode::GetRemainingTime() const

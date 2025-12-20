@@ -18,7 +18,7 @@ AFlashlight::AFlashlight()
 	RootComponent = mesh;
 	mesh->SetCollisionProfileName(TEXT("NoCollision")); // 캐릭터에 부착 시 충돌 방지
 	
-	// Light Component 생성 및 부착
+	// Light Component 생성 및 부착 (기존처럼 스켈레탈 메쉬의 자식으로 유지)
 	lightCone = CreateDefaultSubobject<USpotLightComponent>(TEXT("LightCone"));
 	lightCone->SetupAttachment(mesh);
 
@@ -30,7 +30,7 @@ AFlashlight::AFlashlight()
 	// [요청하신 수치 적용]
 	// -------------------------------------------------------
 	lightCone->Intensity = 2000.0f;          // 밝기 (5000 -> 200)
-	lightCone->AttenuationRadius = 1300.0f; // 도달 거리 (2000 -> 1300)
+	lightCone->AttenuationRadius = 2000.0f; // 도달 거리 (2000 -> 1300)
 	lightCone->OuterConeAngle = 30.0f;      // 퍼지는 각도 (25 -> 30)
     
 	// 그림자 및 기타 설정

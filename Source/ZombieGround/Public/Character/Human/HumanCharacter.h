@@ -38,6 +38,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Zombie")
 	TSubclassOf<AZombieCharacter> ZombieClassToSpawn;
+
+	// [추가] AI가 감염되었을 때 소환될 좀비 클래스 (블루프린트 할당용)
+	UPROPERTY(EditDefaultsOnly, Category = "Zombie")
+	TSubclassOf<AZombieCharacter> AIZombieClassToSpawn;
 	
 
 protected:
@@ -276,5 +280,6 @@ protected:
 	float AimWalkSpeed = 250.0f;
 	
 	
-
+public:
+	void OnInfected();
 };

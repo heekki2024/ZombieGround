@@ -13,4 +13,10 @@ UCLASS()
 class ZOMBIEGROUND_API UZombieHud : public UBaseUserWidget
 {
 	GENERATED_BODY()
+	
+	virtual void NativeConstruct() override;
+	
+	UPROPERTY()
+	class AZombieCharacter* ownerCharacter;
+	
 };

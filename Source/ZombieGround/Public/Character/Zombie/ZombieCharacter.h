@@ -135,5 +135,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	class USoundBase* DieSound;
 	
+	// 생성된 HUD 인스턴스
+	UPROPERTY()
+	class UZombieHud* zombieHUD;
+	
 
 };

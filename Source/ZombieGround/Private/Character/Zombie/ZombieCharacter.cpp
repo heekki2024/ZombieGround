@@ -71,6 +71,7 @@ void AZombieCharacter::BeginPlay()
 	}
 }
 
+
 // Called every frame
 void AZombieCharacter::Tick(float DeltaTime)
 {

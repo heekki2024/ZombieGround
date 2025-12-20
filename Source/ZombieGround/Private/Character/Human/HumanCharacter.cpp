@@ -3,11 +3,14 @@
 
 #include "Character/Human/HumanCharacter.h"
 
+#include "AIController.h"
 #include "Character/Zombie/ZombieCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "Character/AiZombie/AiZombie.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SpotLightComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Inventory/InventoryComponent.h"
@@ -20,6 +23,7 @@
 #include "Item/Pickup/BasePickup.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/InGame/Human/HumanHUD.h"
+#include "Engine/StaticMeshActor.h" // [추가] 스태틱 메쉬 액터 사용을 위해
 
 
 // Sets default values
@@ -112,9 +116,6 @@ void AHumanCharacter::BeginPlay()
 	// 초기 UI 업데이트 (필요 시)
 	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
 	
-	
-
-	
 }
 
 // Called every frame
@@ -133,23 +134,9 @@ float AHumanCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const&
 
 	if (DamageCauser && DamageCauser->IsA(AZombieCharacter::StaticClass()))
 	{
-		AController* CurrentController = GetController();
-		
-		if (ZombieClassToSpawn && CurrentController)
-		{
-			FVector SpawnLocation = GetActorLocation();
-			FRotator SpawnRotation = GetActorRotation();
-			
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-			AZombieCharacter* NewZombie = GetWorld()->SpawnActor<AZombieCharacter>(ZombieClassToSpawn, SpawnLocation, SpawnRotation, SpawnParams);
-			if (NewZombie)
-			{
-				CurrentController->Possess(NewZombie);
-				Destroy();
-			}
-		}
+		OnInfected();
+		
 	}
 	
 	return ActualDamage;
@@ -541,10 +528,10 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
     // 1. 목표 속도 결정 (우선순위: 조준 > 달리기 > 걷기)
     // -------------------------------------------------------
     float TargetMaxSpeed = WalkSpeed; // 350
-
+	
     if (bIsAiming)
     {
-        TargetMaxSpeed = AimWalkSpeed; // 250
+        TargetMaxSpeed = inventoryComponent->currentWeaponActor->weaponInstance->GetItemData<UWeaponDataAsset>()->weaponStats.ADSWalkSpeed; // 250
     }
     else if (bWantsToSprint)
     {
@@ -658,6 +645,117 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
             CurrentActualSpeed, GetCharacterMovement()->MaxWalkSpeed, runAlpha)
         );
     }
+}
+
+void AHumanCharacter::OnInfected()
+{
+	// 1. 유효성 검사 (빠른 리턴)
+	AController* MyController = GetController();
+	UWorld* World = GetWorld();
+    
+	// 필수 요소가 없으면 중단
+	if (!MyController || !World) 
+	{
+		return; 
+	}
+
+	// 2. [추출] 인간의 현재 운동 상태 저장
+	FVector LastVelocity = GetVelocity();
+	EMovementMode LastMode = GetCharacterMovement()->MovementMode;
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = GetActorRotation();
+
+	// 3. 스폰할 클래스 결정 (Player vs AI)
+	// 삼항 연산자를 쓰거나 if문으로 'ClassToSpawn' 변수에만 할당합니다.
+	TSubclassOf<AZombieCharacter> TargetClass = nullptr;
+
+	if (MyController->IsA(APlayerController::StaticClass()))
+	{
+		TargetClass = ZombieClassToSpawn;
+	}
+	else
+	{
+		// AAiZombie가 AZombieCharacter를 상속받았다면 이렇게 하나로 퉁칠 수 있습니다.
+		TargetClass = AIZombieClassToSpawn; 
+	}
+
+	// 클래스가 비어있으면 중단
+	if (!TargetClass) return;
+
+
+	// 4. 좀비 스폰 (한 번만 작성)
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	// 부모 클래스인 AZombieCharacter로 받아도 자식 기능(AI 등)은 정상 작동합니다.
+	AZombieCharacter* NewZombie = World->SpawnActor<AZombieCharacter>(TargetClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (NewZombie)
+	{
+		// [추가] 4.5. 아이템 드랍 및 물리 처리 (빙의 전에 수행)
+		if (inventoryComponent)
+		{
+			// A. 현재 들고 있는 무기 드랍 (Pickup 생성)
+			if (inventoryComponent->currentWeaponActor && inventoryComponent->currentWeaponActor->weaponInstance)
+			{
+				// 현재 무기 인스턴스를 드랍 (DropItemFromSlot이 내부적으로 Pickup 스폰)
+				inventoryComponent->DropItemFromSlot(inventoryComponent->currentWeaponActor->weaponInstance);
+			}
+
+			// B. 플래시라이트 물리화 (떨어뜨리기)
+			if (AFlashlight* Flashlight = inventoryComponent->currentFlashlight)
+			{
+				// 부모(캐릭터 손)에서 분리
+				Flashlight->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+				// 물리 시뮬레이션 활성화 (Mesh 컴포넌트 찾아서 설정)
+				// 이제 루트가 SkeletalMesh이므로 Mesh에 직접 물리 적용
+				if (USkeletalMeshComponent* FlashlightMesh = Flashlight->mesh) // Flashlight->mesh는 Flashlight의 멤버 변수일 것으로 가정
+				{
+					// 1. 충돌 프리셋 변경 (물리 작용을 위해 필수)
+					FlashlightMesh->SetCollisionProfileName(TEXT("PhysicsActor"));
+					
+					// 2. 물리 시뮬레이션 및 중력 켜기
+					FlashlightMesh->SetSimulatePhysics(true);
+					FlashlightMesh->SetEnableGravity(true);
+					
+					// 3. 완전히 랜덤한 방향으로 힘(Impulse)을 줌
+					FVector ThrowDir = FMath::VRand(); // 모든 방향으로 랜덤한 유닛 벡터
+					// ThrowDir.Z = FMath::Abs(ThrowDir.Z) + 0.1f; // 필요 시 Z축 보정
+					FlashlightMesh->AddImpulse(ThrowDir * 500.0f, NAME_None, true); // 힘 조절 (500.0f)
+
+					// 4. 랜덤한 회전력(Angular Impulse) 추가 -> 빙글빙글 돌면서 날아감
+					FVector RandomTorque = FMath::VRand() * FMath::RandRange(1000.0f, 3000.0f); // 회전 강도 조절
+					FlashlightMesh->AddAngularImpulseInDegrees(RandomTorque, NAME_None, true);
+				}
+				
+				// 5. 인벤토리 컴포넌트와의 연결 끊기 (중복 참조 방지)
+				inventoryComponent->currentFlashlight = nullptr;
+			}
+		}
+
+		// 5. [중요] 빙의 (영혼 옮기기)
+		// 이걸 안 하면 플레이어가 좀비를 조종할 수 없습니다.
+		MyController->Possess(NewZombie);
+
+		// 6. 운동량 주입
+		UCharacterMovementComponent* ZombieCMC = NewZombie->GetCharacterMovement();
+		if (ZombieCMC)
+		{
+			// 이동 모드 동기화
+			if (LastMode == MOVE_Falling || LastMode == MOVE_Flying)
+			{
+				ZombieCMC->SetMovementMode(LastMode);
+			}
+
+			// 속도 주입
+			ZombieCMC->Velocity = LastVelocity;
+			ZombieCMC->UpdateComponentVelocity();
+		}
+	}
+
+	// 7. 인간 파괴
+	Destroy();
 }
 
 

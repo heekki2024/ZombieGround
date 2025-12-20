@@ -130,6 +130,8 @@ void UInventoryComponent::AddPrimaryToSlot(class ABaseWeaponPickup* weaponPickup
 	else
 	{
 		DropItemFromSlot(primaryWeaponSlot);
+		
+		
 		// 정상적으로 무기 존재
 		primaryWeaponSlot = weaponPickup->GetInstance<UBaseWeaponInstance>();
 	}
@@ -305,6 +307,13 @@ bool UInventoryComponent::AddConsumableToSlot(ABasePickup* pickup)
 
 void UInventoryComponent::DropItemFromSlot(class UBaseInstance* itemInstance)
 {
+	// 1️⃣ 기존 장착 무기 제거
+	if (IsValid(currentWeaponActor))
+	{
+		currentWeaponActor->Destroy();
+		currentWeaponActor = nullptr;
+	}
+	
 	// 2. 스폰 파라미터 설정
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = ownerCharacter;
@@ -421,12 +430,12 @@ void UInventoryComponent::EquipPrimaryWeapon()
 	if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == primaryWeaponSlot) return;
 
 
-	// 1️⃣ 기존 장착 무기 제거
-	if (IsValid(currentWeaponActor))
-	{
-		currentWeaponActor->Destroy();
-		currentWeaponActor = nullptr;
-	}
+	// // 1️⃣ 기존 장착 무기 제거
+	// if (IsValid(currentWeaponActor))
+	// {
+	// 	currentWeaponActor->Destroy();
+	// 	currentWeaponActor = nullptr;
+	// }
 	
 	// 2. 스폰 파라미터 설정
 	FActorSpawnParameters SpawnParams;

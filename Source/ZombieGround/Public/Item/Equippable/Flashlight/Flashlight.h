@@ -24,6 +24,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 public:
+	// [추가] 물리 충돌 및 루트 역할을 할 캡슐 컴포넌트
+	// UPROPERTY(VisibleAnywhere, Category = "Components")
+	// class UCapsuleComponent* capsuleComponent;
+	
+
 	// 빛을 쏘는 컴포넌트
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class USpotLightComponent* lightCone;
