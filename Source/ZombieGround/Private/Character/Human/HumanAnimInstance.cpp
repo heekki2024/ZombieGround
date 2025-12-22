@@ -60,11 +60,22 @@ void UHumanAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 	if (IsValid(currentWeaponInstance))
 	{
-		playerAnimData = currentWeaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData;
+		UWeaponDataAsset* WeaponData = currentWeaponInstance->GetItemData<UWeaponDataAsset>();
+		if (WeaponData)
+		{
+			playerAnimData = WeaponData->playerAnimData;
+			
+			// [추가] 전환 시간 업데이트
+			LowReadyToAdsTime = WeaponData->weaponStats.LowReadyToAdsDuration;
+			AdsToLowReadyTime = WeaponData->weaponStats.AdsToLowReadyDuration;
+		}
 	}
 	else
 	{
 		playerAnimData = defaultPlayerAnimData;
+		// 기본값 복구 (원한다면)
+		LowReadyToAdsTime = 0.2f;
+		AdsToLowReadyTime = 0.2f;
 	}
 	
 	

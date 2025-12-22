@@ -44,4 +44,25 @@ public:
 	virtual void InitInstance(class UBaseDataAsset* itemDataAsset) override;
 	
 	// virtual UBaseDataAsset* GetItemData() override;
+
+public:
+	// [추가] 총을 꺼내는 중인가? (이게 true면 발사 불가)
+	bool bIsEquipping = false;
+
+	// [추가] 총을 넣는 중인가?
+	bool bIsUnequipping = false;
+	
+//총기반동
+public:
+	// 현재 열기 (0 ~ 100 등)
+	float CurrentHeat = 0.0f;
+	// 현재 탄퍼짐 각도 (도 Degree)
+	float CurrentSpreadAngle = 0.0f;
+	// 마지막 사격 시간
+	double LastFireTime = 0.0;
+
+	// Lyra의 로직을 본딴 함수들
+	void AddSpread();           // 발사 시 열기 추가
+	void UpdateSpread(float DeltaTime); // 틱마다 열기 식힘
+	float GetCurrentSpread();   // 현재 탄퍼짐 각도 반환
 };

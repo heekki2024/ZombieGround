@@ -51,47 +51,62 @@ void ABaseWeaponActor::BeginPlay()
 		ownerCharacter->BroadcastInventoryAmmoUpdate(); 
 
 	}
+	
 }
 
 void ABaseWeaponActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	
-	// 1. 돌아가고 있던 장전 타이머 강제 종료
+    
+	// 1. 돌아가고 있던 타이머 강제 종료
 	if (GetWorld())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+		GetWorld()->GetTimerManager().ClearTimer(EquipTimerHandle);
+		GetWorld()->GetTimerManager().ClearTimer(UnequipTimerHandle);
+		GetWorld()->GetTimerManager().ClearTimer(AimTransitionTimerHandle);
 	}
 
-	// 2. WeaponInstance의 장전 중 상태 해제
-	// IsValid를 사용하여 GC된 객체에 접근하는 것을 방지
+	// 2. WeaponInstance의 상태 해제
 	if (IsValid(weaponInstance))
 	{
 		weaponInstance->bIsReloading = false;
+		weaponInstance->bIsEquipping = false;
+		weaponInstance->bIsUnequipping = false;
 	}
 
-	// 3. 캐릭터 애니메이션 정리
+	// 3. 캐릭터 애니메이션 정리 [삭제 또는 주석 처리]
+	// 이유: 무기 교체 시(Swap), 이 코드가 새 무기의 Equip 애니메이션까지 꺼버림.
+	/*
 	if (IsValid(ownerCharacter))
 	{
-		USkeletalMeshComponent* CharacterMesh = ownerCharacter->FindComponentByClass<USkeletalMeshComponent>();
-		
-		if (IsValid(CharacterMesh))
-		{
-			UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
-			if (IsValid(AnimInstance))
-			{
-				AnimInstance->Montage_Stop(0.0f, nullptr);
-			}
-		}
+	   USkeletalMeshComponent* CharacterMesh = ownerCharacter->FindComponentByClass<USkeletalMeshComponent>();
+	   
+	   if (IsValid(CharacterMesh))
+	   {
+		  UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+		  if (IsValid(AnimInstance))
+		  {
+			 // [범인] 이 줄이 새 무기의 Equip 모션을 즉시 중단시킵니다.
+			 // AnimInstance->Montage_Stop(0.0f, nullptr); 
+		  }
+	   }
 	}
-	
-	UE_LOG(LogTemp, Log, TEXT("WeaponActor Destroyed: Reload Cancelled & Cleaned up."));
+	*/
+    
+	UE_LOG(LogTemp, Log, TEXT("WeaponActor Destroyed: Timers Cleared."));
 }
 
 // Called every frame
 void ABaseWeaponActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	// [추가] 매 프레임 총기 열기를 식힘
+	if (weaponInstance)
+	{
+		weaponInstance->UpdateSpread(DeltaTime);
+	}
 }
 
 
@@ -145,7 +160,15 @@ void ABaseWeaponActor::UpdateAttachments()
 
 void ABaseWeaponActor::OnLeftClickPressed()
 {
+	// [추가] 입력 상태 추적
+	bIsLeftClickHeld = true;
+
 	if(weaponInstance->bIsReloading == true) return;
+	
+	// 장전 중이거나, 꺼내는 중이거나, 넣는 중이면 발사 불가
+	// [추가] ADS 전환 중(bIsAimTransitioning)에도 발사 불가
+	if (weaponInstance->bIsReloading || weaponInstance->bIsEquipping || weaponInstance->bIsUnequipping || bIsAimTransitioning) 
+		return;
 	
 	if (bIsRightClicking == true)
 	{
@@ -172,6 +195,9 @@ void ABaseWeaponActor::OnLeftClickPressed()
 
 void ABaseWeaponActor::OnLeftClickReleased()
 {
+	// [추가] 입력 상태 해제
+	bIsLeftClickHeld = false;
+
 	// FullAuto일 경우 타이머 중지
 	if (weaponInstance->GetItemData<UWeaponDataAsset>()->fireMode == EFireMode::FullAuto)
 	{
@@ -184,11 +210,29 @@ void ABaseWeaponActor::OnLeftClickReleased()
 
 void ABaseWeaponActor::OnRightClickPressed()
 {
+	// [추가] 장착/해제 중에는 조준 불가
+	if (weaponInstance->bIsEquipping || weaponInstance->bIsUnequipping) return;
+
 	// bIsAiming = true;
 	if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Primary || 
 		weaponInstance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Secondary)
 	{
 		bIsRightClicking = true;
+		
+		// [추가] FOV 직접 제어
+		if (ownerCharacter)
+		{
+			ownerCharacter->TargetFOV = ownerCharacter->AimingFOV;
+		}
+
+		// [추가] ADS 전환 중 발사 제한
+		UWeaponDataAsset* Data = weaponInstance->GetItemData<UWeaponDataAsset>();
+		if (Data && Data->weaponStats.LowReadyToAdsDuration > 0.0f)
+		{
+			bIsAimTransitioning = true;
+			GetWorld()->GetTimerManager().ClearTimer(AimTransitionTimerHandle); // 안전장치
+			GetWorld()->GetTimerManager().SetTimer(AimTransitionTimerHandle, this, &ABaseWeaponActor::FinishAimTransition, Data->weaponStats.LowReadyToAdsDuration, false);
+		}
 	}
 }
 
@@ -198,132 +242,417 @@ void ABaseWeaponActor::OnRightClickReleased()
 		weaponInstance->GetItemData<UWeaponDataAsset>()->weaponSlot == EWeaponSlot::Secondary)
 	{
 		bIsRightClicking = false;
+		
+		// [추가] FOV 복구
+		if (ownerCharacter)
+		{
+			ownerCharacter->TargetFOV = ownerCharacter->DefaultFOV;
+		}
+
+		// [추가] ADS 해제 중 발사 제한
+		UWeaponDataAsset* Data = weaponInstance->GetItemData<UWeaponDataAsset>();
+		if (Data && Data->weaponStats.AdsToLowReadyDuration > 0.0f)
+		{
+			bIsAimTransitioning = true;
+			GetWorld()->GetTimerManager().ClearTimer(AimTransitionTimerHandle); // 안전장치
+			GetWorld()->GetTimerManager().SetTimer(AimTransitionTimerHandle, this, &ABaseWeaponActor::FinishAimTransition, Data->weaponStats.AdsToLowReadyDuration, false);
+		}
 	}
 }
+
+// void ABaseWeaponActor::Fire()
+// {
+// 	// 0. 데이터 유효성 검사 (안전장치)
+// 	if (!weaponInstance || !weaponInstance->GetItemData<UWeaponDataAsset>()) return;
+// 	
+// 	// 현재 시간
+// 	double currentTime = GetWorld()->GetTimeSeconds();
+//
+// 	// 다음 발사까지 기다려야 함
+// 	if (currentTime < NextFireTime)
+// 		return;
+//
+// 	// ---------------------------------------------------------
+// 	// [추가됨 1] 탄약 확인 (Ammo Check)
+// 	// 총알이 없으면 발사 로직을 실행하지 않고 종료
+// 	// ---------------------------------------------------------
+// 	if (weaponInstance->currentAmmo <= 0)
+// 	{
+// 		// (선택사항) 빈 총 소리 재생 (찰칵!)
+// 		// if (weaponInstance->defaultWeaponData->weaponFX.DryFireSound)
+// 		// {
+// 		//    UGameplayStatics::PlaySoundAtLocation(this, DryFireSound, GetActorLocation());
+// 		// }
+//         
+// 		// 클릭 소리가 너무 자주 나지 않게 하려면 여기서도 NextFireTime 갱신 필요
+// 		// NextFireTime = currentTime + 0.2f; 
+// 		return; 
+// 	}
+// 	
+// 	// ---- 실제 발사 로직 시작----
+// 	weaponInstance->currentAmmo--;
+// 	
+// 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
+// 	if (!OwnerPawn) return;
+//
+// 	APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController());
+// 	if (!PC) return;
+//
+// 	FVector CameraLocation;
+// 	FRotator CameraRotation;
+// 	PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
+//
+// 	FVector ShootDirection = CameraRotation.Vector();
+//
+// 	// -------------------------------
+// 	// 2) 총구 위치 가져오기 (Muzzle 소켓)
+// 	// -------------------------------
+// 	if (!mesh) return;
+// 	FVector MuzzleLocation = mesh->GetSocketLocation(TEXT("MuzzleFlash"));
+//
+// 	// -------------------------------
+// 	// 3) Projectile 생성
+// 	// -------------------------------
+// 	if (weaponInstance->GetItemData<UWeaponDataAsset>()->projectileClass)
+// 	{
+// 		FActorSpawnParameters SpawnParams;
+// 		SpawnParams.Owner = this;
+// 		SpawnParams.Instigator = OwnerPawn;
+//
+// 		GetWorld()->SpawnActor<ABaseProjectile>(
+// 			weaponInstance->GetItemData<UWeaponDataAsset>()->projectileClass,
+// 			MuzzleLocation,
+// 			CameraRotation,
+// 			SpawnParams
+// 		);
+// 	}
+//
+// 	// -------------------------------
+// 	// 4) 총기 자체 발사 애니메이션 재생
+// 	// -------------------------------
+// 	if (weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim)
+// 	{
+// 		mesh->PlayAnimation(weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim, false);
+// 	}
+// 	
+// 	// -------------------------------
+// 	// 4) 캐릭터 총기 발사 애니메이션 재생
+// 	// -------------------------------
+// 	if (weaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData.FireMontage)
+// 	{
+// 		// 캐릭터 SkeletalMesh 가져오기
+// 		USkeletalMeshComponent* CharacterMesh = OwnerPawn->FindComponentByClass<USkeletalMeshComponent>();
+// 		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+// 		AnimInstance->Montage_Play(weaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData.FireMontage);
+// 	}
+// 	
+// 	
+//
+// 	// -------------------------------
+// 	// 5) 총구 이펙트 & 사운드 (선택)
+// 	// -------------------------------
+// 	// if (MuzzleFlash)
+// 	// {
+// 	// 	UGameplayStatics::SpawnEmitterAttached(
+// 	// 		MuzzleFlash,
+// 	// 		gunMesh,
+// 	// 		TEXT("MuzzleFlash")
+// 	// 	);
+// 	// }
+//
+// 	if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponFX.FireSound)
+// 	{
+// 		UGameplayStatics::PlaySoundAtLocation(
+// 			this,
+// 			weaponInstance->GetItemData<UWeaponDataAsset>()->weaponFX.FireSound,
+// 			GetActorLocation() // 소리는 총 위치에서 나야 자연스러움 (ShootDirection은 방향임)
+// 		);
+// 	}
+// 	
+// 	if (AHumanCharacter* Human = Cast<AHumanCharacter>(OwnerPawn))
+// 	{
+// 		// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
+// 		Human->BroadcastCurrentAmmoUpdate();
+// 	}
+// 	
+// 	// 다음 발사 가능 시간 갱신
+// 	NextFireTime = currentTime + weaponInstance->GetItemData<UWeaponDataAsset>()->weaponStats.fireRate;
+// 	
+// 	//카메라 셰이크 재생
+// 	auto controller = GetWorld()->GetFirstPlayerController();
+// 	controller->PlayerCameraManager->StartCameraShake(fireCameraShake);
+// 	
+// }
 
 void ABaseWeaponActor::Fire()
 {
-	// 0. 데이터 유효성 검사 (안전장치)
-	if (!weaponInstance || !weaponInstance->GetItemData<UWeaponDataAsset>()) return;
-	
-	// 현재 시간
-	double currentTime = GetWorld()->GetTimeSeconds();
+	// 0. 데이터 유효성 검사
+    if (!weaponInstance || !weaponInstance->GetItemData<UWeaponDataAsset>()) return;
+    
+    double currentTime = GetWorld()->GetTimeSeconds();
+    if (currentTime < NextFireTime) return;
 
-	// 다음 발사까지 기다려야 함
-	if (currentTime < NextFireTime)
-		return;
+    // 탄약 확인
+    if (weaponInstance->currentAmmo <= 0)
+    {
+       // 클릭 소리 등 처리...
+       return; 
+    }
+    
+    // =========================================================
+    // [수정] 1. Lyra 로직 적용: 발사했으니 열기(Heat) 증가
+    // =========================================================
+    weaponInstance->AddSpread();
 
-	// ---------------------------------------------------------
-	// [추가됨 1] 탄약 확인 (Ammo Check)
-	// 총알이 없으면 발사 로직을 실행하지 않고 종료
-	// ---------------------------------------------------------
-	if (weaponInstance->currentAmmo <= 0)
+
+    // 실제 발사 로직
+    weaponInstance->currentAmmo--;
+    
+    APawn* OwnerPawn = Cast<APawn>(GetOwner());
+    if (!OwnerPawn) return;
+
+    APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController());
+    if (!PC) return;
+
+    FVector CameraLocation;
+    FRotator CameraRotation;
+    PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
+
+    // =========================================================
+    // [수정] 2. 탄퍼짐(Spread) 적용하여 발사 방향 비틀기
+    // =========================================================
+    FVector ShootDirection = CameraRotation.Vector();
+    
+    // 인스턴스에서 현재 탄퍼짐 각도 가져오기
+    float CurrentSpread = weaponInstance->GetCurrentSpread();
+    
+    // 탄퍼짐이 있다면 방향을 랜덤하게 휨 (VRandCone 사용)
+    if (CurrentSpread > 0.0f)
+    {
+        // HalfAngleInRadians: 절반 각도를 라디안으로 변환해야 함
+        ShootDirection = FMath::VRandCone(ShootDirection, FMath::DegreesToRadians(CurrentSpread * 0.5f));
+    }
+    
+    // 휘어진 방향을 회전값으로 변환
+    FRotator FinalMuzzleRotation = ShootDirection.Rotation();
+
+
+    // 총구 위치
+    if (!mesh) return;
+    FVector MuzzleLocation = mesh->GetSocketLocation(TEXT("MuzzleFlash"));
+
+    // =========================================================
+    // [수정] 3. Projectile 생성 시 '비틀어진 회전값' 사용
+    // =========================================================
+    if (weaponInstance->GetItemData<UWeaponDataAsset>()->projectileClass)
+    {
+       FActorSpawnParameters SpawnParams;
+       SpawnParams.Owner = this;
+       SpawnParams.Instigator = OwnerPawn;
+
+    	// 1. 총알 스폰
+    	ABaseProjectile* NewBullet = GetWorld()->SpawnActor<ABaseProjectile>(
+          weaponInstance->GetItemData<UWeaponDataAsset>()->projectileClass,
+          MuzzleLocation,
+          FinalMuzzleRotation, // <--- CameraRotation 대신 FinalMuzzleRotation 사용
+          SpawnParams
+       );
+    	
+    	// 2. [핵심] 데이터 에셋의 데미지 정보를 총알에 주입!
+    	if (NewBullet)
+    	{
+    		UWeaponDataAsset* weaponDA = weaponInstance->GetItemData<UWeaponDataAsset>();
+           
+    		// InitProjectile 호출
+    		NewBullet->InitProjectile(weaponDA->weaponStats.BaseDmg, weaponDA->weaponStats.HeadshotDmg, weaponDA->weaponStats.KnockbackStrength, weaponDA->weaponStats.Stun,  weaponDA->weaponStats.StunTime);
+    	}
+    }
+
+    // ... (애니메이션, 사운드 재생 코드는 기존 유지) ...
+    if (weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim)
+    {
+       mesh->PlayAnimation(weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim, false);
+    }
+    if (weaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData.FireMontage)
+    {
+       USkeletalMeshComponent* CharacterMesh = OwnerPawn->FindComponentByClass<USkeletalMeshComponent>();
+       UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+       AnimInstance->Montage_Play(weaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData.FireMontage);
+    }
+    if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponFX.FireSound)
+    {
+       UGameplayStatics::PlaySoundAtLocation(
+          this,
+          weaponInstance->GetItemData<UWeaponDataAsset>()->weaponFX.FireSound,
+          GetActorLocation()
+       );
+    }
+    if (AHumanCharacter* Human = Cast<AHumanCharacter>(OwnerPawn))
+    {
+       Human->BroadcastCurrentAmmoUpdate();
+    }
+    
+    // 다음 발사 시간 갱신
+    NextFireTime = currentTime + weaponInstance->GetItemData<UWeaponDataAsset>()->weaponStats.fireRate;
+    
+    // 카메라 셰이크 (기존 유지 - 시각적 흔들림)
+    if(PC->PlayerCameraManager)
+    {
+        PC->PlayerCameraManager->StartCameraShake(fireCameraShake);
+    }
+
+    // =========================================================
+    // [추가] 4. 물리적 반동 (Recoil) 추가 - 에임이 실제로 위로 튐
+    // =========================================================
+	if (PC)
 	{
-		// (선택사항) 빈 총 소리 재생 (찰칵!)
-		// if (weaponInstance->defaultWeaponData->weaponFX.DryFireSound)
-		// {
-		//    UGameplayStatics::PlaySoundAtLocation(this, DryFireSound, GetActorLocation());
-		// }
+		// 데이터 에셋 가져오기
+		UWeaponDataAsset* Data = weaponInstance->GetItemData<UWeaponDataAsset>();
         
-		// 클릭 소리가 너무 자주 나지 않게 하려면 여기서도 NextFireTime 갱신 필요
-		// NextFireTime = currentTime + 0.2f; 
-		return; 
+		if (Data)
+		{
+			// 데이터 에셋에 설정된 Min ~ Max 사이의 랜덤한 값을 추출
+			float VerticalRecoil = FMath::RandRange(Data->weaponStats.RecoilPitchMin, Data->weaponStats.RecoilPitchMax);
+			float HorizontalRecoil = FMath::RandRange(Data->weaponStats.RecoilYawMin, Data->weaponStats.RecoilYawMax);
+            
+			// 컨트롤러에 입력 적용
+			PC->AddPitchInput(VerticalRecoil);
+			PC->AddYawInput(HorizontalRecoil);
+		}
 	}
-	
-	// ---- 실제 발사 로직 시작----
-	weaponInstance->currentAmmo--;
-	
-	APawn* OwnerPawn = Cast<APawn>(GetOwner());
-	if (!OwnerPawn) return;
-
-	APlayerController* PC = Cast<APlayerController>(OwnerPawn->GetController());
-	if (!PC) return;
-
-	FVector CameraLocation;
-	FRotator CameraRotation;
-	PC->GetPlayerViewPoint(CameraLocation, CameraRotation);
-
-	FVector ShootDirection = CameraRotation.Vector();
-
-	// -------------------------------
-	// 2) 총구 위치 가져오기 (Muzzle 소켓)
-	// -------------------------------
-	if (!mesh) return;
-	FVector MuzzleLocation = mesh->GetSocketLocation(TEXT("MuzzleFlash"));
-
-	// -------------------------------
-	// 3) Projectile 생성
-	// -------------------------------
-	if (weaponInstance->GetItemData<UWeaponDataAsset>()->projectileClass)
-	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = OwnerPawn;
-
-		GetWorld()->SpawnActor<ABaseProjectile>(
-			weaponInstance->GetItemData<UWeaponDataAsset>()->projectileClass,
-			MuzzleLocation,
-			CameraRotation,
-			SpawnParams
-		);
-	}
-
-	// -------------------------------
-	// 4) 총기 자체 발사 애니메이션 재생
-	// -------------------------------
-	if (weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim)
-	{
-		mesh->PlayAnimation(weaponInstance->GetItemData<UWeaponDataAsset>()->tempGunAnim, false);
-	}
-	
-	// -------------------------------
-	// 4) 캐릭터 총기 발사 애니메이션 재생
-	// -------------------------------
-	if (weaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData.FireMontage)
-	{
-		// 캐릭터 SkeletalMesh 가져오기
-		USkeletalMeshComponent* CharacterMesh = OwnerPawn->FindComponentByClass<USkeletalMeshComponent>();
-		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
-		AnimInstance->Montage_Play(weaponInstance->GetItemData<UWeaponDataAsset>()->playerAnimData.FireMontage);
-	}
-	
-	
-
-	// -------------------------------
-	// 5) 총구 이펙트 & 사운드 (선택)
-	// -------------------------------
-	// if (MuzzleFlash)
-	// {
-	// 	UGameplayStatics::SpawnEmitterAttached(
-	// 		MuzzleFlash,
-	// 		gunMesh,
-	// 		TEXT("MuzzleFlash")
-	// 	);
-	// }
-
-	if (weaponInstance->GetItemData<UWeaponDataAsset>()->weaponFX.FireSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(
-			this,
-			weaponInstance->GetItemData<UWeaponDataAsset>()->weaponFX.FireSound,
-			GetActorLocation() // 소리는 총 위치에서 나야 자연스러움 (ShootDirection은 방향임)
-		);
-	}
-	
-	if (AHumanCharacter* Human = Cast<AHumanCharacter>(OwnerPawn))
-	{
-		// 아까 만든 델리게이트 호출 -> UI가 즉시 29발로 갱신됨
-		Human->BroadcastCurrentAmmoUpdate();
-	}
-	
-	// 다음 발사 가능 시간 갱신
-	NextFireTime = currentTime + weaponInstance->GetItemData<UWeaponDataAsset>()->weaponStats.fireRate;
-	
-	//카메라 셰이크 재생
-	auto controller = GetWorld()->GetFirstPlayerController();
-	controller->PlayerCameraManager->StartCameraShake(fireCameraShake);
-	
 }
+
+void ABaseWeaponActor::StartEquip()
+{
+	// 0. 데이터 유효성 검사
+	if (!weaponInstance || !ownerCharacter) return;
+
+	UWeaponDataAsset* WeaponDA = weaponInstance->GetItemData<UWeaponDataAsset>();
+	if (!WeaponDA) return;
+
+	// 기존 작업 취소
+	GetWorld()->GetTimerManager().ClearTimer(UnequipTimerHandle);
+
+	// 1. 상태 설정 (발사 못하게 막음)
+	weaponInstance->bIsEquipping = true;
+	weaponInstance->bIsUnequipping = false;
+
+	float equipDuration = WeaponDA->weaponStats.equipDuration;
+	
+	UAnimMontage* equipMontage = WeaponDA->playerAnimData.EquipMontage;
+	float MontageLength = equipMontage->GetPlayLength();
+
+	// B. 3초 안에 끝내기 위한 배속 계산
+	// 공식: (원본 길이 4.5초) / (목표 시간 3.0초) = 1.5배속
+	float PlayRate = 1.0f;
+	if (equipDuration > 0.0f)
+	{
+		PlayRate = MontageLength / equipDuration;
+	}
+	
+	// // 안전장치: 재생 속도가 0 이하면 1.0으로 보정 (무한 대기 방지)
+	// if (PlayRate <= 0.0f) PlayRate = 1.0f;
+
+	USkeletalMeshComponent* CharMesh = ownerCharacter->GetMesh(); // 혹은 FindComponentByClass
+
+	// [핵심 변경] 몽타주 직접 재생
+	CharMesh->GetAnimInstance()->Montage_Play(equipMontage, PlayRate);
+	
+	// 3. 타이머 설정 (계산된 Duration만큼 대기 후 FinishEquip 호출)
+	GetWorld()->GetTimerManager().SetTimer(EquipTimerHandle, this, &ABaseWeaponActor::FinishEquip, equipDuration, false);
+
+	UE_LOG(LogTemp, Log, TEXT("Weapon Equip Started... Duration: %f"), equipDuration);
+}
+
+void ABaseWeaponActor::StartUnequip()
+{
+	// 0. 데이터 유효성 검사
+	if (!weaponInstance || !ownerCharacter) 
+	{
+		// 데이터가 없으면 애니메이션 없이 바로 종료 처리
+		FinishUnequip();
+		return;
+	}
+
+	UWeaponDataAsset* WeaponDA = weaponInstance->GetItemData<UWeaponDataAsset>();
+	if (!WeaponDA) 
+	{
+		FinishUnequip();
+		return;
+	}
+
+	// 기존 Equip 작업 취소
+	GetWorld()->GetTimerManager().ClearTimer(EquipTimerHandle);
+    
+	// 1. 상태 설정 (발사 불가, 장전 취소 등)
+	weaponInstance->bIsUnequipping = true;
+	weaponInstance->bIsEquipping = false; // Equip 중단
+	weaponInstance->bIsReloading = false; // 장전 중이었다면 취소
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle); // 장전 타이머 킬
+
+	float unequipDuration = WeaponDA->weaponStats.unequipDuration;
+	
+	UAnimMontage* unequipMontage = WeaponDA->playerAnimData.UnEquipMontage;
+	float MontageLength = unequipMontage->GetPlayLength();
+
+	// B. 3초 안에 끝내기 위한 배속 계산
+	// 공식: (원본 길이 4.5초) / (목표 시간 3.0초) = 1.5배속
+	float PlayRate = 1.0f;
+	if (unequipDuration > 0.0f)
+	{
+		PlayRate = MontageLength / unequipDuration;
+	}
+	
+	USkeletalMeshComponent* CharMesh = ownerCharacter->GetMesh(); // 혹은 FindComponentByClass
+
+	// [핵심 변경] 몽타주 직접 재생
+	CharMesh->GetAnimInstance()->Montage_Play(unequipMontage, PlayRate);
+	
+
+	// 3. 타이머 설정 (계산된 Duration만큼 대기 후 FinishUnequip 호출)
+	GetWorld()->GetTimerManager().SetTimer(UnequipTimerHandle, this, &ABaseWeaponActor::FinishUnequip, unequipDuration, false);
+    
+	UE_LOG(LogTemp, Log, TEXT("Weapon Unequip Started... Duration: %f"), unequipDuration);
+}
+
+void ABaseWeaponActor::FinishEquip()
+{
+	if (weaponInstance)
+	{
+		weaponInstance->bIsEquipping = false; // 이제 발사 가능!
+	}
+    
+	// [추가] 장착 완료 시점에 플레이어가 우클릭을 유지하고 있다면 즉시 조준 모드 진입
+	if (ownerCharacter && ownerCharacter->bIsAiming)
+	{
+		OnRightClickPressed();
+	}
+
+	// 캐릭터에게 "장착 끝났다"고 알림 (필요시 UI 갱신 등)
+	if (OnEquipFinished.IsBound())
+	{
+		OnEquipFinished.Broadcast();
+	}
+	UE_LOG(LogTemp, Log, TEXT("Weapon Equip Finished. Ready to Fire."));
+}
+
+void ABaseWeaponActor::FinishUnequip()
+{
+	if (weaponInstance)
+	{
+		weaponInstance->bIsUnequipping = false;
+	}
+
+	// 4. 캐릭터에게 "나 이제 사라진다"고 알림 (다음 무기 스폰을 위해)
+	if (OnUnequipFinished.IsBound())
+	{
+		OnUnequipFinished.Broadcast();
+	}
+
+	// [변경 2] 할 일 다 했으니 스스로 파괴 (Self Destroy)
+	Destroy();
+}
+
 
 void ABaseWeaponActor::TryReload()
 {
@@ -427,6 +756,19 @@ void ABaseWeaponActor::FinishReload()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Reload Failed: No Ammo Available (Internal or Inventory)"));
+	}
+}
+
+void ABaseWeaponActor::FinishAimTransition()
+{
+	bIsAimTransitioning = false;
+	
+	UE_LOG(LogTemp, Log, TEXT("FinishAimTransition Called. bIsLeftClickHeld: %d"), bIsLeftClickHeld);
+
+	// [추가] 전환이 끝났을 때 좌클릭을 누르고 있다면 즉시 발사 로직 실행
+	if (bIsLeftClickHeld)
+	{
+		OnLeftClickPressed();
 	}
 }
 

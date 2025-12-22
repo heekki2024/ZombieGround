@@ -181,4 +181,21 @@ public:
 	// 켜고 끌 때 재생할 효과음 (에디터에서 할당)
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	class USoundBase* toggleSound;
+	
+	
+protected:
+	// [추가] 현재 무기가 사라진 뒤, 다음에 장착될 무기 인스턴스
+	UPROPERTY()
+	class UBaseWeaponInstance* PendingWeaponInstance;
+
+	// [추가] 무기가 Unequip(파괴) 완료되었을 때 호출될 콜백 함수
+	void SwapWeaponInternal();
+	
+	UFUNCTION()
+	void OnCurrentWeaponUnequipped();
+
+	// [추가] 실제 스폰 로직을 담당하는 내부 함수
+	void SpawnPendingWeapon();
+	
+
 };

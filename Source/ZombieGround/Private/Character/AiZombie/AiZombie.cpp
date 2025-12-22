@@ -5,6 +5,9 @@
 
 #include "Character/AiZombie/AiZombieFSM.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/PawnSensingComponent.h"
+#include "Character/Human/HumanCharacter.h"
+
 // Sets default values
 AAiZombie::AAiZombie()
 {
@@ -17,6 +20,14 @@ AAiZombie::AAiZombie()
 	
 	//엑터 컴포넌트이기 때문에 다른거의 자식으로 들어가지 않는다.
 	fsm = CreateDefaultSubobject<UAiZombieFSM>(TEXT("FSM"));
+
+	// [추가] PawnSensing 생성 및 설정
+	PawnSensing = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensing"));
+	PawnSensing->SightRadius = 800.0f; // 시야 거리
+	PawnSensing->SetPeripheralVisionAngle(60.0f); // 시야각 (Half Angle, 즉 전체 120도)
+
+	// [추가] 스폰 시 자동으로 AI 컨트롤러 빙의
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
@@ -24,11 +35,25 @@ void AAiZombie::BeginPlay()
 {
 	Super::BeginPlay();
 	
-
-	
+	if (PawnSensing)
+	{
+		PawnSensing->OnSeePawn.AddDynamic(this, &AAiZombie::OnSeePawn);
+	}
 }
 
-// Called every frame
+void AAiZombie::OnSeePawn(APawn* Pawn)
+{
+	// 1. 감지된 대상이 인간인지 확인
+	AHumanCharacter* Human = Cast<AHumanCharacter>(Pawn);
+	// 2. FSM에 알림 (FSM 헤더에 함수 추가 필요)
+	if (Human && fsm)
+	{
+		fsm->OnTargetDetected(Human);
+	}
+}
+
+
+// Called every 조frame
 void AAiZombie::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -38,46 +63,6 @@ void AAiZombie::Tick(float DeltaTime)
 void AAiZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-void AAiZombie::OnDamageProcess(FVector hitDirection)
-{
-	// Super::OnDamageProcess();
-	
-	//체력
-	currentHP--;
-	
-	//경과시간 초기화
-	fsm->currentTime = 0;
-	
-	if (currentHP > 0)
-	{
-		fsm->zombieState = EZombieState::Damage;
-		
-		//살아있음
-		hitDirection.Z = 0;
-		FVector force = hitDirection * knockbackPower;
-		knockbackPos  = GetActorLocation() + force;
-		// SetActorLocation(knockbackPos, true);
-		
-		// float percent = GetWorld()->DeltaTimeSeconds * 10;
-		// FVector P = FMath::Lerp(GetActorLocation(), knockbackPos,percent);
-		//
-		// // 원충돌 거의 도착했다는걸 보장하기 위해.
-		// float dist = FVector::Dist(P, GetActorLocation());
-		// if (dist < 10)
-		// {
-		// 	P = GetActorLocation();
-		// }
-		// else
-		// {
-		// 	SetActorLocation(P, true);
-		// }
-	}
-	else
-	{
-		fsm->zombieState = EZombieState::Die;
-	}
 }
 
 

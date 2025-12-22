@@ -51,9 +51,23 @@ struct FWeaponStats
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float baseDamage = 10.0f; // 기본값 설정 추천
+	// [추가] 총기의 기본 데미지 (Body Shot 기준)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
+	float BaseDmg = 30.0f; 
 
+	// [추가] 헤드샷 배율 (예: 1.5배, 2.0배 등)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
+	float HeadshotDmg = 50.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
+	float KnockbackStrength = 10.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
+	float Stun = 10.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
+	float StunTime = 10.0f;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float fireRate = 0.1f;    // 연사 속도
 
@@ -69,8 +83,54 @@ struct FWeaponStats
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ADSWalkSpeed = 350.f;
 	
+	// [추가] 장착/해제 속도 (기본 1.0)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	float equipDuration = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	float unequipDuration = 1.0f;
+
+	// [추가] ADS 전환 시간 (LowReady -> ADS)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	float LowReadyToAdsDuration = 0.2f;
+
+	// [추가] ADS 해제 시간 (ADS -> LowReady)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	float AdsToLowReadyDuration = 0.2f;
 	
+	// [Lyra 스타일] 탄퍼짐 및 열기 관리 데이터
+    UPROPERTY(EditDefaultsOnly, Category = "Lyra Logic")
+    class UCurveFloat* HeatToSpreadCurve; // 열기에 따른 탄퍼짐 각도 그래프
+    
+	// [수정] Lyra 스타일 커브 (추가)
+	// "현재 열기(X)에 따라 이번에 추가될 열기량(Y)을 결정하는 그래프"
+	UPROPERTY(EditDefaultsOnly, Category = "Lyra Logic")
+	class UCurveFloat* HeatToHeatPerShotCurve;
 	
+    UPROPERTY(EditDefaultsOnly, Category = "Lyra Logic")
+    class UCurveFloat* HeatToCooldownCurve; // 열기가 식는 속도 그래프
+    
+    UPROPERTY(EditDefaultsOnly, Category = "Lyra Logic")
+    float HeatPerShot = 1.0f; // 한 발 쏠 때 오르는 열기
+    
+    UPROPERTY(EditDefaultsOnly, Category = "Lyra Logic")
+    float CoolingDelay = 0.5f; // 사격 중지 후 열기가 식기 시작하는 시간
+	
+	// 수직 반동 최소값 (음수여야 위로 올라갑니다. 예: -0.5)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Recoil")
+	float RecoilPitchMin = -0.5f;
+
+	// 수직 반동 최대값 (예: -1.0)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Recoil")
+	float RecoilPitchMax = -1.0f;
+
+	// 수평 반동 최소값 (왼쪽으로 튀는 정도. 예: -0.5)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Recoil")
+	float RecoilYawMin = -0.2f;
+
+	// 수평 반동 최대값 (오른쪽으로 튀는 정도. 예: 0.5)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Recoil")
+	float RecoilYawMax = 0.2f;
 	
 	// UPROPERTY(EditAnywhere, Category = "Ammo")
 	// int32 magazineCapacity; // 탄창 용량 (예: 30발)
@@ -97,10 +157,10 @@ struct FPlayerAnimData
 	UAnimSequence* LowReady; // 평상시 포즈 (Idle)
     
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimSequence* Equip; // 꺼내기
+	UAnimMontage* EquipMontage; // 꺼내기
     
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimSequence* UnEquip; // 집어넣기
+	UAnimMontage* UnEquipMontage; // 집어넣기
     
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* ReloadMontage;

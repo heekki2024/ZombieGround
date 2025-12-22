@@ -4,12 +4,10 @@
 #include "Inventory/InventoryComponent.h"
 
 #include "Character/Human/HumanCharacter.h"
-#include "Components/SpotLightComponent.h"
 #include "Item/DataAsset/Ammo/AmmoDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
 #include "Item/Equippable/Flashlight/Flashlight.h"
 #include "Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h"
-#include "Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistolActor.h"
 #include "Item/Instance/Ammo/AmmoInstance.h"
 #include "Item/Instance/Weapon/BaseWeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
@@ -58,24 +56,6 @@ void UInventoryComponent::BeginPlay()
 		secondaryWeaponSlot = NewWeaponInstance;
 	}
 	EquipSecondaryWeapon();
-	
-	
-	// // 게임 시작 시 플래시 라이트 생성 및 손에 부착
-	if (flashlightClass)
-	{
-        
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = ownerCharacter;
-		
-		currentFlashlight = GetWorld()->SpawnActor<AFlashlight>(flashlightClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
-	
-		if (currentFlashlight)
-		{
-			// Mesh의 소켓 이름(예: "Hand_R_Socket")에 부착
-			currentFlashlight->AttachToComponent(ownerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_l_flashlight"));
-		}
-	}
-	
 }
 
 
@@ -422,125 +402,147 @@ void UInventoryComponent::SortInventory()
 
 void UInventoryComponent::EquipPrimaryWeapon()
 {
-	if (!IsValid(primaryWeaponSlot))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: primaryWeapon is invalid"));
-		return;
-	}
-	if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == primaryWeaponSlot) return;
+	//인벤토리에 주무기가 있는지 확인한다. 없으면 return;
+	//현재 들고 있는 무기가 인벤토리의 주무기에 해당하면 return;
+	//총기 swap, 스왑한 무기를 현재 들고 있는 무기로 설정
+	if (primaryWeaponSlot == nullptr) return;
+	if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == primaryWeaponSlot) return;	
+	
+	// 2. [중요] "나 이거 낄거야"라고 예약 (Pending)
+	PendingWeaponInstance = primaryWeaponSlot;
+	
+	// 4. 교체 로직 실행
+	SwapWeaponInternal();
+	
+	// if (!IsValid(primaryWeaponSlot))
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("DropWeapon: primaryWeapon is invalid"));
+	// 	return;
+	// }
+	// if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == primaryWeaponSlot) return;
+	//
+	// // 2. 스폰 파라미터 설정
+	// FActorSpawnParameters SpawnParams;
+	// SpawnParams.Owner = ownerCharacter;
+	// SpawnParams.Instigator = ownerCharacter;
+	// SpawnParams.SpawnCollisionHandlingOverride = 
+	// 	ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//
+	// // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+	// FVector SpawnLocation = ownerCharacter->GetActorLocation();
+	// FRotator SpawnRotation = ownerCharacter->GetActorRotation();
+	//
+	// // 4. 액터 스폰
+	// ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
+	// 	primaryWeaponSlot->GetItemData<UWeaponDataAsset>()->actorClass,
+	// 	SpawnLocation,
+	// 	SpawnRotation,
+	// 	SpawnParams
+	// );
+	//
+	// newCurrentWeapon->LoadWeaponInstance(primaryWeaponSlot);
+	//
+	//
+	// // 6. 무기 저장
+	// currentWeaponActor = newCurrentWeapon;
+	// // currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
+	//
+	// // 7. Attach (부착)
+	// currentWeaponActor->AttachToComponent(
+	// 	ownerCharacter->GetMesh(),
+	// 	FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+	// 	primaryWeaponSlot->GetItemData<UWeaponDataAsset>()->rHandRifleSocketName
+	// );
+	//
+	// if(ownerCharacter)
+	// {
+	// 	ownerCharacter->BroadcastCurrentAmmoUpdate();
+	// 	ownerCharacter->BroadcastInventoryAmmoUpdate();
+	// }
+	//
+	// currentWeaponActor->weaponInstance = primaryWeaponSlot;
+}
 
-
+void UInventoryComponent::EquipSecondaryWeapon()
+{
+	//인벤토리에 주무기가 있는지 확인한다. 없으면 return;
+	//현재 들고 있는 무기가 인벤토리의 주무기에 해당하면 return;
+	//총기 swap, 스왑한 무기를 현재 들고 있는 무기로 설정
+	if (secondaryWeaponSlot == nullptr) return;
+	if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == secondaryWeaponSlot) return;	
+	
+	// 2. [중요] "나 이거 낄거야"라고 예약 (Pending)
+	PendingWeaponInstance = secondaryWeaponSlot;
+	
+	// 4. 교체 로직 실행
+	SwapWeaponInternal();
+	
+	
+	// if (!IsValid(secondaryWeaponSlot))
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("DropWeapon: primaryWeapon is invalid"));
+	// 	return;
+	// }
+	// if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == secondaryWeaponSlot) return;
+	//
+	//
 	// // 1️⃣ 기존 장착 무기 제거
 	// if (IsValid(currentWeaponActor))
 	// {
 	// 	currentWeaponActor->Destroy();
 	// 	currentWeaponActor = nullptr;
 	// }
-	
-	// 2. 스폰 파라미터 설정
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = ownerCharacter;
-	SpawnParams.Instigator = ownerCharacter;
-	SpawnParams.SpawnCollisionHandlingOverride = 
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-	FVector SpawnLocation = ownerCharacter->GetActorLocation();
-	FRotator SpawnRotation = ownerCharacter->GetActorRotation();
-
-	// 4. 액터 스폰
-	ABaseWeaponActor* newCurrentWeapon = GetWorld()->SpawnActor<ABaseWeaponActor>(
-		primaryWeaponSlot->GetItemData<UWeaponDataAsset>()->actorClass,
-		SpawnLocation,
-		SpawnRotation,
-		SpawnParams
-	);
-	
-	newCurrentWeapon->LoadWeaponInstance(primaryWeaponSlot);
-	
-	// 6. 무기 저장
-	currentWeaponActor = newCurrentWeapon;
-	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
-	
-	// 7. Attach (부착)
-	currentWeaponActor->AttachToComponent(
-		ownerCharacter->GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		primaryWeaponSlot->GetItemData<UWeaponDataAsset>()->rHandRifleSocketName
-	);
-
-	if(ownerCharacter)
-	{
-		ownerCharacter->BroadcastCurrentAmmoUpdate();
-		ownerCharacter->BroadcastInventoryAmmoUpdate();
-	}
-}
-
-void UInventoryComponent::EquipSecondaryWeapon()
-{
-	
-	if (!IsValid(secondaryWeaponSlot))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("DropWeapon: primaryWeapon is invalid"));
-		return;
-	}
-	if (IsValid(currentWeaponActor) && currentWeaponActor->weaponInstance == secondaryWeaponSlot) return;
-
-
-	// 1️⃣ 기존 장착 무기 제거
-	if (IsValid(currentWeaponActor))
-	{
-		currentWeaponActor->Destroy();
-		currentWeaponActor = nullptr;
-	}
-	
-	// 2. 스폰 파라미터 설정
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = ownerCharacter;
-	SpawnParams.Instigator = ownerCharacter;
-	SpawnParams.SpawnCollisionHandlingOverride = 
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	// if (!IsValid(currentFlashlight))
-	// {
-	// 	currentFlashlight = GetWorld()->SpawnActor<AFlashlight>(flashlightClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
 	//
-	// 	if (currentFlashlight)
-	// 	{
-	// 		// Mesh의 소켓 이름(예: "Hand_R_Socket")에 부착
-	// 		currentFlashlight->AttachToComponent(ownerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_l_flashlight"));
-	// 	}
+	// // 2. 스폰 파라미터 설정
+	// FActorSpawnParameters SpawnParams;
+	// SpawnParams.Owner = ownerCharacter;
+	// SpawnParams.Instigator = ownerCharacter;
+	// SpawnParams.SpawnCollisionHandlingOverride = 
+	// 	ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//
+	// // if (!IsValid(currentFlashlight))
+	// // {
+	// // 	currentFlashlight = GetWorld()->SpawnActor<AFlashlight>(flashlightClass, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation(), SpawnParams);
+	// //
+	// // 	if (currentFlashlight)
+	// // 	{
+	// // 		// Mesh의 소켓 이름(예: "Hand_R_Socket")에 부착
+	// // 		currentFlashlight->AttachToComponent(ownerCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("hand_l_flashlight"));
+	// // 	}
+	// // }
+	//
+	// // 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
+	// FVector SpawnLocation = ownerCharacter->GetActorLocation();
+	// FRotator SpawnRotation = ownerCharacter->GetActorRotation();
+	//
+	// // 4. 액터 스폰
+	// ABasePistolActor* newCurrentWeapon = GetWorld()->SpawnActor<ABasePistolActor>(
+	// 	secondaryWeaponSlot->GetItemData<UWeaponDataAsset>()->actorClass,
+	// 	SpawnLocation,
+	// 	SpawnRotation,
+	// 	SpawnParams
+	// );
+	//
+	// newCurrentWeapon->LoadWeaponInstance(secondaryWeaponSlot);
+	//
+	// // 6. 무기 저장
+	// currentWeaponActor = newCurrentWeapon;
+	// // currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
+	//
+	// // 7. Attach (부착)
+	// currentWeaponActor->AttachToComponent(
+	// 	ownerCharacter->GetMesh(),
+	// 	FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+	// 	secondaryWeaponSlot->GetItemData<UWeaponDataAsset>()->rHandPistolSocketName
+	// );
+	//
+	// if(ownerCharacter)
+	// {
+	// 	ownerCharacter->BroadcastCurrentAmmoUpdate();
+	// 	ownerCharacter->BroadcastInventoryAmmoUpdate();	
 	// }
-	
-	// 3. 스폰 위치/회전은 대충 캐릭터 위치 기준으로
-	FVector SpawnLocation = ownerCharacter->GetActorLocation();
-	FRotator SpawnRotation = ownerCharacter->GetActorRotation();
+	// currentWeaponActor->weaponInstance = secondaryWeaponSlot;
 
-	// 4. 액터 스폰
-	ABasePistolActor* newCurrentWeapon = GetWorld()->SpawnActor<ABasePistolActor>(
-		secondaryWeaponSlot->GetItemData<UWeaponDataAsset>()->actorClass,
-		SpawnLocation,
-		SpawnRotation,
-		SpawnParams
-	);
-	
-	newCurrentWeapon->LoadWeaponInstance(secondaryWeaponSlot);
-	
-	// 6. 무기 저장
-	currentWeaponActor = newCurrentWeapon;
-	// currentWeaponNameEnum = currentWeapon->weaponDetails.WeaponName;
-	
-	// 7. Attach (부착)
-	currentWeaponActor->AttachToComponent(
-		ownerCharacter->GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		secondaryWeaponSlot->GetItemData<UWeaponDataAsset>()->rHandPistolSocketName
-	);
-
-	if(ownerCharacter)
-	{
-		ownerCharacter->BroadcastCurrentAmmoUpdate();
-		ownerCharacter->BroadcastInventoryAmmoUpdate();	}
 }
 
 void UInventoryComponent::EquipMeleeWeapon()
@@ -656,6 +658,156 @@ void UInventoryComponent::DropConsumableByIndex(int32 SlotIndex)
 	    }
 	}
 }
+
+void UInventoryComponent::SwapWeaponInternal()
+{
+	if (IsValid(currentWeaponActor))
+	{
+		// A. 기존 무기가 있으면 "넣어라(StartUnequip)" 명령
+		// 델리게이트 바인딩: 무기가 사라지면(Destroy 직전) 나한테 알려줘
+		currentWeaponActor->OnUnequipFinished.AddDynamic(this, &UInventoryComponent::OnCurrentWeaponUnequipped);
+        
+		// 애니메이션 재생 시작 -> 끝나면 스스로 Destroy됨
+		currentWeaponActor->StartUnequip();
+	}
+	else
+	{
+		// B. 기존 무기가 없으면(맨손) 바로 스폰
+		SpawnPendingWeapon();
+	}
+}
+
+void UInventoryComponent::OnCurrentWeaponUnequipped()
+{
+	// 기존 무기는 이미 FinishUnequip()에서 Destroy()를 호출했으므로
+	// 포인터만 비워줍니다.
+	currentWeaponActor = nullptr;
+
+	// 대기 중이던 새 무기 스폰
+	SpawnPendingWeapon();
+}
+
+void UInventoryComponent::SpawnPendingWeapon()
+{
+	if (!PendingWeaponInstance || !ownerCharacter) return;
+    
+    UWeaponDataAsset* WeaponData = PendingWeaponInstance->GetItemData<UWeaponDataAsset>();
+    if (!WeaponData) return;
+	
+	// =================================================================
+	// [추가] 플래시라이트 관리 로직 (Primary: 제거 / Secondary: 생성)
+	// =================================================================
+	if (WeaponData->weaponSlot == EWeaponSlot::Primary)
+	{
+		// 주무기를 들 때는 플래시라이트 끄기(제거)
+		if (IsValid(currentFlashlight))
+		{
+			currentFlashlight->Destroy();
+			currentFlashlight = nullptr;
+		}
+	}
+	else if (WeaponData->weaponSlot == EWeaponSlot::Secondary)
+	{
+		// 보조무기를 들 때는 플래시라이트 켜기(생성)
+		// 이미 있으면 또 만들지 않음
+		if (!IsValid(currentFlashlight) && flashlightClass)
+		{
+			FActorSpawnParameters FlashlightSpawnParams;
+			FlashlightSpawnParams.Owner = ownerCharacter;
+			FlashlightSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			currentFlashlight = GetWorld()->SpawnActor<AFlashlight>(
+				flashlightClass, 
+				ownerCharacter->GetActorLocation(), 
+				ownerCharacter->GetActorRotation(), 
+				FlashlightSpawnParams
+			);
+
+			if (currentFlashlight)
+			{
+				// 캐릭터의 왼손 등 지정된 소켓에 부착
+				currentFlashlight->AttachToComponent(
+					ownerCharacter->GetMesh(), 
+					FAttachmentTransformRules::SnapToTargetNotIncludingScale, 
+					TEXT("hand_l_flashlight")
+				);
+			}
+		}
+	}
+
+	// =================================================================
+	
+
+    // 1. 스폰 파라미터 설정
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.Owner = ownerCharacter;
+    SpawnParams.Instigator = ownerCharacter;
+    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+    FVector SpawnLocation = ownerCharacter->GetActorLocation();
+    FRotator SpawnRotation = ownerCharacter->GetActorRotation();
+
+    // 2. 소켓 이름 결정 (주무기/보조무기에 따라 다름)
+    FName TargetSocketName = NAME_None;
+    
+    // WeaponSlot 타입에 따라 소켓 분류
+    if (WeaponData->weaponSlot == EWeaponSlot::Primary)
+    {
+        TargetSocketName = WeaponData->rHandRifleSocketName;
+    }
+    else if (WeaponData->weaponSlot == EWeaponSlot::Secondary)
+    {
+        TargetSocketName = WeaponData->rHandPistolSocketName;
+    }
+    // Melee 등 추가 가능...
+
+    // 3. 액터 스폰 (BaseWeaponActor로 통일하거나, 데이터 에셋의 클래스 사용)
+    // PistolActor와 WeaponActor가 다르다면 Cast나 템플릿으로 분기해도 되지만, 
+    // 여기서는 DataAsset의 ActorClass를 믿고 스폰합니다.
+    AActor* NewActor = GetWorld()->SpawnActor<AActor>(
+        WeaponData->actorClass,
+        SpawnLocation,
+        SpawnRotation,
+        SpawnParams
+    );
+
+    // 4. 캐스팅 및 초기화
+    ABaseWeaponActor* NewWeaponActor = Cast<ABaseWeaponActor>(NewActor);
+    if (NewWeaponActor)
+    {
+        // 데이터 로드
+        NewWeaponActor->LoadWeaponInstance(PendingWeaponInstance);
+        
+        // 멤버 변수 갱신
+        currentWeaponActor = NewWeaponActor;
+        currentWeaponActor->weaponInstance = PendingWeaponInstance;
+
+        // 5. 부착 (Attach)
+        if (TargetSocketName != NAME_None)
+        {
+            NewWeaponActor->AttachToComponent(
+                ownerCharacter->GetMesh(),
+                FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+                TargetSocketName
+            );
+        }
+
+        // [중요] WeaponActor의 BeginPlay()에서 StartEquip()이 자동 호출되므로
+        // 여기서는 별도로 StartEquip을 호출할 필요가 없습니다.
+        
+    	// [추가] 데이터 주입과 부착이 끝난 후, 여기서 수동으로 호출!
+    	NewWeaponActor->StartEquip();
+    	
+        // 6. UI 및 탄약 갱신
+        ownerCharacter->BroadcastCurrentAmmoUpdate();
+        ownerCharacter->BroadcastInventoryAmmoUpdate();
+    }
+    
+    // Pending 초기화 (선택사항, 안전을 위해)
+    // PendingWeaponInstance = nullptr;
+}
+
+
 
 
 // bool UInventoryComponent::PickUpAmmo(ABaseItem* NewAmmo)

@@ -48,6 +48,21 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	USoundBase* ImpactSound;
+
+	// [추가] 사운드 감쇄 설정 (3D 사운드 범위 조절용)
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	class USoundAttenuation* ImpactAttenuation;
+	
+public:
+	// 이 총알이 가진 데미지 (스폰될 때 주입받음)
+	float baseDmg = 1.0f;
+	float headshotDmg = 1.0f;
+	float knockbackStrength = 100.0f;
+	float stun = 10;
+	float stunTime = 0.3f;
+	
+	// [추가] 총알 생성 직후 호출해서 데미지를 세팅하는 함수
+	void InitProjectile(float weaponBaseDmg, float weaponHeadshotDmg, float weaponKnockbackStrength, float weaponStun, float weaponStunTime);
 	
 	UFUNCTION()
 	void OnHit(

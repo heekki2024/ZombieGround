@@ -32,6 +32,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UAiZombieFSM* fsm;
 	
-	virtual void OnDamageProcess(FVector hitDirection) override;
+	// [추가] 시야 감지 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	class UPawnSensingComponent* PawnSensing;
 
+	// [추가] 감지 시 호출될 함수
+	UFUNCTION()
+	void OnSeePawn(APawn* Pawn);
 };

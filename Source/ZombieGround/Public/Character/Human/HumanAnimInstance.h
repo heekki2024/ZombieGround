@@ -61,4 +61,11 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float deltaPitch;
+
+	// [추가] ADS 전환 시간 (애니메이션 블루프린트용)
+	UPROPERTY(BlueprintReadOnly, Category="Animation")
+	float LowReadyToAdsTime = 0.2f;
+
+	UPROPERTY(BlueprintReadOnly, Category="Animation")
+	float AdsToLowReadyTime = 0.2f;
 };

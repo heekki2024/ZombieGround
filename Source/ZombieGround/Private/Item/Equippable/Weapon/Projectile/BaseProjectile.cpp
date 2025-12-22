@@ -65,6 +65,16 @@ void ABaseProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+
+void ABaseProjectile::InitProjectile(float weaponBaseDmg, float weaponHeadshotDmg, float weaponKnockbackStrength, float weaponStun, float weaponStunTime)
+{
+	this->baseDmg = weaponBaseDmg;
+	this->headshotDmg = weaponHeadshotDmg;
+	this->knockbackStrength = weaponKnockbackStrength;
+	this->stun = weaponStun;
+	this->stunTime = weaponStunTime;
+}
+
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                             FVector NormalImpulse,
                             const FHitResult& Hit)
@@ -72,10 +82,10 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	// UE_LOG(LogTemp, Warning, TEXT("Projectile Hit! %s"), *OtherActor->GetName());
 
 	CollisionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	if (RadialForceComp)
-	{
-		RadialForceComp->FireImpulse();
-	}
+	// if (RadialForceComp)
+	// {
+	// 	RadialForceComp->FireImpulse();
+	// }
 	if (ImpactParticle) // UPROPERTY로 선언했다고 가정
 	{
 		// Normal → Rotation
@@ -92,17 +102,35 @@ void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	if (ImpactSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(
-			this,
+			GetWorld(), // World Context
 			ImpactSound,
-			Hit.ImpactPoint
+			Hit.ImpactPoint,
+			1.0f, // Volume Multiplier
+			1.0f, // Pitch Multiplier
+			0.0f, // Start Time
+			ImpactAttenuation // [수정] 감쇄 설정 적용
 		);
 	}
 	
+	// 4. 좀비 피격 처리 및 물리 힘 적용 (핵심 부분)
 	if (AZombieCharacter* hitZombie = Cast<AZombieCharacter>(Hit.GetActor()))
 	{
+		// A. 총알이 날아가는 방향 구하기 (이 방향으로 좀비를 밉니다)
+		FVector BulletDirection = GetVelocity().GetSafeNormal();
+       
+		FString HitBoneName = Hit.BoneName.ToString();
 		
-		hitZombie->OnDamageProcess(GetVelocity().GetSafeNormal());
+		// 헤드샷 판정
+		if (HitBoneName.Contains(TEXT("head"), ESearchCase::IgnoreCase) || 
+			HitBoneName.Contains(TEXT("neck"), ESearchCase::IgnoreCase))
+		{
+			hitZombie->OnDamageProcess(this->headshotDmg, Hit, BulletDirection, knockbackStrength, stun, stunTime);
+		}
+		else
+		{
+			hitZombie->OnDamageProcess(this->baseDmg, Hit, BulletDirection, knockbackStrength, stun, stunTime);
+		}
 	}
-	
+    
 	Destroy();
 }

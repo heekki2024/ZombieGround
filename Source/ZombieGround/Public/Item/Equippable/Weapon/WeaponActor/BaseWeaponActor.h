@@ -8,6 +8,7 @@
 
 // 1. 블루프린트에서 변수로 사용하려면 BlueprintType 필수
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponStateChanged);
 
 UCLASS()
 class ZOMBIEGROUND_API ABaseWeaponActor : public ABaseEquippable
@@ -92,6 +93,9 @@ public:
 public:
 	
 	bool bIsRightClicking = false;
+	
+	// [추가] 좌클릭 입력 유지 상태 추적 (조준 전환 후 자동 사격용)
+	bool bIsLeftClickHeld = false;
 
 	
 	// =================================================================
@@ -118,5 +122,34 @@ public:
 	UFUNCTION()
 	void Fire();
 	
+public:
+	// ... 기존 코드 ...
 
+	// [추가] 장착 시작 함수
+	void StartEquip();
+	// [추가] 장착 해제 시작 함수
+	void StartUnequip();
+
+	
+	// [추가] 이벤트 알리미 (캐릭터가 이걸 구독함)
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnWeaponStateChanged OnEquipFinished;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnWeaponStateChanged OnUnequipFinished;
+
+protected:
+	// 내부적으로 타이머가 끝나면 호출될 함수들
+	void FinishEquip();
+	void FinishUnequip();
+
+	
+	FTimerHandle EquipTimerHandle;
+	FTimerHandle UnequipTimerHandle;
+	
+	// [추가] ADS 전환 타이머 (조준/해제 중 발사 불가)
+	FTimerHandle AimTransitionTimerHandle;
+	bool bIsAimTransitioning = false;
+
+	void FinishAimTransition();
 };

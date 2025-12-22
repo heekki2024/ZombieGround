@@ -95,6 +95,7 @@ public:
 	void OnTabPressed(const struct FInputActionValue& Value);
 	
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UAnimInstance* AnimInstance;
 	// 에디터에서 할당할 공격 애니메이션 몽타주
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
@@ -123,13 +124,14 @@ public:
 	
 	
 	UPROPERTY(EditAnywhere)
-	int32 MAX_HP = 30;
-	int32 currentHP = MAX_HP;
+	float MAX_HP = 500.0;
+	float currentHP = MAX_HP;
 
 	UPROPERTY(EditAnywhere)
 	float knockbackPower = 5;
 	FVector knockbackPos;
-	virtual void OnDamageProcess(FVector hitDirection);
+	virtual void OnDamageProcess(float damage,const FHitResult& hitResult,FVector bulletDirection, float knockbackStrength, float stun, float stunTime);
+	void OnDie();
 
 	// 생성 시 재생될 전역 사운드 (요청하신 dieSound)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
@@ -139,5 +141,20 @@ public:
 	UPROPERTY()
 	class UZombieHud* zombieHUD;
 	
+	// [추가] 넉백 상태 관리 변수
+	bool bIsKnockbackActive = false; // 지금 밀려나는 중인가?
+	FVector KnockbackTargetPos;      // 어디까지 밀려날 것인가?
+protected:
+	// 넉백 처리를 담당하는 내부 함수
+	// void UpdateKnockback(float DeltaTime);
+	
+private:
+	// [추가] 스턴 상태가 끝나면 속도를 복구하는 타이머 핸들
+	FTimerHandle StunTimerHandle;
 
+	// [추가] 원래 이동 속도를 저장할 변수
+	float DefaultWalkSpeed = 600.0f; 
+
+	// [추가] 타이머가 끝나면 호출될 함수
+	void RestoreWalkSpeed();
 };

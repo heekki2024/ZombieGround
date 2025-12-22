@@ -284,13 +284,9 @@ void AHumanCharacter::OnLeftClickReleased(const FInputActionValue& Value)
 
 void AHumanCharacter::OnNum1KeyPressed(const FInputActionValue& Value)
 {
-	//인벤토리에 주무기가 있는지 확인한다. 없으면 return;
-	//현재 들고 있는 무기가 인벤토리의 주무기에 해당하면 return;
-	//총기 swap, 스왑한 무기를 현재 들고 있는 무기로 설정
-	if (inventoryComponent->primaryWeaponSlot == nullptr) return;
-	if (inventoryComponent->primaryWeaponSlot == inventoryComponent->currentWeaponActor->weaponInstance) return;
+
 	inventoryComponent->EquipPrimaryWeapon();
-	inventoryComponent->currentWeaponActor->weaponInstance = inventoryComponent->primaryWeaponSlot;
+	// inventoryComponent->currentWeaponActor->weaponInstance = inventoryComponent->primaryWeaponSlot;
 
 }
 
@@ -300,7 +296,7 @@ void AHumanCharacter::OnNum2KeyPressed(const FInputActionValue& Value)
 	if (inventoryComponent->secondaryWeaponSlot == inventoryComponent->currentWeaponActor->weaponInstance) return;
 
 	inventoryComponent->EquipSecondaryWeapon();
-	inventoryComponent->currentWeaponActor->weaponInstance = inventoryComponent->secondaryWeaponSlot;
+	// inventoryComponent->currentWeaponActor->weaponInstance = inventoryComponent->secondaryWeaponSlot;
 }
 
 void AHumanCharacter::Reload(const FInputActionValue& Value)
@@ -616,13 +612,9 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
     // ----------------------------------------------------------------
     if (FirstPersonCamera)
     {
-        float TargetFOV = DefaultFOV;
-
-        if (bIsAiming)
-        {
-            TargetFOV = AimingFOV;
-        }
-        else 
+        // [수정] 조준 중이 아닐 때만 속도에 따라 FOV 변경
+        // 조준 중일 때는 외부(BaseWeaponActor)에서 TargetFOV를 설정해줌
+        if (!bIsAiming)
         {
             TargetFOV = FMath::GetMappedRangeValueClamped(
                 FVector2D(WalkSpeed, runSpeed),

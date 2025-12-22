@@ -34,8 +34,6 @@ AZombieCharacter::AZombieCharacter()
 	
 	// 필요 시 Overlap 이벤트 발생 가능
 	InteractionCapsule->SetGenerateOverlapEvents(true);
-	
-	
 }
 
 // Called when the game starts or when spawned
@@ -47,8 +45,7 @@ void AZombieCharacter::BeginPlay()
 	
 
 
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
-	
+	DefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;	
 	// Enhanced Input Subsystem 활성화
 	if (IsValid(PC))
 	{
@@ -103,6 +100,9 @@ void AZombieCharacter::Tick(float DeltaTime)
 			outLinedInteractable = HitActor;
 		}
 	}
+	
+	// [수정] 코드가 깔끔해졌습니다. 함수 안에서 알아서 처리합니다.
+	// UpdateKnockback(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -251,21 +251,20 @@ void AZombieCharacter::PlayDamageMontage()
 	{
 		// 2. 현재 몽타주가 이미 재생 중이 아니라면 실행 (스팸 방지 로직이 필요하다면 사용)
 		AnimInstance = GetMesh()->GetAnimInstance();
-		if (AnimInstance && !AnimInstance->Montage_IsPlaying(DamageMontage))
-		{
-			//피격 애니메이션 재생
-			int index = FMath::RandRange(0, 2);
-			// FName sectionName(FString::Printf(TEXT("Damage%d"), index));
-			// 1. int를 FName으로 변환 (예: index가 1이면 "Hit1"이 됨)
-			// *FString::Printf는 포맷팅된 문자열을 만듭니다.
-			FName SectionName = FName(*FString::Printf(TEXT("Damage%d"), index));
 
-			// 2. 세 번째 인자에 섹션 이름 전달
-			PlayAnimMontage(DamageMontage, 1.0f, SectionName);
-            
-			// 만약 특정 섹션부터 시작하거나 속도를 조절하려면 아래와 같이 사용:
-			// PlayAnimMontage(AttackMontage, 1.0f, FName("StartSection"));
-		}
+		//피격 애니메이션 재생
+		int index = FMath::RandRange(0, 2);
+		// FName sectionName(FString::Printf(TEXT("Damage%d"), index));
+		// 1. int를 FName으로 변환 (예: index가 1이면 "Hit1"이 됨)
+		// *FString::Printf는 포맷팅된 문자열을 만듭니다.
+		FName SectionName = FName(*FString::Printf(TEXT("Damage%d"), index));
+
+		// 2. 세 번째 인자에 섹션 이름 전달
+		PlayAnimMontage(DamageMontage, 1.0f, SectionName);
+        
+		// 만약 특정 섹션부터 시작하거나 속도를 조절하려면 아래와 같이 사용:
+		// PlayAnimMontage(AttackMontage, 1.0f, FName("StartSection"));
+	
 	}
 }
 
@@ -399,46 +398,150 @@ AActor* AZombieCharacter::GetCenterScreenInteractable()
 	return nullptr;
 }
 
-void AZombieCharacter::OnDamageProcess(FVector hitDirection)
+void AZombieCharacter::OnDamageProcess(float damage,const FHitResult& hitResult,FVector bulletDirection, float knockbackStrength, float stun, float stunTime)
 {
-	//체력
-	currentHP--;
+	// 1. 체력 감소
+	currentHP = currentHP - damage;
+	UE_LOG(LogTemp, Warning, TEXT("Current HP: %f"), currentHP);
 	if (currentHP > 0)
 	{
-		//살아있음
-		hitDirection.Z = 0;
-		FVector force = hitDirection * knockbackPower;
-		knockbackPos  = GetActorLocation() + force;
-		// SetActorLocation(knockbackPos, true);
+		// =========================================================
+		// [살아있을 때]: 물리 엔진(Simulate Physics) 대신 무브먼트(Launch) 사용
+		// 이유: 여기서 Physics를 켜면 좀비가 걷다가 갑자기 흐물거며 쓰러집니다.
+		// =========================================================
+       
+		// Z축 힘 제거 (위로 붕 뜨지 않게)
+		FVector LaunchDir = bulletDirection;
+		// LaunchDir.Z = 0.0f;
+		// LaunchDir.Normalize();
+
+		// LaunchCharacter: 캐릭터 무브먼트를 이용해 밀어냄 (애니메이션 유지됨)
+		LaunchCharacter(LaunchDir * knockbackStrength, true, false);
 		
-		float percent = GetWorld()->DeltaTimeSeconds * 10;
-		FVector P = FMath::Lerp(GetActorLocation(), knockbackPos,percent);
 		
-		// 원충돌 거의 도착했다는걸 보장하기 위해.
-		float dist = FVector::Dist(P, GetActorLocation());
-		if (dist < 5)
+		if (GetCharacterMovement())
 		{
-			P = GetActorLocation();
+			// 1. 속도를 스턴 수치로 즉시 변경 (예: 600 -> 100)
+			GetCharacterMovement()->MaxWalkSpeed = stun;
+
+			// 2. 타이머 설정 (이미 돌고 있다면 시간을 리셋해서 다시 0초부터 셉니다)
+			// stunTime(초) 뒤에 RestoreWalkSpeed 함수를 실행하라!
+			GetWorld()->GetTimerManager().SetTimer(
+				StunTimerHandle, 
+				this, 
+				&AZombieCharacter::RestoreWalkSpeed, 
+				stunTime, 
+				false // 반복 안 함 (1회성)
+			);
 		}
-		else
-		{
-			SetActorLocation(P, true);
-		}
+		
+		// 피격 몽타주 재생
+		PlayDamageMontage();
 	}
 	else
 	{
-		// OnDie();
+		// 타이머가 돌고 있었다면 취소 (죽었으니 속도 복구할 필요 없음)
+		GetWorld()->GetTimerManager().ClearTimer(StunTimerHandle);
+		// =========================================================
+		// [죽었을 때]: 즉시 사망 처리 후 물리 힘 적용
+		// =========================================================
+		OnDie();
 	}
-	
-
 }
 
 
-// void AZombieCharacter::OnDie()
+void AZombieCharacter::OnDie()
+{
+	// SetActorEnableCollision(false);
+	// SetActorLocation(GetActorLocation() + (-GetActorUpVector() * 100 * GetWorld()->GetWorld()->DeltaTimeSeconds));
+	// if (GetActorLocation().Z < -80)
+	// 	Destroy();
+	// 1. 더 이상 데미지 안 받게 / 충돌 안 되게 설정
+	// bIsDead = true; // (플래그가 있다면)
+
+	// 2. 캡슐 컴포넌트 충돌 끄기 (캡슐은 제자리에 있고 메쉬만 나가도록)
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    
+	// 3. 캐릭터 움직임 멈추기
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->DisableMovement();
+	GetCharacterMovement()->SetComponentTickEnabled(false);
+
+	// 4. [핵심] 메쉬 물리 시뮬레이션 켜기 (Ragdoll 활성화)
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll")); // 콜리전 프리셋 변경 (필수)
+	GetMesh()->SetSimulatePhysics(true);                 // 물리 켜기
+
+	// 5. 사망 소리
+	if (DieSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), DieSound);
+	}
+    
+	// 6. 일정 시간 뒤 사라지게 하기 (SetLifeSpan)
+	SetLifeSpan(5.0f); // 5초 뒤 자동 Destroy
+	
+}
+
+void AZombieCharacter::RestoreWalkSpeed()
+{
+	if (GetCharacterMovement())
+	{
+		// 속도를 원래대로 복구 (예: 100 -> 600)
+		GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+        
+		// UE_LOG(LogTemp, Log, TEXT("Zombie recovered from stun. Speed restored."));
+	}
+}
+
+// // [추가] 분리된 넉백 로직 함수
+// void AZombieCharacter::UpdateKnockback(float DeltaTime)
 // {
-// 	SetActorEnableCollision(false);
-// 	SetActorLocation(GetActorLocation() + (-GetActorUpVector() * 100 * GetWorld()->GetWorld()->DeltaTimeSeconds));
-// 	if (GetActorLocation().Z < -80)
-// 		Destroy();
+// 	// 활성화 상태가 아니면 바로 리턴 (성능 절약)
+// 	if (!bIsKnockbackActive) return;
+//
+// 	// 1. 현재 위치에서 목표 위치로 부드럽게 보간 (VInterpTo)
+// 	// InterpSpeed 10.0f: 숫자가 클수록 빠릅니다. (10.0f는 적당히 빠름)
+// 	FVector CurrentPos = GetActorLocation();
+// 	FVector NewLocation = FMath::VInterpTo(CurrentPos, KnockbackTargetPos, DeltaTime, 10.0f);
+//     
+// 	// 2. 위치 이동 (bSweep=true: 벽 뚫기 방지)
+// 	FHitResult Hit;
+// 	SetActorLocation(NewLocation, true, &Hit);
+//
+// 	// 3. 도착 판정 (남은 거리 계산)
+// 	float Dist = FVector::Dist(CurrentPos, KnockbackTargetPos);
+//     
+// 	// 목표에 거의 도착했거나(5cm 이내), 벽에 막혀서 더 못 가면 멈춤
+// 	if (Dist < 5.0f || Hit.bBlockingHit)
+// 	{
+// 		bIsKnockbackActive = false; // 넉백 종료
+// 		// UE_LOG(LogTemp, Log, TEXT("Knockback Finished"));
+// 	}
 // }
 
+
+// if (!IsValid(compOwner))
+// {
+// 	return;
+// }
+//
+// currentTime += GetWorld()->DeltaTimeSeconds;
+// if (currentTime > damageDelayTime)
+// {
+// 	currentTime = 0;
+// 	zombieState = EZombieState::Idle;
+// }
+// 	
+// float percent = GetWorld()->DeltaTimeSeconds * 10;
+// FVector P = FMath::Lerp(compOwner->GetActorLocation(), compOwner->knockbackPos, percent);
+// float dist = FVector::Dist(P, compOwner->GetActorLocation());
+// if (dist < 10)
+// {
+// 	P = compOwner->GetActorLocation();
+// }
+// else
+// {
+// 	compOwner->SetActorLocation(P, true);
+// }
+//
+// compOwner->PlayDamageMontage();

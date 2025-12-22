@@ -21,7 +21,8 @@ public:
 public:
 	//Animation 소유 Pawn
 	UPROPERTY()
-	class AZombieCharacter* pawnOwner;
+	class AZombieCharacter* zombieCharacter;
+
 	
 	//이동 속도
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -34,6 +35,9 @@ public:
 	//수평 이동 속력
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float groundSpeed;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float direction;
 	
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	// bool bIsRightClicking = false;

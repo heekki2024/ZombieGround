@@ -50,6 +50,20 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category=FSM)
 	class AHumanCharacter* target;
+
+	// [추가] 시야 감지 시 호출될 함수
+	void OnTargetDetected(class AHumanCharacter* NewTarget);
+
+	// [추가] 현재 목표로 하는 타겟 포인트 (패트롤용)
+	UPROPERTY(VisibleAnywhere, Category = FSM)
+	class AActor* CurrentTargetPoint;
+
+	// [추가] 맵에 있는 모든 타겟 포인트 목록
+	UPROPERTY()
+	TArray<class AActor*> AllTargetPoints;
+	
+	// [추가] 랜덤 타겟 포인트 선정 함수
+	void FindRandomTargetPoint();
 	
 private:
 	// 가장 가까운 인간을 찾아 반환하는 함수
@@ -72,8 +86,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = FSM)
 	float damageDelayTime = 0.5f;
 	
-	void DamageState();
-	void DieState();
+	// void DamageState();
+	// void DieState();
+	void ChangeState(EZombieState NewState);
 
 	// [추가] 이동 중 타겟 재검색 주기 (0.5 ~ 1.0초 권장)
 	float ReSearchRate = 1.0f; 

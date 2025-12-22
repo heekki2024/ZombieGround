@@ -21,7 +21,7 @@ public:
 	UPROPERTY()
 	class USkeletalMesh* actorMesh;
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UBaseDataAsset* defaultItemData;
 
 	UPROPERTY()
@@ -32,7 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void InitInstance(class UBaseDataAsset* itemDataAsset) {};
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	virtual UBaseDataAsset* GetItemData() const {return defaultItemData;};
 
 	//템플릿 함수

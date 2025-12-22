@@ -252,6 +252,7 @@ private:
 	
 	
 	//달리기 카메라 조절
+public:
 	// [추가] 기본 FOV (걷기 상태) - 1인칭은 보통 90 정도를 기본으로 많이 씁니다.
 	UPROPERTY(EditAnywhere, Category = "Camera")
 	float DefaultFOV = 80.0f;
@@ -265,9 +266,6 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class UCameraComponent* FirstPersonCamera;
 	
-protected:
-	// ... 기존 변수들 ...
-
 	// [추가] 조준 FOV (줌 인) - 숫자가 작을수록 확대됩니다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float AimingFOV = 75.0f; 
@@ -275,9 +273,14 @@ protected:
 	// [추가] 조준 상태 플래그
 	bool bIsAiming = false;
 	
+	// [추가] 현재 목표 FOV (외부에서 직접 접근 가능하도록 public)
+	float TargetFOV = 80.0f;
+
+protected:
+	// ... 기존 변수들 ...
+	
+	
 	// [추가] 조준 시 이동 속도 (250)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float AimWalkSpeed = 250.0f;
 	
 	
 public:
