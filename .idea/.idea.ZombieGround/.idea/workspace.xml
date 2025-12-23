@@ -15,44 +15,13 @@
     <list default="true" id="d4f3ddc7-86d1-42a1-bb7c-fedf326fe68d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/ABP_HumanAnim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/ABP_HumanAnim.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ABP_ZombieAnim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ABP_ZombieAnim.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/BS_UnarmedWalk.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Attack_D_Montage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Attack_D_Montage.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Walk_B.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Walk_B.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Pistol_A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Pistol_A.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Rifle_A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Rifle_A.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Sniper_Rifle_A.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Item/DataAsset/Weapon/DA_Sniper_Rifle_A.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Item/Equippable/Weapon/Projectiles/BP_BaseBulletProjectile.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Item/Equippable/Weapon/Projectiles/BP_BaseBulletProjectile.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ZombieAnimationPack/Animations/Mannequin_UE5/anim_Walk_B.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ZombieAnimationPack/Animations/Mannequin_UE5/anim_Walk_B.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_AnimationLibrary/Lyra/AM_MM_Pistol_Equip.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_AnimationLibrary/Lyra/AM_MM_Pistol_Equip.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/_AnimationLibrary/Lyra/AM_MM_Rifle_Equip.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/_AnimationLibrary/Lyra/AM_MM_Rifle_Equip.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/A/JR/VP4WCX9P08Z1AFE7LZSEV7.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/B/NQ/VJ30PHQZS2WZ9D9D7CUDZU.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/D/7K/KFPEL2W1ZN36P3PA12HDZ8.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Lvl_ThirdPerson/E/TG/MR71R1COINTK4Y7P6EWQ50.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiZombie/AiZombie.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiZombie/AiZombie.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiZombie/AiZombieFSM.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiZombie/AiZombieFSM.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/BS_Lowready_Walk.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/BP_Human.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/BP_Human.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanAnimInstance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieAnimInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Inventory/InventoryComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Inventory/InventoryComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/Projectile/BaseProjectile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/Projectile/BaseProjectile.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Instance/Weapon/BaseWeaponInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Item/Instance/Weapon/BaseWeaponInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiZombie/AiZombie.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiZombie/AiZombie.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiZombie/AiZombieFSM.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiZombie/AiZombieFSM.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanAnimInstance.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieAnimInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Inventory/InventoryComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Inventory/InventoryComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/DataAsset/Weapon/WeaponDataAsset.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/DataAsset/Weapon/WeaponDataAsset.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/Projectile/BaseProjectile.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/Projectile/BaseProjectile.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Equippable/Weapon/WeaponActor/BaseWeaponActor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Instance/BaseInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Instance/BaseInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Instance/Weapon/BaseWeaponInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/Instance/Weapon/BaseWeaponInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +35,6 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="cidr-memory-view://6" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ACLPlugin/Source/ACLPluginEditor/Public/IACLPluginEditorModule.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Source/ControlRigEditor/Private/Sequencer/LoadAnimToControlRigSettings.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Plugins/Chooser/Source/Chooser/Internal/RandomizeColumn.h" root0="SKIP_HIGHLIGHTING" />
@@ -330,27 +298,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ Project.ZombieGround.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Notification.DisplayName-DoNotAsk-Uproject Promotion": "Suggest opening Uproject",
-    "Notification.DoNotAsk-Uproject Promotion": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ShowUsagesActions.previewPropertyKey": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ Project.ZombieGround.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Notification.DisplayName-DoNotAsk-Uproject Promotion&quot;: &quot;Suggest opening Uproject&quot;,
+    &quot;Notification.DoNotAsk-Uproject Promotion&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ShowUsagesActions.previewPropertyKey&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RiderProblemsViewState">
     <option name="proportion" value="0.81764704" />
   </component>
@@ -594,7 +562,8 @@
       <workItem from="1765777706323" duration="86300000" />
       <workItem from="1766218741595" duration="2936000" />
       <workItem from="1766222320864" duration="18344000" />
-      <workItem from="1766316054850" duration="46107000" />
+      <workItem from="1766316054850" duration="49641000" />
+      <workItem from="1766463019775" duration="412000" />
     </task>
     <servers />
   </component>

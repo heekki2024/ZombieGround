@@ -116,6 +116,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* IA_Toggle; // 에디터에서 할당할 Sprint 액션
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* IA_Crouch; // 에디터에서 할당할 Sprint 액션
+	
+	// 토글 Crouch
+    void ToggleCrouch();
+	void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	
 	
 	//Input 함수
 	void Move(const struct FInputActionValue& Value);
@@ -132,6 +140,8 @@ protected:
 	void OnTabPressed(const struct FInputActionValue& Value);
 	void Toggle(const struct FInputActionValue& Value);
 
+
+	
 public:
 	UPROPERTY()
 	APlayerController* PC;
@@ -201,7 +211,7 @@ public:
 private:
 	
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float WalkSpeed = 350.f;
+	float walkSpeed = 350.f;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float runSpeed = 600.f;

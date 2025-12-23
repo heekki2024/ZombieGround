@@ -3,6 +3,7 @@
 
 #include "Character/Human/HumanAnimInstance.h"
 #include "Character/Human/HumanCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
@@ -31,6 +32,8 @@ void UHumanAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		humanCharacter = Cast<AHumanCharacter>(TryGetPawnOwner());
 		if (!humanCharacter) return;
 	}
+	
+	IsCrouching = humanCharacter->GetCharacterMovement()->IsCrouching();
 	
 	//이동 속도 설정 (vector 가져옴)
 	//수평 이동 속력 (루트 x^2 + y^2 해도 됨) 

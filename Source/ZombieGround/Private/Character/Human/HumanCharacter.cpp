@@ -3,14 +3,11 @@
 
 #include "Character/Human/HumanCharacter.h"
 
-#include "AIController.h"
 #include "Character/Zombie/ZombieCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
-#include "Character/AiZombie/AiZombie.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/SpotLightComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Inventory/InventoryComponent.h"
@@ -21,9 +18,7 @@
 #include "Item/Equippable/Weapon/WeaponActor/SecondaryWeapon/Pistol/BasePistolActor.h"
 #include "Item/Instance/Weapon/BaseWeaponInstance.h"
 #include "Item/Pickup/BasePickup.h"
-#include "Kismet/GameplayStatics.h"
 #include "UI/InGame/Human/HumanHUD.h"
-#include "Engine/StaticMeshActor.h" // [추가] 스태틱 메쉬 액터 사용을 위해
 
 
 // Sets default values
@@ -63,6 +58,12 @@ AHumanCharacter::AHumanCharacter()
 	
 	// 필요 시 Overlap 이벤트 발생 가능
 	InteractionCapsule->SetGenerateOverlapEvents(true);
+	
+	// 또는
+	
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	// 앉았을 때 캡슐 높이
+	GetCharacterMovement()->CrouchedHalfHeight = 44.f;
 	
 }
 
@@ -166,7 +167,22 @@ void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		playerInput->BindAction(IA_Run, ETriggerEvent::Started, this, &AHumanCharacter::StartRun);	
 		playerInput->BindAction(IA_Run, ETriggerEvent::Completed, this, &AHumanCharacter::StopRun);	
 		playerInput->BindAction(IA_Toggle, ETriggerEvent::Started, this, &AHumanCharacter::Toggle);	
+		playerInput->BindAction(IA_Crouch, ETriggerEvent::Started, this, &AHumanCharacter::ToggleCrouch);
 
+	}
+}
+
+void AHumanCharacter::ToggleCrouch()
+{
+	// 현재 앉아 있으면 → 일어나기
+	if (GetCharacterMovement()->IsCrouching())
+	{
+		UnCrouch();
+	}
+	// 서 있으면 → 앉기
+	else
+	{
+		Crouch();
 	}
 }
 
@@ -311,10 +327,24 @@ void AHumanCharacter::OnTabPressed(const FInputActionValue& Value)
 
 void AHumanCharacter::Toggle(const struct FInputActionValue& Value)
 {
-	if (ABasePistolActor* PistolActor = Cast<ABasePistolActor>(inventoryComponent->currentWeaponActor))
+	if (Cast<ABasePistolActor>(inventoryComponent->currentWeaponActor))
 	{
 		inventoryComponent->currentFlashlight->ToggleLight();
 	}
+}
+
+void AHumanCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+
+}
+
+void AHumanCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+
 }
 
 
@@ -523,7 +553,7 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
     // -------------------------------------------------------
     // 1. 목표 속도 결정 (우선순위: 조준 > 달리기 > 걷기)
     // -------------------------------------------------------
-    float TargetMaxSpeed = WalkSpeed; // 350
+    float TargetMaxSpeed = walkSpeed; // 350
 	
     if (bIsAiming)
     {
@@ -545,7 +575,7 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
         runAlpha += (DeltaTime / runAccelerationTime);
 
         // B. 벽 충돌 감지 (막히면 가속도 리셋)
-        bool bIsBlocked = (CurrentMaxSpeed > WalkSpeed + 10.0f) && (CurrentActualSpeed < WalkSpeed - 50.0f);
+        bool bIsBlocked = (CurrentMaxSpeed > walkSpeed + 10.0f) && (CurrentActualSpeed < walkSpeed - 50.0f);
         if (bIsBlocked)
         {
             runAlpha = FMath::FInterpTo(runAlpha, 0.0f, DeltaTime, 10.0f);
@@ -553,7 +583,7 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
 
         // C. 속도 적용 (Ease-In)
         runAlpha = FMath::Clamp(runAlpha, 0.0f, 1.0f);
-        float NewSpeed = FMath::InterpEaseIn(WalkSpeed, runSpeed, runAlpha, runEaseExp);
+        float NewSpeed = FMath::InterpEaseIn(walkSpeed, runSpeed, runAlpha, runEaseExp);
         GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
     }
     else
@@ -617,7 +647,7 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
         if (!bIsAiming)
         {
             TargetFOV = FMath::GetMappedRangeValueClamped(
-                FVector2D(WalkSpeed, runSpeed),
+                FVector2D(walkSpeed, runSpeed),
                 FVector2D(DefaultFOV, RunFOV),
                 CurrentActualSpeed
             );
@@ -659,7 +689,7 @@ void AHumanCharacter::OnInfected()
 
 	// 3. 스폰할 클래스 결정 (Player vs AI)
 	// 삼항 연산자를 쓰거나 if문으로 'ClassToSpawn' 변수에만 할당합니다.
-	TSubclassOf<AZombieCharacter> TargetClass = nullptr;
+	TSubclassOf<AZombieCharacter> TargetClass;
 
 	if (MyController->IsA(APlayerController::StaticClass()))
 	{

@@ -41,6 +41,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bIsRightClicking;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool IsCrouching;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class ABaseWeaponActor* currentWeaponActor;
