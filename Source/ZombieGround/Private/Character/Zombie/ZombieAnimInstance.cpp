@@ -36,11 +36,3 @@ void UZombieAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	isAir = zombieCharacter->GetMovementComponent()->IsFalling();
 }
 
-void UZombieAnimInstance::OnAttackHitEvent()
-{
-	
-	if (zombieCharacter)
-	{
-		zombieCharacter->AttackHitCheck();
-	}
-}

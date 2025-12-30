@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Controllers/HumanAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Inventory/InventoryComponent.h"
@@ -27,18 +28,21 @@ AHumanCharacter::AHumanCharacter()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	springArmComponent = CreateDefaultSubobject<USpringArmComponent>(FName("SpringArm"));
-	springArmComponent->TargetArmLength = 0.f;
-	springArmComponent->bUsePawnControlRotation = true;
-	springArmComponent->bInheritPitch = true;
-	springArmComponent->bInheritYaw = true;
-	springArmComponent->bInheritRoll = false;
-	springArmComponent->bDoCollisionTest = false;
-	springArmComponent->SetupAttachment(GetRootComponent());
+	// AI용 기본 컨트롤러 클래스 지정
+	AIControllerClass = AHumanAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	// springArmComponent = CreateDefaultSubobject<USpringArmComponent>(FName("SpringArm"));
+	// springArmComponent->TargetArmLength = 0.f;
+	// springArmComponent->bUsePawnControlRotation = true;
+	// springArmComponent->bInheritPitch = true;
+	// springArmComponent->bInheritYaw = true;
+	// springArmComponent->bInheritRoll = false;
+	// springArmComponent->bDoCollisionTest = false;
+	// springArmComponent->SetupAttachment(GetRootComponent());
 	
-	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(FName("Camera"));
-	FirstPersonCamera->SetupAttachment(springArmComponent, FName("camera"));
-	FirstPersonCamera->SetFieldOfView(DefaultFOV);
+	// FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(FName("Camera"));
+	// FirstPersonCamera->SetupAttachment(springArmComponent, FName("camera"));
+	firstPersonCamera->SetFieldOfView(DefaultFOV);
 
 	
 	inventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
@@ -64,6 +68,10 @@ AHumanCharacter::AHumanCharacter()
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	// 앉았을 때 캡슐 높이
 	GetCharacterMovement()->CrouchedHalfHeight = 44.f;
+
+	// [추가] 플레이어가 조종하지 않는 경우 AI가 자동으로 빙의하도록 설정
+
+
 	
 }
 
@@ -640,7 +648,7 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
     // ----------------------------------------------------------------
     // 4. FOV 로직 (기존 유지)
     // ----------------------------------------------------------------
-    if (FirstPersonCamera)
+    if (firstPersonCamera)
     {
         // [수정] 조준 중이 아닐 때만 속도에 따라 FOV 변경
         // 조준 중일 때는 외부(BaseWeaponActor)에서 TargetFOV를 설정해줌
@@ -654,8 +662,8 @@ void AHumanCharacter::UpdateRunSpeed(float DeltaTime)
         }
 
         float InterpSpeed = bIsAiming ? 15.0f : 10.0f;
-        float NewFOV = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, InterpSpeed);
-        FirstPersonCamera->SetFieldOfView(NewFOV);
+        float NewFOV = FMath::FInterpTo(firstPersonCamera->FieldOfView, TargetFOV, DeltaTime, InterpSpeed);
+        firstPersonCamera->SetFieldOfView(NewFOV);
     }
     
     // 디버그 (수치 확인용)
@@ -689,21 +697,9 @@ void AHumanCharacter::OnInfected()
 
 	// 3. 스폰할 클래스 결정 (Player vs AI)
 	// 삼항 연산자를 쓰거나 if문으로 'ClassToSpawn' 변수에만 할당합니다.
-	TSubclassOf<AZombieCharacter> TargetClass;
-
-	if (MyController->IsA(APlayerController::StaticClass()))
-	{
-		TargetClass = ZombieClassToSpawn;
-	}
-	else
-	{
-		// AAiZombie가 AZombieCharacter를 상속받았다면 이렇게 하나로 퉁칠 수 있습니다.
-		TargetClass = AIZombieClassToSpawn; 
-	}
-
-	// 클래스가 비어있으면 중단
+	// 3. 스폰할 클래스 (하나로 통일)
+	TSubclassOf<AZombieCharacter> TargetClass = ZombieClassToSpawn;
 	if (!TargetClass) return;
-
 
 	// 4. 좀비 스폰 (한 번만 작성)
 	FActorSpawnParameters SpawnParams;
@@ -756,9 +752,19 @@ void AHumanCharacter::OnInfected()
 			}
 		}
 
-		// 5. [중요] 빙의 (영혼 옮기기)
-		// 이걸 안 하면 플레이어가 좀비를 조종할 수 없습니다.
-		MyController->Possess(NewZombie);
+		if (IsValid(PC))
+		{
+			// 플레이어 → 빙의
+			PC->Possess(NewZombie);
+		}
+		else
+		{
+			// AI → 혹시 모를 경우 대비 (보통은 필요 없음)
+			if (!NewZombie->GetController())
+			{
+				NewZombie->SpawnDefaultController();
+			}
+		}
 
 		// 6. 운동량 주입
 		UCharacterMovementComponent* ZombieCMC = NewZombie->GetCharacterMovement();

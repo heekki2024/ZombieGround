@@ -3,7 +3,6 @@
 
 #include "Core/ZGGameMode.h"
 
-#include "Character/AiZombie/AiZombie.h"
 #include "Character/Human/HumanCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"

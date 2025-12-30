@@ -39,15 +39,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Zombie")
 	TSubclassOf<AZombieCharacter> ZombieClassToSpawn;
 
-	// [추가] AI가 감염되었을 때 소환될 좀비 클래스 (블루프린트 할당용)
-	UPROPERTY(EditDefaultsOnly, Category = "Zombie")
-	TSubclassOf<AZombieCharacter> AIZombieClassToSpawn;
-	
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USpringArmComponent* springArmComponent;
-	
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// class USpringArmComponent* springArmComponent;
+	//
 
 	// Ease-In 곡선의 휘어짐 정도 (기본값 2.0)
 	// 1.0 = 직선(선형), 2.0 = 제곱(부드러움), 3.0~ = 급격한 변화
@@ -273,8 +269,8 @@ public:
 
 	// [추가] 1인칭 카메라 컴포넌트
 	
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
-	class UCameraComponent* FirstPersonCamera;
+	// UPROPERTY(VisibleAnywhere, Category = "Camera")
+	// class UCameraComponent* FirstPersonCamera;
 	
 	// [추가] 조준 FOV (줌 인) - 숫자가 작을수록 확대됩니다.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")

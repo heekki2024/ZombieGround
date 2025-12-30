@@ -21,7 +21,7 @@ public class ZombieGround : ModuleRules
 			"Slate",
 			"SlateCore",
 			"NavigationSystem",
-			"AIModule"
+			"StructUtils"
 		});
 		
 		PublicIncludePaths.Add(ModuleDirectory);

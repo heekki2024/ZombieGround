@@ -5,8 +5,10 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 #include "Character/Human/HumanCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Controllers/ZombieAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interactable/InteractInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -18,6 +20,12 @@ AZombieCharacter::AZombieCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	// AI용 기본 컨트롤러 클래스 지정
+	AIControllerClass = AZombieAIController::StaticClass();
+
+	// 월드에 스폰될 때 자동으로 AI 컨트롤러 생성
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 	InteractionCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("InteractionCapsule"));
 	InteractionCapsule->SetupAttachment(RootComponent);
@@ -268,48 +276,65 @@ void AZombieCharacter::PlayDamageMontage()
 	}
 }
 
-void AZombieCharacter::AttackHitCheck()
+void AZombieCharacter::BasicAttackHit()
 {
-	// 1. 트레이스 시작점과 끝점 계산
-	// 캐릭터의 위치에서 정면으로 AttackRange만큼 뻗어나감
-	FVector Start = GetActorLocation(); 
-	FVector ForwardVector = GetActorForwardVector();
-	FVector End = Start + (ForwardVector * AttackRange);
 
-	// 2. 충돌 감지 매개변수 설정
+
+	// 2. 시작점과 끝점 계산
+	FVector StartLocation = firstPersonCamera->GetComponentLocation();
+	FVector ForwardVector = firstPersonCamera->GetForwardVector();
+	FVector EndLocation = StartLocation + (ForwardVector * BasicAttackRange);
+
+	// 3. 충돌 결과 구조체
 	FHitResult HitResult;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this); // 자기 자신은 무시
 
-	// 3. 스피어 트레이스 실행 (SweepSingleByChannel)
-	// 여기서는 파온(Pawn)만 감지하도록 설정했습니다. 필요에 따라 채널 변경 가능 (예: ECC_GameTraceChannel1)
-	bool bHit = GetWorld()->SweepSingleByChannel(
+	// 4. 무시할 액터 설정 (자기 자신)
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+	// 5. [핵심 변경] Kismet 라이브러리 사용
+	// 이 함수는 계산과 동시에 디버그 드로잉(빨간/초록 캡슐)을 자동으로 처리해줍니다.
+	bool bHit = UKismetSystemLibrary::SphereTraceSingle(
+		GetWorld(),
+		StartLocation,
+		EndLocation,
+		BasicAttackRadius,      // 스피어 반지름
+		UEngineTypes::ConvertToTraceType(ECC_Pawn), // 트레이스 채널
+		false,                  // 복잡한 충돌(Mesh) 정밀 검사 여부
+		ActorsToIgnore,         // 무시할 액터 목록
+		EDrawDebugTrace::ForDuration, // 디버그 타입 (None, ForOneFrame, ForDuration, Persistent)
 		HitResult,
-		Start,
-		End,
-		FQuat::Identity,
-		ECC_Pawn,
-		FCollisionShape::MakeSphere(AttackRadius),
-		Params
+		true,                   // 자기 자신 무시 (위의 배열과 중복되지만 안전장치)
+		FLinearColor::Red,      // 빗나갔을 때 색상
+		FLinearColor::Green,    // 맞았을 때 색상
+		2.0f                    // 디버그 표시 시간 (초)
 	);
 
-	// 4. 디버그 드로잉 (개발 중에 눈으로 확인하기 위해 필수)
-	// 빨간색: 충돌 없음 / 초록색: 충돌 함
-	FVector Center = Start + (ForwardVector * (AttackRange * 0.5f));
-	float HalfHeight = AttackRange * 0.5f;
-	FColor DrawColor = bHit ? FColor::Green : FColor::Red;
-    
-	// DrawDebugCapsule 사용 예시 (혹은 UKismetSystemLibrary::DrawDebugSphereTraceSingle 사용 가능)
-	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(ForwardVector).ToQuat(), DrawColor, false, 1.0f);
-
-
-	// 5. 충돌 처리 로직
-	if (bHit && HitResult.GetActor())
+	// 6. 충돌 후 처리 로직
+	if (bHit)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName());
+		// 예: 대미지 적용 코드
+		// AActor* HitActor = HitResult.GetActor();
+		// UGameplayStatics::ApplyDamage(HitActor, ...);
         
-		// 여기에 데미지 전달 로직 추가 (예: ApplyDamage)
-		UGameplayStatics::ApplyDamage(HitResult.GetActor(), 10.0f, GetController(), this, UDamageType::StaticClass());
+		UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitResult.GetActor()->GetName());
+		if (bHit)
+		{
+			AActor* HitActor = HitResult.GetActor();
+
+			// [중요] 맞은 액터가 '인간 캐릭터'인지 확인(Cast)
+			AHumanCharacter* Human = Cast<AHumanCharacter>(HitActor);
+
+			if (Human)
+			{
+				// 로그로 확인
+				UE_LOG(LogTemp, Warning, TEXT("인간을 공격했습니다! 감염 시작!"));
+
+				// 여기에 데미지 전달 로직 추가 (예: ApplyDamage)
+				UGameplayStatics::ApplyDamage(HitResult.GetActor(), 10.0f, GetController(), this, UDamageType::StaticClass());	}
+		}
+		
+		
 	}
 }
 
@@ -452,6 +477,9 @@ void AZombieCharacter::OnDamageProcess(float damage,const FHitResult& hitResult,
 
 void AZombieCharacter::OnDie()
 {
+	// [추가] AI 컨트롤러 분리 (StateTree 종료 유도)
+	DetachFromControllerPendingDestroy();
+
 	// SetActorEnableCollision(false);
 	// SetActorLocation(GetActorLocation() + (-GetActorUpVector() * 100 * GetWorld()->GetWorld()->DeltaTimeSeconds));
 	// if (GetActorLocation().Z < -80)

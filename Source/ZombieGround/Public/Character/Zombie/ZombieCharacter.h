@@ -110,14 +110,14 @@ public:
 public:
 	// 공격 판정 함수 (AnimNotify에서 호출)
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void AttackHitCheck();
+	void BasicAttackHit();
 
 	// 공격 거리 및 범위 설정
 	UPROPERTY(EditAnywhere, Category = "Combat")
-	float AttackRange = 150.0f;
+	float BasicAttackRange = 150.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
-	float AttackRadius = 50.0f;
+	float BasicAttackRadius = 50.0f;
 	
 	void SetInteractableOutline(AActor* interactable, bool bEnable);
 	AActor* GetCenterScreenInteractable();

@@ -53,10 +53,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bAttackPlay = false;
-	
-	UFUNCTION(BlueprintCallable)
-	void OnAttackHitEvent();
-	
+
 	// UFUNCTION(BlueprintImplementableEvent)
 	// void PlayDamageAnim(FName sectionName);
 };
