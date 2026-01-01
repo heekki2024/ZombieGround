@@ -13,93 +13,167 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4f3ddc7-86d1-42a1-bb7c-fedf326fe68d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Controllers/HumanAIController.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Controllers/ZombieAIController.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Conditions/MyClasssadas.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Evaluators/MyClass65.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/MyClass.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Schemas/MyClass41.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Tasks/ChaseTask.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Tasks/GetRandomLocation.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Tasks/MoveToLocation.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Tasks/SelectNextWeightedRoomTask.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/StateTrees/Tasks/SelectWeightedSearchEntryPointTask.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/World/SearchZone.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Controllers/HumanAIController.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Controllers/ZombieAIController.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Conditions/MyClasssadas.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Evaluators/MyClass65.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/MyClass.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Schemas/MyClass41.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/ChaseTask.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/GetRandomLocation.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/MoveToLocation.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/SelectNextWeightedRoomTask.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/SelectWeightedSearchEntryPointTask.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/World/SearchZone.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/AI_Human/Blueprints/BP_AI_Human.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/AI_Zombie/Blueprints/BP_AI_Zombie.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/ABP_HumanAnim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Anims/ABP_HumanAnim.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/BP_Human.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/BP_Human.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IA_Interact.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IA_Interact.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Human/Blueprints/Inputs/IMC_HumanPlayer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Lvl_DemoTestLevel.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Lvl_DemoTestLevel.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ABP_ZombieAnim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ABP_ZombieAnim.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Attack_D_Montage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Attack_D_Montage.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Taking_Damage_B_Montage.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/Anims/ZombieAnimation/Demo_anim_Taking_Damage_B_Montage.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/BP_Zombie.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/Zombie/Blueprints/BP_Zombie.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Core/BP_ZGGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Core/BP_ZGGameMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/7S/272FZ9Q8ERPU4IVA9QN2RC.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/7S/272FZ9Q8ERPU4IVA9QN2RC.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/GE/F3PXOFIMTCD0FWC74RP0FM.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/5C/NQ6EPDLESDM15UW03REAH2.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/U7/GX0SYQTQW9IMI8LU2G7IK2.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/DG/QJV8RSSRPQKTU0KBQJT38X.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/HH/A9EAUY3AZJX3V2B6R4N8W8.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/HH/A9EAUY3AZJX3V2B6R4N8W8.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/NN/CO2H3JTA9F8ROMSGZ0VI3W.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/DT/1B3HI0EEIU80R1Z7MW4O6V.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/64/JNLTMPCQ8GVLLS15I9NRKJ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/64/JNLTMPCQ8GVLLS15I9NRKJ.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/2H/EZF8L23Y8W8HW0F8W4BTBA.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/2L/9UQQHF2RDRO1RJZPWWMQL9.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/ZG/74JXWUGGUJATNAJF9ZZHA4.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/2M/D68ZP15AKZE9QWB01VR3FF.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/2M/D68ZP15AKZE9QWB01VR3FF.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/3G/13GVHJAOLD6NF0Q2TQI6GF.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/H8/T0XD90WW4EZE78CUXXQEM1.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/VF/GOWLKG97M4B89SCEGH0PDC.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/I9/6IOLFMLZ2ROI63RAAUG4VZ.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/9Y/H0VMYEO937AQR61HY63OMK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/QB/MPV18RKU9FSXBYPVL9GOD2.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/QO/CX91WT5VOT1P0OLA73VNYZ.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/4C/V8FJ8M5EDT2UWXE6DDJN0C.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/CU/9MF0Q4FEWX1G7JSL2H25S4.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/TK/4MD4O5QDMHM0ER3X3O0WG1.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/NW/8A3MR4OA1JYFZ5GSVTXQFX.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/PI/PFLP1V1OID7PWE3676VS1S.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/TU/RFP46GVSYL1VXHUAFP9CBS.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/40/H28NK91YNBRU7KF09ZIO3S.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/E0/PQT539QY4U0RSDH4OZ8WBX.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/S3/3F0HZUT3CZXKKGM8DSK1OU.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiHuman/AiHuman.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiHuman/AiHumanFSM.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiZombie/AiZombie.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/AiZombie/AiZombieFSM.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/BaseCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieAnimInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieAnimInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Core/ZGGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Core/ZGGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiHuman/AiHuman.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiHuman/AiHumanFSM.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiZombie/AiZombie.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/AiZombie/AiZombieFSM.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/BaseCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Human/HumanCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieAnimInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieAnimInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Core/ZGGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Core/ZGGameMode.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/ZombieGround.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/ZombieGround.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZombieGround.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/ZombieGround.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Characters/AI_Zombie/Blueprints/ST_ZombieAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Characters/AI_Zombie/Blueprints/ST_ZombieAI.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/2O/PTS0F9SG4ZXXE5U8QSI6XB.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/2R/98LVB0W2OMKKZKV8N9NDMP.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/4D/9PD7Q1R9ZSU4U2C51OMCBZ.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/7O/F8FLRPUF9PKKCXDIP49GPD.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/84/6M3A8L5QCWYUGMYD1NVNMX.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/84/6M3A8L5QCWYUGMYD1NVNMX.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/B0/WYR65XXYQEVE5MAZMDL3G4.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/L9/ZKGCI14BUQ7TKV50MFIDNL.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/L9/ZKGCI14BUQ7TKV50MFIDNL.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/PD/KLOKMOFG8J9YH88WTMHIY4.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/PD/KLOKMOFG8J9YH88WTMHIY4.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/0/ZL/R00LJ6ENXB8KDRZODF1KQA.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/57/M3FRQCUO28PF55IRLG0TZE.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/5H/Q980D3CNMJG9P6AA1JUFMO.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/F5/KX5F0PRYT94HMKCTGKHF1I.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/IB/PLFNOKXI3PU75P6O542I8R.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/OW/Z2X8EQFCB815G19MZFTF2R.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/R4/G7KH3DGYDIHNK6MY3ZTQZU.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/XX/V1HDPC817991AQM2YBADTN.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/1/XX/V1HDPC817991AQM2YBADTN.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/4T/12WGLZTKUV1D8E1ZZIH1AK.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/6Z/6GTS5397ISSQNESGRZQIEK.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/G2/TL4CUJ9TI5G7MLCT7U8RZN.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/G2/TL4CUJ9TI5G7MLCT7U8RZN.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/GW/PVIW1FD6JP5VQIQGHPW1SH.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/KF/ZY4Y04A5LHUK1I7JM65RX9.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/LB/RX3IDGGPXSOA0TB54G6YA1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/LB/RX3IDGGPXSOA0TB54G6YA1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/N7/48RAOAF1FLTFRMXVL7URWC.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/N7/48RAOAF1FLTFRMXVL7URWC.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/QK/6N5QYNM1KNWJGO1B7OTDMO.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/S6/6CK4G5YV8DME0EYXHOMOXZ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/S6/6CK4G5YV8DME0EYXHOMOXZ.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/WB/YGRHMGA1GZ2IC42M6OWYSJ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/WB/YGRHMGA1GZ2IC42M6OWYSJ.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/2/XV/3W3W9SLJWWOUBCJ4W42GWZ.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/8C/3IUGKNBCN49ZN8MON4I7T7.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/AD/X2DFE8W5UQGE213RDZH959.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/LQ/3JKRLGT4QYAI4GNI8J4494.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/RH/CSKN0MREO6RYVRAN1LU4EC.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/3/U2/TQSAUOBYLUK3WJY93WFHB7.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/47/56G3JWKEHCR84LPBGTTTRD.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/DV/UZUBOXGLUE0TRYPPJY87BR.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/I6/MN4HSTHZF58NHFK2TPAVKV.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/I6/MN4HSTHZF58NHFK2TPAVKV.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/L7/XN9TDJ2LXD7L1M1SFHR6I0.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/O4/IBL7IYK2BFGY3QB5ZW79NU.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/O4/IBL7IYK2BFGY3QB5ZW79NU.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/S9/M8JLLB9BFH1YRWGQUPB21S.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/WD/UZQA0OA9T9RZSB6T2LFX5E.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/WS/T4RAMIU978VBH373JPF8N2.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/4/ZW/LUS47AYV5NPNTIR6GGUZTE.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/3C/HED12MYTQXC9DNL65FPE8C.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/9P/0CBQU7BR61V81LVNX5RPXE.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/DR/DW6H57WCYD60EVX5IVX294.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/HJ/YV8GAGO5WW6COV0FKC4OFD.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/KB/SUG0IL0AL8KZFYD642769I.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/LG/IEJVNYTT9KMNYF59NZWULQ.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/MD/LG4IQ8XQ0RW92K5QK5P73K.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/MD/LG4IQ8XQ0RW92K5QK5P73K.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/MI/1XTJ36JUCCLINO0YKX6CCA.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/RI/9YTXOVAXDT45HL0IXFQCIG.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/SQ/XH7C6R68A0T8R9EKHY6CDP.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/U1/AMJG465UT28LIB7WY5IV7V.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/UZ/NS8Y1AVBC7OEVL74Z87Z2U.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/5/YT/B3ZFYDYPT1NACP5CME5I3Q.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/3K/SBNBQNRBEE1IKMXYSLSDEE.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/5S/4XWKVBBGRI50LLNZO837JY.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/6J/AEQZ1CFPIUFKUBEH5W9AF4.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/7S/TM6HAN46R8BMRZ0B1IJTQI.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/6/PY/2LBJUUD8RTMPL257ZB48Z6.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/1U/WG9KC29ZNZ23MUY35K2KPN.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/FF/53WF1DLINIZWW0P7OBDCBU.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/HB/IZV9UWOMYLLMC4J6GSQNOE.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/HB/IZV9UWOMYLLMC4J6GSQNOE.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/IY/ZS60QXFH0RWE0SWZTP9515.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/M2/T4ZSTAIYVSNHPSTKTLUR1P.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/MW/X7N918BT261GEJJLCLLTW3.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/PK/5VMY8Y9B6S5590X4J5K98S.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/PK/5VMY8Y9B6S5590X4J5K98S.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/R2/V1YJ7DN1K5LU685BNIJ9AP.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/WM/UWOW0RE090XKEZJW1I1HWT.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/XI/P2XR288P12S0Y2ETY93Q4Y.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/7/YD/4GO80CX50IYPSAAAMN6OGN.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/16/CMPTYKGHTH80RDCGK5HR56.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/3B/KU6I1WYUS2H3RB5KQYI6LZ.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/4Y/17GUU3RFEAXMXREAICL7AA.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/4Y/17GUU3RFEAXMXREAICL7AA.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/DE/A80EVKQ08FQ4JJQQY4HROQ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/DE/A80EVKQ08FQ4JJQQY4HROQ.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/GV/WE7S3CBIEEN8009P3K2QQA.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/JX/Q2329EQDT2N1K5405MCTRX.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/MK/G4FSVHIOGQOUDNK48OXP9D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/MK/G4FSVHIOGQOUDNK48OXP9D.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/SL/SWO1WJ147OO2GSO2FBFN43.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/WI/0P9EC0XRP9OYUGFHMJY0DY.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/8/XL/7XR2B5LQLJU8ZEW4ILB0BN.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/53/FB2MLK3FVKDU4AERA8QITL.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/70/RTE38ZOSYO6BFICBTCJMXY.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/70/RTE38ZOSYO6BFICBTCJMXY.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/7W/0MURE2E7LFB71IKETL7KSQ.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/D2/9FGYL2YB9HA2X1XH3EMQME.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/EN/54X7U110D3WC44R0WVB7X0.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/F6/AXFQGPM69OM7MC7ODKHTC3.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/MS/TVJ8G6FJB72KBPERAVXNZP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/MS/TVJ8G6FJB72KBPERAVXNZP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/RH/SFD9DNCSY6K3VAKSJBY2H7.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/RU/26S0MY0WCYDHNWEB7C4R6M.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/RU/26S0MY0WCYDHNWEB7C4R6M.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/TT/33KE9GU7ISXMGRL7U9HA5H.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/TT/33KE9GU7ISXMGRL7U9HA5H.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/UR/UQUVWEBTJHZRNZA3U8HDYF.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/VM/11726H76E5L0UKJGU870RU.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/VM/11726H76E5L0UKJGU870RU.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/YA/TV4QE13X2GBIQQO9KREPJD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/9/YA/TV4QE13X2GBIQQO9KREPJD.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/1N/9OG5Y2HDU1UHGI3YUUM0PM.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/4A/LP18E65O636BL9819XXA91.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/5Q/QIJ6E1LH2PSK05AA9EM3T0.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/5Q/QIJ6E1LH2PSK05AA9EM3T0.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/5V/F6DA6GQHQ4MNB3M98230IO.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/6H/4LGCP1OHPPBMRRJ7PIY0XX.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/7D/AT1ERM2NPNYBO958VOWDVZ.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/7D/AT1ERM2NPNYBO958VOWDVZ.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/9K/AEOAAB5BCI28JO9UXLKQ8X.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/9O/CDNBDWV1X44TB5I7567OLM.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/9O/CDNBDWV1X44TB5I7567OLM.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/A7/IIE4UU8DIJ5NWYZ2FG10PL.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/DM/U69HO7JJ0J2HPJZSZJLM7I.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/DU/38EO4SH1ZY4JTCT76QT5QE.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/DU/38EO4SH1ZY4JTCT76QT5QE.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/H9/ACRHSN4W3PFGQTVCRCS7Q6.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/QR/I3CZE0UBGQR6WZG1CW0K90.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/TY/PAPD5XHNS3GX3XX64GAL8D.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/UE/FHJNHN7B8LQZQOQ7FFUZ0G.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/UQ/YKN6X5EW6W62LG4ZUSCXU3.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/Y7/T5CJFA7QSJYBKWP3EW7ZFW.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/A/YZ/JNG75SLA3STH9H45PCEDZL.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/0T/L2TF8K2UUV4SF0B9FCLX52.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/28/XQHATA6FFI0HI32B159EIN.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/28/XQHATA6FFI0HI32B159EIN.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/7O/27CSPUQUQEOM0LK5OT3FH8.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/CA/00DYU4S7VJFSBM6YMYPQ1H.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/DF/DZKSEGW8HAA2YDXMHUWG6Y.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/DU/4PC5UKO16TT1KNH0MX4IH8.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/DU/4PC5UKO16TT1KNH0MX4IH8.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/H1/7DFFBD1DT3JCCF1L87WW67.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/JV/289VCGGB5H97UBWAQ40ZVT.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/NI/X4O7P3K4V0544ZSEYRJTAF.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/P9/CIRRTCJR9Q41OCKFDCO4MH.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/QO/OUM24TOVHNCG8EAWI6APRH.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/QO/OUM24TOVHNCG8EAWI6APRH.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/UR/SVAEKGIYLA5DXCO1RD23M2.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/UU/1OLITVIDRE4JHCZRBY78KL.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/B/Y1/0PQYHGWNT3DM475WPBXXH8.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/4O/F0UB8VI51L7S5RIVBAVINV.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/5F/CUQ831K3DXWZ4VBDOZOU7R.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/5F/CUQ831K3DXWZ4VBDOZOU7R.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/9E/TX2M13EUL98J4GGLSE3J7U.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/D8/7CL7H1E1T46DS92XHLC4UU.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/D8/7CL7H1E1T46DS92XHLC4UU.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/DX/N2ESS91I9ZMMK53GF9HXXG.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/EX/6JDXM3Z08Q4VRJHOCIJTQN.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/KS/G9HHFZN5IIIGFI6RRGJMA1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/KS/G9HHFZN5IIIGFI6RRGJMA1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/M9/QPU7G29L2MRC69QKT8ERSR.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/MP/Y7FUIJKJOY2O8LEY2K87QV.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/NU/6MQYLFO6TEOI95G0IV2OBY.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/NU/6MQYLFO6TEOI95G0IV2OBY.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/V8/E9NE00ZMTU8WM31XZJ552S.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/C/X3/RL7U5APB8GJS0JK751OA50.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/6N/8KCW1R504I9OL1YISFRZEG.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/8G/B7WGOWOHICDTE04CQZMWSB.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/8G/B7WGOWOHICDTE04CQZMWSB.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/8T/ILKPEGMTMCIRXXZ2JE6OBW.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/8T/ILKPEGMTMCIRXXZ2JE6OBW.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/AN/IWFHVDXKH7WC5AZBWV7RXJ.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/DC/8AL9FE40H7NGC05DU3BIP1.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/HH/1OUDO77CHDL443O896V5V2.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/MU/X6BMD3XZ626FMEW0ZZBBYW.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/MU/X6BMD3XZ626FMEW0ZZBBYW.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/OJ/EPMPMCQEV44I6SYOLXBFSE.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/QD/TDSCLTY1B4LAJ4165III4A.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/R5/Y5JNYB3M5AL7HJP39UJE2U.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/US/I916TSGT1Y96ZT3E7RGJLJ.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/D/Y8/JSTIG270FPC66Y6GHMJEQL.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/04/NQI8IRWOZ0ML1FXHL6C5EA.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/04/NQI8IRWOZ0ML1FXHL6C5EA.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/6J/957EJMW4J5POLIGO4KWEUA.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/AW/NAGQCBAIFZ614QO7G6CF52.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/BQ/DRYOBQ2IHU3RYZGZ4B0LX7.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/BQ/DRYOBQ2IHU3RYZGZ4B0LX7.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/IP/4KSNW26AT5CHN3HMHF3HX0.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/JL/N8O10R61328XIRSV7723HG.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/E/U6/QKNESBIIZEK0KQFEJ9A1O1.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/Characters/Lvl_DemoTestLevel/F/1B/XZCTJZLRL1ZHM314TDL3V7.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/GetRandomLocation.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/GetRandomLocation.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/SelectWeightedSearchEntryPointTask.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/SelectWeightedSearchEntryPointTask.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +187,6 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="cidr-memory-view://4" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ACLPlugin/Source/ACLPluginEditor/Public/IACLPluginEditorModule.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Source/ControlRigEditor/Private/Sequencer/LoadAnimToControlRigSettings.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Plugins/Chooser/Source/Chooser/Internal/RandomizeColumn.h" root0="SKIP_HIGHLIGHTING" />
@@ -231,9 +304,14 @@
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.6/Engine/Source/ThirdParty/AtomicQueue/AtomicQueue.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Plugins/Experimental/Mover/Source/Mover/Private/DefaultMovementSet/Modes/WalkingMode.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Plugins/Experimental/Mover/Source/Mover/Public/DefaultMovementSet/CharacterMoverComponent.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Plugins/Runtime/StateTree/Source/StateTreeModule/Private/StateTreeExecutionContext.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Plugins/Runtime/GameplayStateTree/Source/GameplayStateTreeModule/Private/Components/StateTreeComponent.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Plugins/Runtime/StateTree/Source/StateTreeModule/Private/Debugger/StateTreeRuntimeValidation.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Plugins/Runtime/StateTree/Source/StateTreeModule/Private/StateTreeExecutionContext.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Plugins/Runtime/StateTree/Source/StateTreeModule/Private/Tasks/StateTreeDebugTextTask.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/AIModule/Classes/Navigation/PathFollowingComponent.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/AIModule/Private/AIController.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/AIModule/Private/Navigation/CrowdManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/Core/Private/Async/TaskGraph.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/Core/Private/HAL/MallocMimalloc.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/Core/Private/HAL/UnrealMemory.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/Core/Private/Windows/WindowsPlatformProcess.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -249,6 +327,7 @@
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectHandleTracking.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectPtr.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/D3D12RHI/Private/D3D12Util.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/Engine/Classes/Animation/AnimNotifies/AnimNotify.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/Engine/Classes/Camera/PlayerCameraManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/Engine/Classes/Components/ActorComponent.h" root0="FORCE_HIGHLIGHTING" />
@@ -272,6 +351,7 @@
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/Runtime/NavigationSystem/Public/NavAreas/NavAreaMeta.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/ThirdParty/mimalloc/2.0.0/include/mimalloc-internal.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Program Files/Epic Games/UE_5.7/Engine/Source/UnrealEditor.Target.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/ZombieGround/UHT/SelectWeightedSearchEntryPointTask.gen.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Character/BaseAnimInstance.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Character/BaseCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanAnimInstance.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -674,7 +754,9 @@
       <workItem from="1766977919914" duration="247000" />
       <workItem from="1766979443633" duration="963000" />
       <workItem from="1766990050291" duration="17180000" />
-      <workItem from="1767007797800" duration="32282000" />
+      <workItem from="1767007797800" duration="32478000" />
+      <workItem from="1767161804042" duration="13988000" />
+      <workItem from="1767242249805" duration="8068000" />
     </task>
     <servers />
   </component>
@@ -717,7 +799,25 @@
           <line>104</line>
           <option name="timeStamp" value="48" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/SelectWeightedSearchEntryPointTask.h</url>
+          <line>21</line>
+          <option name="timeStamp" value="92" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/ZombieGround/Public/StateTrees/Tasks/SelectNextWeightedRoomTask.h</url>
+          <line>42</line>
+          <option name="timeStamp" value="106" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="CppProject">
+        <watch expression="Context.InstanceData" />
+        <watch expression="this" />
+        <watch expression="((struct FStateTreeNodeBase &amp;) ((struct FStateTreeTaskBase &amp;) ((struct FStateTreeTaskCommonBase &amp;) (*(this))))).InstanceDataHandle" />
+        <watch expression="this" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

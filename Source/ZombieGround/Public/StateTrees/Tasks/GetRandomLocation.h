@@ -51,6 +51,12 @@ struct ZOMBIEGROUND_API FFindLocation : public FStateTreeTaskCommonBase
 	*/
 	virtual const UStruct* GetInstanceDataType() const override { return FInstanceDataType::StaticStruct(); }
 	
+	
+	FFindLocation()
+	{
+		// "이 태스크는 매 프레임 Tick 함수를 호출할 필요가 없습니다"라고 선언
+		bShouldCallTick = false;
+	}
 	/**
 	 * Called when entering the state
 	 * @param Context The execution context for the state tree
@@ -61,6 +67,8 @@ struct ZOMBIEGROUND_API FFindLocation : public FStateTreeTaskCommonBase
 	{
 		FGetRandomLocationInstanceData& Data = Context.GetInstanceData(*this);
 
+		
+		
 		UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(Context.GetWorld());
 		if (!NavSys)
 		{
@@ -77,6 +85,7 @@ struct ZOMBIEGROUND_API FFindLocation : public FStateTreeTaskCommonBase
 		if (bFound)
 		{
 			Data.RandomReachableLocation = NavLocation.Location;
+			UE_LOG(LogTemp, Warning, TEXT("GetRandomLocation: succeeded"), *SearchOrigin.ToString(), Data.RandomPatrolRadius);
 			return EStateTreeRunStatus::Succeeded;
 		}
 		else

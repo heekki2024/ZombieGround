@@ -67,14 +67,26 @@ struct ZOMBIEGROUND_API FSelectWeightedSearchEntryPointTask : public FStateTreeT
     {
         FInstanceDataType& Data = Context.GetInstanceData(*this);
         
-        if (!Data.ZombieAIC || !Data.ZombieActor) return EStateTreeRunStatus::Failed;
-        if (Data.ZombieAIC->CachedSearchZones.IsEmpty()) return EStateTreeRunStatus::Failed;
+        if (!Data.ZombieAIC || !Data.ZombieActor)
+        {
+             UE_LOG(LogTemp, Error, TEXT("SelectWeightedEntryPoint: AIC or Actor is null"));
+             return EStateTreeRunStatus::Failed;
+        }
+        if (Data.ZombieAIC->CachedSearchZones.IsEmpty())
+        {
+             UE_LOG(LogTemp, Warning, TEXT("SelectWeightedEntryPoint: CachedSearchZones is empty. Check ZombieAIController::BeginPlay"));
+             return EStateTreeRunStatus::Failed;
+        }
         
         const FVector PawnLocation = Data.ZombieActor->GetActorLocation();
         UWorld* World = Data.ZombieActor->GetWorld();
         UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(World);
 
-        if (!NavSys) return EStateTreeRunStatus::Failed;
+        if (!NavSys)
+        {
+            UE_LOG(LogTemp, Error, TEXT("SelectWeightedEntryPoint: NavigationSystem is null"));
+            return EStateTreeRunStatus::Failed;
+        }
 
         TArray<FEntryPointCandidate> Candidates;
         TArray<FEntryPointCandidate> FallbackCandidates; 
@@ -105,7 +117,11 @@ struct ZOMBIEGROUND_API FSelectWeightedSearchEntryPointTask : public FStateTreeT
                 double PathLength = 0.0;
                 ENavigationQueryResult::Type Result = NavSys->GetPathLength(PawnLocation, WorldEntryLocation, PathLength);
 
-                if (Result != ENavigationQueryResult::Success) continue;
+                if (Result != ENavigationQueryResult::Success)
+                {
+                    // UE_LOG(LogTemp, Verbose, TEXT("Pathfinding failed to Zone %s EntryPoint. Result: %d"), *Zone->GetName(), (int32)Result);
+                    continue;
+                }
 
                 // 가중치 계산
                 float Weight = 100000.0f / ((float)PathLength + 100.0f);
@@ -131,6 +147,7 @@ struct ZOMBIEGROUND_API FSelectWeightedSearchEntryPointTask : public FStateTreeT
         // 2. 만약 최근 방문하지 않은 새로운 건물 후보가 하나도 없다면?
         if (Candidates.Num() == 0)
         {
+            UE_LOG(LogTemp, Warning, TEXT("SelectWeightedEntryPoint: No fresh candidates found. Checking fallbacks..."));
             // 어쩔 수 없이 최근에 방문했던 곳들 중에서 다시 선택 (Fallback 사용)
             if (FallbackCandidates.Num() > 0)
             {
@@ -140,6 +157,7 @@ struct ZOMBIEGROUND_API FSelectWeightedSearchEntryPointTask : public FStateTreeT
             }
             else
             {
+                UE_LOG(LogTemp, Error, TEXT("SelectWeightedEntryPoint: No candidates (fresh or fallback) found! Returning Failed."));
                 return EStateTreeRunStatus::Failed; 
             }
         }
@@ -169,6 +187,8 @@ struct ZOMBIEGROUND_API FSelectWeightedSearchEntryPointTask : public FStateTreeT
             Data.SelectedZone = SelectedCandidate->OwnerZone;
             Data.TargetLocation = SelectedCandidate->Location;
 
+            UE_LOG(LogTemp, Log, TEXT("SelectWeightedEntryPoint: Selected Zone %s at %s"), *Data.SelectedZone->GetName(), *Data.TargetLocation.ToString());
+
             // [수정됨] 방문 기록 업데이트 로직
             // 1) 배열에 현재 선택된 존 추가
             Data.ZombieAIC->VisitedZoneHistory.Add(SelectedCandidate->OwnerZone);
@@ -191,6 +211,7 @@ struct ZOMBIEGROUND_API FSelectWeightedSearchEntryPointTask : public FStateTreeT
             return EStateTreeRunStatus::Succeeded;
         }
 
+        UE_LOG(LogTemp, Error, TEXT("SelectWeightedEntryPoint: Selection failed unexpectedly after candidate check."));
         return EStateTreeRunStatus::Failed;
     }
 };
