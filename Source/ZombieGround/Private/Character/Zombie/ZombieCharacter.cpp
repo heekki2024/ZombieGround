@@ -51,8 +51,6 @@ void AZombieCharacter::BeginPlay()
 	
 	PC = Cast<APlayerController>(GetController());
 	
-
-
 	DefaultWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;	
 	// Enhanced Input Subsystem 활성화
 	if (IsValid(PC))
@@ -153,6 +151,7 @@ void AZombieCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		playerInput->BindAction(IA_Tab, ETriggerEvent::Started, this, &AZombieCharacter::OnTabPressed);	
 	}
 }
+
 
 void AZombieCharacter::Move(const FInputActionValue& Value)
 {

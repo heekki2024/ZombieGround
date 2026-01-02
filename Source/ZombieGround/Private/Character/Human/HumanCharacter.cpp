@@ -151,6 +151,8 @@ float AHumanCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const&
 	return ActualDamage;
 }
 
+
+
 // Called to bind functionality to input
 void AHumanCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

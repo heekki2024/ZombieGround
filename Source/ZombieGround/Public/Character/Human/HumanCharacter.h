@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "InputAction.h"
 #include "Character/BaseCharacter.h"
 #include "HumanCharacter.generated.h"
@@ -15,7 +16,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryAmmoChangedDelegate, int
 // [추가] 스태미나 변경 알림용 델리게이트 (UI와 연동)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, CurrentStamina, float, MaxStamina);
 UCLASS()
-class ZOMBIEGROUND_API AHumanCharacter : public ABaseCharacter
+class ZOMBIEGROUND_API AHumanCharacter : public ABaseCharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -39,6 +40,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Zombie")
 	TSubclassOf<AZombieCharacter> ZombieClassToSpawn;
 
+	FGenericTeamId TeamId = FGenericTeamId(2);
+	// 내 팀 ID 반환 함수
+	virtual FGenericTeamId GetGenericTeamId() const override {return TeamId;}
 
 protected:
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite)

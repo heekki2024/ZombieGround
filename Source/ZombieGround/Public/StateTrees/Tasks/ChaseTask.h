@@ -62,6 +62,9 @@ struct ZOMBIEGROUND_API FChaseTask : public FStateTreeTaskCommonBase
 	virtual EStateTreeRunStatus EnterState(FStateTreeExecutionContext& Context, const FStateTreeTransitionResult& Transition) const override
 	{
 		const FChaseTaskInstanceData& Data = Context.GetInstanceData(*this);
+		
+		UE_LOG(LogTemp, Log, TEXT("ChaseTask: EnterState. Target: %s"), *GetNameSafe(Data.TargetHuman));
+
 		if (ensure(Data.TargetHuman))
 		{
 			if (AAIController* AI = Cast<AAIController>(Context.GetOwner()))

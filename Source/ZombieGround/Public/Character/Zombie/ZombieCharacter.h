@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "Character/BaseCharacter.h"
 #include "ZombieCharacter.generated.h"
 
 UCLASS()
-class ZOMBIEGROUND_API AZombieCharacter : public ABaseCharacter
+class ZOMBIEGROUND_API AZombieCharacter : public ABaseCharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -27,6 +28,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 public:
+	FGenericTeamId TeamId = FGenericTeamId(1); // 좀비 팀 1번
+	
+	virtual FGenericTeamId GetGenericTeamId() const override {return TeamId;}
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Collision")
 	UCapsuleComponent* InteractionCapsule;
 	

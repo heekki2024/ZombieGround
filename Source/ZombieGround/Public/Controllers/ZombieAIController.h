@@ -61,8 +61,28 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
-
+	// IGenericTeamAgentInterface 상속 유지
 public:
+	virtual FGenericTeamId GetGenericTeamId() const override;
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+	
+public:
+	virtual void OnPossess(APawn* InPawn) override;
+
+	// Perception 업데이트 델리게이트 함수
+	UFUNCTION()
+	void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
+
+	//Chase state
+	// [중요] State Tree나 Task에서 접근할 타겟 대상
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI")
+	class AActor* TargetActor = nullptr;
+	
+	// 시각 설정용
+	UPROPERTY(VisibleAnywhere)
+	class UAISenseConfig_Sight* SightConfig;
+	
+	
 	// 맵에 존재하는 모든 수색 구역 (최적화를 위해 미리 저장)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|Search")
 	TArray<TObjectPtr<class ASearchZone>> CachedSearchZones;
@@ -86,7 +106,6 @@ public:
 	// [변경] 이름 변경: RoomSearchStatus -> SectorSearchStatus
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "AI | State")
 	FSectorSearchState SectorSearchStatus;
-
 	// [기존 함수 수정] 건물이 바뀌면 모든 섹터 기록 초기화
 	void StartNewBuildingSearch()
 	{
