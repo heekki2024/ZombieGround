@@ -63,7 +63,7 @@ struct FWeaponStats
 	float KnockbackStrength = 10.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
-	float Stun = 10.0f;
+	float Stun = 0.3f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
 	float StunTime = 10.0f;

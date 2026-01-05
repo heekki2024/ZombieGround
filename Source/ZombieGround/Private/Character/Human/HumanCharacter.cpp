@@ -67,11 +67,9 @@ AHumanCharacter::AHumanCharacter()
 	
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	// 앉았을 때 캡슐 높이
-	GetCharacterMovement()->CrouchedHalfHeight = 44.f;
-
+	
+	GetCharacterMovement()->SetCrouchedHalfHeight(44.f);
 	// [추가] 플레이어가 조종하지 않는 경우 AI가 자동으로 빙의하도록 설정
-
-
 	
 }
 

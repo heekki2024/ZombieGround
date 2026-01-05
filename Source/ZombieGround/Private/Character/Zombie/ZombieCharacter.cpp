@@ -111,6 +111,39 @@ void AZombieCharacter::Tick(float DeltaTime)
 	// UpdateKnockback(DeltaTime);
 }
 
+void AZombieCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	// 1. 플레이어가 조종하는 경우
+	if (NewController->IsA<APlayerController>())
+	{
+		// [TPS/FPS 슈터 스타일]
+		// 마우스를 돌리면 캐릭터도 같이 회전함 (조준을 위해)
+		bUseControllerRotationYaw = true; 
+
+		// 이동 방향으로 회전하는 기능은 끔 (게걸음/뒷걸음질 가능해야 하므로)
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+        
+		// (선택) 회전 속도 설정
+		GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
+	}
+	// 2. AI가 조종하는 경우
+	else 
+	{
+		// [AI 네비게이션 스타일]
+		// 컨트롤러(시선) 회전을 따라가지 않음
+		bUseControllerRotationYaw = false;
+
+		// 이동하는 방향(가속도) 쪽으로 몸을 돌림 (자연스러운 주행)
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+        
+		// (선택) AI는 회전을 좀 더 빠릿하게 설정
+		GetCharacterMovement()->RotationRate = FRotator(0.0f, 600.0f, 0.0f);
+	}
+}
+
+
 // Called to bind functionality to input
 void AZombieCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

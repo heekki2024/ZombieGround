@@ -133,6 +133,7 @@ void AZombieAIController::Tick(float DeltaTime)
 	// (성능 최적화가 필요하다면 0.2초~0.5초 간격으로 실행되도록 타이머를 걸 수도 있습니다.)
 }
 
+
 FGenericTeamId AZombieAIController::GetGenericTeamId() const
 {
 	// [핵심 변경] 내 변수가 아니라, 내가 조종 중인 좀비의 팀 ID를 리턴
