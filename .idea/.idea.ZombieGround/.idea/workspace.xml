@@ -15,11 +15,6 @@
     <list default="true" id="d4f3ddc7-86d1-42a1-bb7c-fedf326fe68d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ZombieGround/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Human/HumanCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Character/Zombie/ZombieCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Private/Controllers/ZombieAIController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Private/Controllers/ZombieAIController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Character/Zombie/ZombieCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/DataAsset/Weapon/WeaponDataAsset.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ZombieGround/Public/Item/DataAsset/Weapon/WeaponDataAsset.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/ZombieGround.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -614,6 +609,7 @@
       <workItem from="1767242249805" duration="17860000" />
       <workItem from="1767326319404" duration="12610000" />
       <workItem from="1767605671047" duration="559000" />
+      <workItem from="1767606273839" duration="426000" />
     </task>
     <servers />
   </component>

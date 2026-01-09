@@ -10,7 +10,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Controllers/HumanAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "Inventory/InventoryComponent.h"
 #include "Item/DataAsset/BaseDataAsset.h"
 #include "Item/DataAsset/Weapon/WeaponDataAsset.h"
